@@ -1,0 +1,8 @@
+.DS_Store
+.cache/
+.temp/
+node_modules/
+.vscode/
+.idea/
+playwright-report/
+test-results/

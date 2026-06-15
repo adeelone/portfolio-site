@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Nebula-STAT Proto",
+    "url": null,
+    "homepage": null,
+    "description": "Hackathon analytics prototype for health data workflows.",
+    "languages": ["React", "Supabase", "LangChain", "Node.js"],
+    "topics": ["ai", "analytics", "hackathon"],
+    "tech": ["React", "Supabase", "LangChain", "Node.js"],
+    "is_private": true,
+    "highlights": [
+      "Built an interactive analytics workflow for 100+ hackathon users.",
+      "Connected React UI, Supabase storage, and AI-assisted process automation."
+    ]
+  },
+  {
+    "name": "SHPE UTEP Website",
+    "url": null,
+    "homepage": null,
+    "description": "Frontend cleanup and performance work for the SHPE UTEP site.",
+    "languages": ["HTML", "CSS", "JavaScript"],
+    "topics": ["frontend", "student-org"],
+    "tech": ["HTML", "CSS", "JavaScript"],
+    "is_private": true,
+    "highlights": [
+      "Led content cleanup and practical performance improvements as Web Chair.",
+      "Compressed 30+ leadership photos and tightened page organization."
+    ]
+  }
+]
