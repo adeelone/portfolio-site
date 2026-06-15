@@ -42,8 +42,8 @@
     {
       "company": "Google",
       "title": "STEP Intern, Software Engineering",
-      "dates": "May 2025 - Aug 2025",
-      "location": "Sunnyvale, CA · Hybrid",
+      "dates": "May 2026 - Aug 2026",
+      "location": "Sunnyvale, CA - Hybrid",
       "context": "Google Cloud, Workspace Policy Infrastructure.",
       "bullets": [
         "Redesigned the D4 compilation pipeline around per-entity parallelism, improving p50 latency by 30% and raising QA throughput by 15%.",
@@ -54,10 +54,10 @@
       "tags": ["Google Cloud", "JavaScript", "Testing", "Rollouts", "Observability"]
     },
     {
-      "company": "Education at Work × Intuit",
+      "company": "Education at Work x Intuit",
       "title": "Product Expert, TurboTax",
       "dates": "Dec 2025 - May 2026",
-      "location": "El Paso, TX · On-site",
+      "location": "El Paso, TX - On-site",
       "context": "Outbound phone transfer agent supporting TurboTax customers.",
       "bullets": [
         "Resolved 40+ tax-related customer issues per shift, maintaining a 94% first-call resolution rate and cutting callback volume by 18%.",
