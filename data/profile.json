@@ -1,17 +1,102 @@
 {
   "name": "Aden Ramirez",
-  "title": "CS @ UTEP building backend, systems, and AI projects.",
-  "subtitle": "Open to software engineering internships.",
-  "current_status": "Currently: Google STEP Intern, Summer 2026",
-  "semester_focus": "This semester I'm focused on advanced Java work, systems thinking, and building fuller end-to-end product projects.",
+  "title": "CS at UTEP, building backend, systems, and full-stack projects that feel real enough to ship.",
+  "subtitle": "Open to software engineering internships, part-time tech roles, and teams where careful work actually matters.",
+  "current_status": "Currently at Boys & Girls Club of El Paso, still building toward Spring 2028 and the next strong SWE opportunity.",
+  "availability": "Based in El Paso, open to relocating for the right role, and usually easiest to reach by email or LinkedIn.",
+  "semester_focus": "Right now I'm balancing coursework, applications, SHPE web work, and a steady push to make my projects cleaner, more complete, and more worth showing.",
   "phone": "(915) 240-7882",
   "phone_href": "tel:+19152407882",
   "email": "adeemra@gmail.com",
   "email_href": "mailto:adeemra@gmail.com",
+  "school_email": "aeramirez17@miners.utep.edu",
   "linkedin": "https://linkedin.com/in/aden-ramirez-cs",
   "github": "https://github.com/adeelone",
   "resume": "assets/Aden_Ramirez_Resume.pdf",
+  "hero_image": "assets/aden-profile.jpg",
   "location": "El Paso, Texas",
+  "hero_facts": [
+    {
+      "label": "Based in",
+      "value": "El Paso, TX"
+    },
+    {
+      "label": "Studying",
+      "value": "B.S. Computer Science"
+    },
+    {
+      "label": "GPA",
+      "value": "3.97 / 4.0"
+    }
+  ],
+  "current_focus": {
+    "title": "Trying to make every project and role look more complete, more real, and more useful.",
+    "copy": "Most of what I enjoy sits in the overlap between backend logic, cleanup-heavy engineering work, and product decisions that make software feel reliable instead of fragile.",
+    "points": [
+      "Keeping projects runnable, documented, and worth showing to actual recruiters.",
+      "Using LinkedIn, GitHub, Handshake, and direct applications pretty aggressively.",
+      "Looking for the next SWE internship or part-time tech role where I can contribute early and keep learning fast."
+    ]
+  },
+  "snapshot": [
+    {
+      "label": "Work style",
+      "value": "Calm, direct, detail-oriented"
+    },
+    {
+      "label": "Interested in",
+      "value": "Backend, full-stack, embedded, analytics"
+    },
+    {
+      "label": "School",
+      "value": "The University of Texas at El Paso"
+    },
+    {
+      "label": "Looking for",
+      "value": "SWE internships, part-time tech work, Spring 2028 runway"
+    }
+  ],
+  "focus_areas": [
+    {
+      "title": "Backend and systems",
+      "copy": "I like the parts of software that have to survive edge cases, stay readable, and still make sense after the first version ships."
+    },
+    {
+      "title": "Full-stack product work",
+      "copy": "I still care about whether an interface makes sense, whether the copy sounds normal, and whether someone would keep using it after the demo."
+    },
+    {
+      "title": "Testing and rollout discipline",
+      "copy": "A lot of my best work comes from tightening coverage, watching latency, and making sure changes are safe enough to ship without drama."
+    },
+    {
+      "title": "Practical AI and automation",
+      "copy": "The interesting part for me is not just using models. It is knowing where automation actually helps and where normal software should stay in charge."
+    }
+  ],
+  "calendar": {
+    "href": "",
+    "label": "Book time",
+    "title": "Want a booking link here?",
+    "copy": "I left space for a real scheduling flow. If you want this live, swap in a Calendly link or a Google Calendar appointment page and this section is ready for it.",
+    "note": "Add your Calendly or Google Calendar booking link."
+  },
+  "career_links": {
+    "linkedin": "https://linkedin.com/in/aden-ramirez-cs",
+    "handshake": "",
+    "indeed": "",
+    "ziprecruiter": ""
+  },
+  "career_note": {
+    "title": "LinkedIn is the profile I keep the most current.",
+    "copy": "If I add a new role or project anywhere first, it is usually LinkedIn. Handshake and the job boards matter for applications, but LinkedIn is still the clearest picture of what I'm doing."
+  },
+  "community": {
+    "title": "Recruiters, hiring managers, founders, classmates, and referrers are all welcome.",
+    "copy": "If someone likes the page, the work, or the resume, they should be able to reach me without guessing what to do next. Email, phone, LinkedIn, and the outreach form all work here.",
+    "banner": "Best first move: email or LinkedIn. That is usually where I answer fastest."
+  },
+  "connect_note": "If you're reaching out about internships, projects, student org work, or part-time tech roles, email is usually the safest bet. LinkedIn and GitHub stay current too.",
   "education": {
     "school": "The University of Texas at El Paso",
     "degree": "B.S. in Computer Science",
@@ -22,9 +107,9 @@
       "2025 Hispanic Scholarship Fund Scholar"
     ],
     "coursework": [
-      "Data Structures & Algorithms",
+      "Data Structures and Algorithms",
       "Advanced OOP",
-      "Automata & Formal Languages",
+      "Automata and Formal Languages",
       "Computer Organization",
       "Digital Systems Design",
       "Discrete Mathematics",
@@ -33,22 +118,22 @@
     ]
   },
   "about": [
-    "I'm a computer science student at UTEP working at the intersection of backend systems, product engineering, and practical AI tools.",
-    "I like projects with real constraints: performance tradeoffs, cleanup work, test coverage, rollout safety, and interfaces people actually use.",
-    "Lately that has meant production infrastructure work at Google, customer-facing troubleshooting at Intuit, and a steady stream of side projects that sharpen both engineering depth and product judgment.",
-    "I'm looking for internships where I can contribute quickly, write careful code, and keep leveling up around strong engineers."
+    "I'm a computer science student at UTEP who likes building software that feels solid, not just impressive in a screenshot.",
+    "A lot of the work I enjoy lives in backend systems, full-stack product work, testing, and the cleanup-heavy engineering work that makes software usable after launch.",
+    "So far that has meant infrastructure work at Google, high-volume problem solving at Intuit, youth-facing STEAM instruction, and side projects that keep getting more serious over time.",
+    "I'm looking for SWE internships, part-time tech work, and teams where I can contribute early, learn from stronger engineers, and keep getting better at shipping careful work."
   ],
   "experience": [
     {
       "company": "Google",
       "title": "STEP Intern, Software Engineering",
-      "dates": "May 2026 - Aug 2026",
-      "location": "Sunnyvale, CA - Hybrid",
+      "dates": "May 2025 - Aug 2025",
+      "location": "Sunnyvale, CA",
       "context": "Google Cloud, Workspace Policy Infrastructure.",
       "bullets": [
         "Redesigned the D4 compilation pipeline around per-entity parallelism, improving p50 latency by 30% and raising QA throughput by 15%.",
         "Migrated 6 core modules to PromiseGraph, lifting test coverage from 60% to 95% and shortening review cycles by 20%.",
-        "Ran a zero-incident Dev, QA, and Prod rollout through a 10-step gated launch plan for a critical production update.",
+        "Ran a zero-incident rollout across Dev, QA, and Prod using a 10-step gated launch plan for a critical production update.",
         "Built 50+ unit and integration tests plus 7 Streamz dashboards so the team could track latency, error rates, and system health live."
       ],
       "tags": ["Google Cloud", "JavaScript", "Testing", "Rollouts", "Observability"]
@@ -57,27 +142,41 @@
       "company": "Education at Work x Intuit",
       "title": "Product Expert, TurboTax",
       "dates": "Dec 2025 - May 2026",
-      "location": "El Paso, TX - On-site",
-      "context": "Outbound phone transfer agent supporting TurboTax customers.",
+      "location": "El Paso, TX - Remote",
+      "context": "Outbound phone transfer agent supporting TurboTax customers at scale.",
       "bullets": [
         "Resolved 40+ tax-related customer issues per shift, maintaining a 94% first-call resolution rate and cutting callback volume by 18%.",
-        "Explained complex product and tax flows across 600+ interactions, holding a 4.7/5.0 customer satisfaction average."
+        "Explained complex product and tax flows across 600+ interactions, holding a 4.7/5.0 customer satisfaction average.",
+        "Kept transfer rate below 10% by handling the majority of customer questions independently instead of escalating."
       ],
-      "tags": ["Customer Support", "Troubleshooting", "Communication"]
+      "tags": ["Customer Support", "Troubleshooting", "Communication", "Product Support"]
+    },
+    {
+      "company": "Boys & Girls Club of El Paso",
+      "title": "STEAM Specialist",
+      "dates": "May 2026 - Present",
+      "location": "El Paso, TX",
+      "context": "Hands-on STEAM instruction, workshop planning, and technical learning support across club sites.",
+      "bullets": [
+        "Planned and led project-based STEAM sessions covering 3D printing, prototyping, digital fabrication, and basic technical workflows for middle and high school students.",
+        "Translated technical concepts into practical lessons that kept students engaged while staying structured and understandable.",
+        "Managed equipment, activity setup, and day-to-day workshop logistics across multiple club environments."
+      ],
+      "tags": ["STEAM", "Technical Instruction", "Project Planning", "Communication"]
     }
   ],
   "additional_experience": [
     {
-      "company": "Peter Piper Pizza",
-      "title": "Part-time Employee",
-      "dates": "Dec 2023 - Present",
-      "context": "Worked across cashier, food prep, customer service, and closing duties in a high-volume environment."
+      "company": "Best Buy",
+      "title": "Seasonal Sales Associate",
+      "dates": "Oct 2025 - Jan 2026",
+      "context": "Worked in gaming and electronics during peak holiday season, handling product recommendations, payments, and promotional floor support."
     },
     {
-      "company": "Best Buy",
-      "title": "Details coming",
-      "dates": "Dates coming",
-      "context": "Role title and dates still need to be confirmed."
+      "company": "Peter Piper Pizza",
+      "title": "Team Member",
+      "dates": "Dec 2023 - Apr 2025",
+      "context": "Worked across cashier, food prep, customer service, and closing duties in a high-volume environment while helping train new hires and covering nights, weekends, and holidays."
     }
   ]
 }

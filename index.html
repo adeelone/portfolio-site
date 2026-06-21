@@ -11,38 +11,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="page-glow page-glow-blue" aria-hidden="true"></div>
+    <div class="page-glow page-glow-red" aria-hidden="true"></div>
+
     <main class="site-shell">
-      <section class="hero" id="top" aria-labelledby="hero-heading">
-        <div class="hero-copy">
-          <p class="eyebrow">Software Engineering Portfolio</p>
-          <h1 id="hero-heading" class="hero-name"></h1>
-          <p class="hero-pitch" id="hero-pitch"></p>
-          <p class="hero-pitch hero-pitch-secondary" id="hero-pitch-secondary"></p>
-          <p class="status-line" id="status-line"></p>
-          <div class="hero-actions" id="hero-actions"></div>
-        </div>
-        <div class="hero-visual" aria-hidden="true">
-          <div class="placeholder-frame">
-            <div class="placeholder-ring">
-              <div class="placeholder-card">
-                <p class="eyebrow eyebrow-small">Photo Placeholder</p>
-                <p class="placeholder-copy">Swap in a real headshot when you have one worth using.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="contact-bar" id="contact" aria-label="Contact information">
-        <div class="contact-bar-inner" id="contact-items"></div>
-      </section>
-
       <header class="site-header" data-nav-root>
         <a class="wordmark" href="#top" aria-label="Jump to top">AR</a>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
@@ -53,37 +31,89 @@
           <a href="#education">Education</a>
           <a href="#experience">Experience</a>
           <a href="#projects">Projects</a>
-          <a href="#additional">Additional</a>
+          <a href="#career">Career</a>
+          <a href="#profiles">Profiles</a>
+          <a href="#community">Outreach</a>
         </nav>
       </header>
 
-      <section class="panel reveal" id="about" aria-labelledby="about-heading">
+      <section class="hero reveal" id="top" aria-labelledby="hero-heading">
+        <div class="hero-copy">
+          <h1 id="hero-heading" class="hero-heading"></h1>
+          <p class="hero-pitch" id="hero-pitch"></p>
+          <p class="hero-pitch-secondary" id="hero-pitch-secondary"></p>
+          <p class="status-line" id="status-line"></p>
+          <p class="hero-note" id="availability-line"></p>
+          <div class="hero-actions" id="hero-actions"></div>
+          <div class="hero-facts" id="hero-facts"></div>
+        </div>
+
+        <aside class="hero-card">
+          <div class="hero-card-art" aria-hidden="true">
+            <div class="hero-card-photo">
+              <img id="hero-photo-image" alt="Aden Ramirez portrait" loading="eager" />
+            </div>
+          </div>
+          <div class="hero-card-body">
+            <p class="eyebrow">Right now</p>
+            <p class="hero-card-title" id="current-focus-title"></p>
+            <p class="hero-card-copy" id="current-focus-copy"></p>
+            <div class="hero-card-list" id="hero-highlights"></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="contact-bar" id="contact" aria-label="Contact information">
+        <div class="contact-bar-inner">
+          <div class="contact-bar-copy">
+            <p class="eyebrow">Reach out</p>
+            <p class="contact-bar-title">Best paths: email, phone, LinkedIn, resume.</p>
+          </div>
+          <div class="contact-items" id="contact-items"></div>
+        </div>
+      </section>
+
+      <section class="panel panel-split reveal" id="about" aria-labelledby="about-heading">
         <div class="section-head">
           <p class="eyebrow">About</p>
-          <h2 id="about-heading">What I do, what I like building, and what I'm looking for.</h2>
+          <h2 id="about-heading">I like projects that have real constraints and real users.</h2>
         </div>
-        <div class="prose" id="about-copy"></div>
+        <div class="about-layout">
+          <div class="prose" id="about-copy"></div>
+          <aside class="snapshot-card">
+            <p class="eyebrow">What I bring</p>
+            <div class="snapshot-grid" id="snapshot-grid"></div>
+          </aside>
+        </div>
+        <div class="pillar-grid" id="focus-pillars"></div>
       </section>
 
       <section class="panel reveal" id="education" aria-labelledby="education-heading">
-        <div class="section-head">
-          <p class="eyebrow">Education</p>
-          <h2 id="education-heading">Computer Science at UTEP.</h2>
+        <div class="section-head section-head-spread">
+          <div>
+            <p class="eyebrow">Education</p>
+            <h2 id="education-heading">Computer science at UTEP, with a pretty practical bent.</h2>
+          </div>
+          <div class="semester-banner" id="semester-focus"></div>
         </div>
         <div class="education-grid">
           <article class="detail-card" id="education-summary"></article>
           <article class="detail-card">
-            <h3>Coursework</h3>
+            <p class="eyebrow">Coursework</p>
             <div class="chip-list" id="coursework-chips"></div>
-            <p class="semester-focus" id="semester-focus"></p>
           </article>
         </div>
       </section>
 
       <section class="panel reveal" id="experience" aria-labelledby="experience-heading">
         <div class="section-head">
-          <p class="eyebrow">SWE Experience</p>
-          <h2 id="experience-heading">Experience that maps directly to engineering work.</h2>
+          <p class="eyebrow">Experience</p>
+          <h2 id="experience-heading">The work that maps closest to software engineering.</h2>
+        </div>
+        <div class="experience-featured" id="experience-featured"></div>
+        <div class="section-subhead">
+          <p class="eyebrow">Relevant experience</p>
+          <h3>Roles that still connect cleanly to software engineering work.</h3>
         </div>
         <div class="experience-grid" id="experience-cards"></div>
       </section>
@@ -92,27 +122,256 @@
         <div class="section-head section-head-spread">
           <div>
             <p class="eyebrow">Projects</p>
-            <h2 id="projects-heading">Work pulled live from GitHub.</h2>
+            <h2 id="projects-heading">Recent work, pulled from GitHub and filtered down to the strongest six.</h2>
           </div>
-          <a class="inline-link" id="projects-profile-link" href="https://github.com/adeelone" target="_blank" rel="noopener">
-            Show all on GitHub
+          <a class="section-link" id="projects-profile-link" href="https://github.com/adeelone" target="_blank" rel="noopener">
+            View full GitHub
           </a>
         </div>
+        <div class="project-summary-banner" id="project-summary-banner"></div>
         <div class="projects-grid" id="projects-grid"></div>
       </section>
 
       <section class="panel reveal" id="additional" aria-labelledby="additional-heading">
         <div class="section-head">
           <p class="eyebrow">Additional Experience</p>
-          <h2 id="additional-heading">Useful work outside direct SWE roles.</h2>
+          <h2 id="additional-heading">Useful experience outside direct SWE roles still counts.</h2>
         </div>
         <div class="additional-grid" id="additional-grid"></div>
+      </section>
+
+      <section class="panel reveal" id="career" aria-labelledby="career-heading">
+        <div class="section-head">
+          <p class="eyebrow">Career Links</p>
+          <h2 id="career-heading">The places I actually use for applications and professional updates.</h2>
+        </div>
+        <div class="connect-grid">
+          <article class="connect-card">
+            <p class="eyebrow">Profiles</p>
+            <h3 class="connect-title">Public career links</h3>
+            <p class="connect-copy">LinkedIn stays the most current. The rest are here if you need the broader application trail.</p>
+            <div class="link-stack" id="career-links"></div>
+          </article>
+          <article class="connect-card">
+            <p class="eyebrow">How I use them</p>
+            <h3 class="connect-title" id="career-note-title"></h3>
+            <p class="connect-copy" id="career-note-copy"></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel reveal" id="profiles" aria-labelledby="profiles-heading">
+        <div class="section-head section-head-spread">
+          <div>
+            <p class="eyebrow">Profile Views</p>
+            <h2 id="profiles-heading">A cleaner preview of the two profiles recruiters usually check first.</h2>
+          </div>
+        </div>
+        <div class="profile-preview-grid">
+          <article class="profile-preview-card profile-preview-card-github" id="github-preview"></article>
+          <article class="profile-preview-card profile-preview-card-linkedin" id="linkedin-preview"></article>
+        </div>
+      </section>
+
+      <section class="panel reveal" id="community" aria-labelledby="community-heading">
+        <div class="section-head section-head-spread">
+          <div>
+            <p class="eyebrow">Reach Out</p>
+            <h2 id="community-heading">If someone wants to recruit me, refer me, or just start a real conversation, this is the easiest path.</h2>
+          </div>
+          <div class="community-banner" id="community-banner"></div>
+        </div>
+        <div class="community-grid">
+          <article class="connect-card">
+            <p class="eyebrow">Why reach out</p>
+            <h3 class="connect-title">Good reasons to start the conversation here.</h3>
+            <p class="connect-copy" id="community-copy"></p>
+            <div class="link-stack" id="community-links"></div>
+          </article>
+          <article class="connect-card">
+            <p class="eyebrow">Quick form</p>
+            <h3 class="connect-title">Send me a structured note</h3>
+            <p class="connect-copy">This sends a clean note into the site inbox so a recruiter, manager, or referrer can get straight to the point.</p>
+            <form class="community-form" id="community-form">
+              <div class="community-form-grid">
+                <label class="owner-field">
+                  <span>Your name</span>
+                  <input id="community-name" name="name" type="text" required />
+                </label>
+                <label class="owner-field">
+                  <span>Company</span>
+                  <input id="community-company" name="company" type="text" />
+                </label>
+                <label class="owner-field">
+                  <span>Email</span>
+                  <input id="community-email" name="email" type="email" required />
+                </label>
+                <label class="owner-field">
+                  <span>LinkedIn or website</span>
+                  <input id="community-link" name="link" type="text" />
+                </label>
+                <label class="owner-field">
+                  <span>What is this about?</span>
+                  <select id="community-topic" name="topic">
+                    <option>Recruiting</option>
+                    <option>Referral</option>
+                    <option>Project conversation</option>
+                    <option>Schedule a call</option>
+                    <option>General connection</option>
+                  </select>
+                </label>
+                <label class="owner-field">
+                  <span>Timeline</span>
+                  <input id="community-timeline" name="timeline" type="text" placeholder="Example: next week or Summer 2027 internship" />
+                </label>
+              </div>
+              <label class="owner-field">
+                <span>Message</span>
+                <textarea id="community-message" name="message" rows="5" required></textarea>
+              </label>
+              <div class="owner-actions owner-actions-wrap">
+                <button class="owner-button owner-button-primary" type="submit">Send message</button>
+                <button class="owner-button" id="community-copy-email" type="button">Copy my email</button>
+                <button class="owner-button" id="community-copy-phone" type="button">Copy my phone</button>
+              </div>
+              <p class="connect-copy" id="community-result">No account or extra tool needed. This sends directly to the site inbox.</p>
+            </form>
+          </article>
+        </div>
       </section>
 
       <footer class="site-footer reveal">
         <p id="footer-built"></p>
       </footer>
     </main>
+
+    <button class="owner-trigger" id="owner-trigger" type="button" aria-label="Open owner mode" title="Owner mode">
+      AR
+    </button>
+
+    <div class="owner-modal" id="owner-modal" hidden>
+      <div class="owner-modal-backdrop" id="owner-modal-backdrop"></div>
+      <div class="owner-modal-card" role="dialog" aria-modal="true" aria-labelledby="owner-modal-heading">
+        <p class="eyebrow">Owner mode</p>
+        <h2 id="owner-modal-heading" class="owner-title">Local edit access</h2>
+        <p class="owner-copy">This is the owner login for the site backend. It unlocks profile editing, resume upload, and recruiter message review.</p>
+        <form class="owner-form" id="owner-login-form">
+          <label class="owner-field">
+            <span>Email</span>
+            <input id="owner-email" name="email" type="email" autocomplete="username" />
+          </label>
+          <label class="owner-field">
+            <span>Code</span>
+            <input id="owner-code" name="code" type="password" autocomplete="current-password" />
+          </label>
+          <p class="owner-error" id="owner-error" hidden>That combination did not match.</p>
+          <div class="owner-actions">
+            <button class="owner-button owner-button-primary" type="submit">Unlock</button>
+            <button class="owner-button" id="owner-cancel" type="button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <aside class="owner-drawer" id="owner-drawer" aria-label="Owner edit panel" hidden>
+      <div class="owner-drawer-head">
+        <div>
+          <p class="eyebrow">Owner mode</p>
+          <h2 class="owner-title">Owner editor</h2>
+        </div>
+        <button class="owner-button" id="owner-close" type="button">Close</button>
+      </div>
+      <p class="owner-copy">Changes here save to the backend profile file, so the site keeps them the next time it loads from this server.</p>
+      <form class="owner-editor" id="owner-editor">
+        <div class="owner-grid">
+          <label class="owner-field">
+            <span>Status line</span>
+            <input id="editor-status" name="current_status" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>Resume URL</span>
+            <input id="editor-resume" name="resume" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>LinkedIn</span>
+            <input id="editor-linkedin" name="linkedin" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>GitHub</span>
+            <input id="editor-github" name="github" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>Calendar link</span>
+            <input id="editor-calendar" name="calendar_href" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>Handshake</span>
+            <input id="editor-handshake" name="handshake" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>Indeed</span>
+            <input id="editor-indeed" name="indeed" type="text" />
+          </label>
+          <label class="owner-field">
+            <span>ZipRecruiter</span>
+            <input id="editor-ziprecruiter" name="ziprecruiter" type="text" />
+          </label>
+        </div>
+        <div class="owner-upload">
+          <label class="owner-field">
+            <span>Upload new resume PDF</span>
+            <input id="owner-resume-file" type="file" accept="application/pdf" />
+          </label>
+          <button class="owner-button" id="owner-upload-resume" type="button">Upload resume</button>
+        </div>
+        <label class="owner-field">
+          <span>About intro</span>
+          <textarea id="editor-about-0" rows="3"></textarea>
+        </label>
+        <label class="owner-field">
+          <span>Main SWE experience JSON</span>
+          <textarea id="editor-experience" rows="12"></textarea>
+        </label>
+        <label class="owner-field">
+          <span>Additional experience JSON</span>
+          <textarea id="editor-additional" rows="10"></textarea>
+        </label>
+        <label class="owner-field">
+          <span>Full profile JSON</span>
+          <textarea id="editor-json" rows="18"></textarea>
+        </label>
+        <div class="owner-actions owner-actions-wrap">
+          <button class="owner-button owner-button-primary" type="submit">Save to backend</button>
+          <button class="owner-button" id="owner-export" type="button">Export JSON</button>
+          <label class="owner-button owner-button-file" for="owner-import">Import JSON</label>
+          <input id="owner-import" type="file" accept="application/json" hidden />
+          <button class="owner-button" id="owner-reset" type="button">Reload saved profile</button>
+          <button class="owner-button" id="owner-logout" type="button">Lock</button>
+        </div>
+        <p class="owner-copy" id="owner-save-note">This admin mode saves to the backend profile file. Public visitors will see updates when the site is served through the backend.</p>
+      </form>
+      <section class="owner-submissions">
+        <div class="owner-drawer-head">
+          <div>
+            <p class="eyebrow">Inbox</p>
+            <h2 class="owner-title">Recent outreach</h2>
+          </div>
+          <button class="owner-button" id="owner-refresh-submissions" type="button">Refresh</button>
+        </div>
+        <div class="submission-list" id="owner-submissions-list"></div>
+      </section>
+      <section class="owner-submissions">
+        <div class="owner-drawer-head">
+          <div>
+            <p class="eyebrow">Security</p>
+            <h2 class="owner-title">Owner logins</h2>
+          </div>
+          <button class="owner-button" id="owner-refresh-logins" type="button">Refresh</button>
+        </div>
+        <div class="submission-list" id="owner-logins-list"></div>
+      </section>
+      <p class="owner-copy owner-note" id="owner-linkedin-note">LinkedIn auto-sync is not wired because LinkedIn does not offer a simple public profile sync path for this site. The backend here gives you direct editing, resume upload, and recruiter message capture instead.</p>
+    </aside>
 
     <script type="module" src="script.js"></script>
   </body>

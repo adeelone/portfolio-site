@@ -1,0 +1,9 @@
+{
+  "name": "aden-portfolio-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Portfolio site with a lightweight Node backend for owner edits and recruiter outreach.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
