@@ -18,13 +18,11 @@ const sessionCookieName = "aden_session";
 const sessionStore = new Map();
 const sessionTtlMs = 1000 * 60 * 60 * 12;
 
-const allowedEmailHashes = new Set([
-  "59795ed154274b4e3b71016ed8a5546f981d03b321269f4d506644b449f58b0c"
-]);
+const defaultOwnerEmailHashes = "59795ed154274b4e3b71016ed8a5546f981d03b321269f4d506644b449f58b0c";
+const defaultOwnerCodeHashes = "5dab66f7acd97a490f29037436f6a973c9c7178103914f2c8c7447e37db716f0";
 
-const allowedCodeHashes = new Set([
-  "5dab66f7acd97a490f29037436f6a973c9c7178103914f2c8c7447e37db716f0"
-]);
+const allowedEmailHashes = hashSetFromEnv("OWNER_EMAIL_HASHES", defaultOwnerEmailHashes);
+const allowedCodeHashes = hashSetFromEnv("OWNER_CODE_HASHES", defaultOwnerCodeHashes);
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -43,12 +41,30 @@ function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
+function hashSetFromEnv(name, fallback) {
+  return new Set(
+    String(process.env[name] || fallback)
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
 function ensureWithinRoot(targetPath) {
   const resolved = path.resolve(targetPath);
-  if (!resolved.startsWith(path.resolve(rootDir))) {
+  const relative = path.relative(rootDir, resolved);
+  if (relative.startsWith("..") || path.isAbsolute(relative)) {
     throw new Error("Path escapes workspace root.");
   }
   return resolved;
+}
+
+function commonHeaders(extra = {}) {
+  return {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    ...extra
+  };
 }
 
 async function ensureDataFiles() {
@@ -135,14 +151,17 @@ async function recordLoginEvent(email, req) {
 
 function sendJson(res, statusCode, payload, headers = {}) {
   res.writeHead(statusCode, {
-    "Content-Type": "application/json; charset=utf-8",
+    ...commonHeaders({
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store"
+    }),
     ...headers
   });
   res.end(JSON.stringify(payload));
 }
 
 function sendText(res, statusCode, message) {
-  res.writeHead(statusCode, { "Content-Type": "text/plain; charset=utf-8" });
+  res.writeHead(statusCode, commonHeaders({ "Content-Type": "text/plain; charset=utf-8" }));
   res.end(message);
 }
 
@@ -333,7 +352,13 @@ async function serveStatic(res, pathname) {
 
   try {
     const content = await fsp.readFile(filePath);
-    res.writeHead(200, { "Content-Type": contentType });
+    res.writeHead(
+      200,
+      commonHeaders({
+        "Content-Type": contentType,
+        "Cache-Control": requestedPath === "/index.html" ? "no-cache" : "public, max-age=3600"
+      })
+    );
     res.end(content);
   } catch {
     sendText(res, 404, "Not found");

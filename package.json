@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Portfolio site with a lightweight Node backend for owner edits and recruiter outreach.",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "check": "node --check server.js && node --check script.js"
   }
 }

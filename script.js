@@ -694,8 +694,8 @@ function submissionCard(submission) {
         <p class="eyebrow">${submission.topic || "General outreach"}</p>
         <span class="role-dates">${when}</span>
       </div>
-      <h3>${submission.name || "Anonymous"}${submission.company ? ` · ${submission.company}` : ""}</h3>
-      <p class="detail-copy">${submission.email || "No email provided"}${submission.timeline ? ` · ${submission.timeline}` : ""}</p>
+      <h3>${submission.name || "Anonymous"}${submission.company ? ` &middot; ${submission.company}` : ""}</h3>
+      <p class="detail-copy">${submission.email || "No email provided"}${submission.timeline ? ` &middot; ${submission.timeline}` : ""}</p>
       ${submission.link ? `<p class="detail-copy"><a class="section-link" href="${submission.link}" target="_blank" rel="noopener">${submission.link}</a></p>` : ""}
       <p class="additional-context">${submission.message || ""}</p>
     </article>
