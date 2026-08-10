@@ -6,3 +6,7 @@ node_modules/
 .idea/
 playwright-report/
 test-results/
+data/submissions.json
+data/login-events.json
+assets/uploads/
+.env

@@ -1,75 +1,43 @@
 # Aden Ramirez Portfolio
 
-This is Aden Ramirez's portfolio site. It is a single-page front end backed by a lightweight Node server that handles profile edits, owner login, resume uploads, and recruiter/community submissions.
+An editorial, route-based portfolio for Aden Ramirez. One dependency-free Node service delivers the public application, read-only content APIs, individual project case studies, route-specific metadata, and security headers.
 
-## What the backend covers
+## Run and verify
 
-- Owner login with persistent session cookie
-- Live profile editing and JSON import/export through owner mode
-- Resume PDF upload and profile update
-- Recruiter/community submissions saved on disk
-- Owner login event logging
-- Optional webhook hook for owner-login alerts
-- Health endpoint at `/api/health`
-
-## Run locally
-
-```bash
-npm start
+```powershell
+npm.cmd start
+npm.cmd run check
 ```
 
-Open `http://127.0.0.1:3000`.
+Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, API behavior, and private-file isolation.
 
-## Check the app
+## Public routes
 
-```bash
-npm run check
-```
+- `/` — concise home page
+- `/work` — searchable, filterable archive of every synced project
+- `/projects/:slug` — a case study for every project record
+- `/jobs` — the complete employment history, including technical and non-technical work
+- `/about` — background and working style
+- `/contact` — email, phone, professional profiles, résumé, and downloadable vCard
+- `/sitemap.xml` and `/robots.txt` — search discovery
 
-The check script validates the backend and frontend JavaScript syntax. There is no separate build output because this is a small Node server that serves the static front end directly.
+## Content
 
-## Environment
+- `data/profile.json` contains biography, experience, education, and contact content.
+- `data/projects.json` is the normalized GitHub project feed.
+- `data/highlights.json` contains curated project notes used by the sync script.
+- `node scripts/sync-github.mjs` refreshes public GitHub project data.
 
-Create `.env` from `.env.example` for production overrides.
+The server exposes only an explicit set of public assets. Repository source, `.git`, environment files, and `data/*.json` are never served statically. Public content is available through narrow read-only API routes.
 
-- `PORT`: host port. Most cloud hosts set this automatically.
-- `OWNER_EMAIL_HASHES`: comma-separated SHA-256 hashes for allowed owner emails.
-- `OWNER_CODE_HASHES`: comma-separated SHA-256 hashes for allowed owner codes.
-- `OWNER_LOGIN_ALERT_WEBHOOK_URL`: optional webhook from Zapier, Make, Resend, Twilio, or another service.
+## Deployment
 
-The repo includes default owner credential hashes so the private owner mode works locally with the current configured owner login. For a real public deployment, rotate the code and set fresh hashes in the host environment instead of relying on committed defaults.
+Deploy as one Node service with `npm start`. Set `PORT` only if the host does not provide it. Set `SITE_URL` to the final HTTPS origin, such as `https://portfolio.example.com`, so canonical URLs, social metadata, and the sitemap use the public domain. Set `NODE_ENV=production` to enable HSTS.
 
-## Update content
+The repository includes:
 
-- Edit `data/profile.json` for copy, contact info, booking placeholder text, education, and experience.
-- Edit `data/highlights.json` for hand-picked project bullets.
-- Run `node scripts/sync-github.mjs` to refresh `data/projects.json` from GitHub.
-- Start the backend and use the hidden owner mode in the live page to update profile data without editing JSON by hand.
-- Recruiter/community form messages are stored in `data/submissions.json`.
-- Owner login events are stored in `data/login-events.json`.
-- Uploaded resumes are stored in `assets/uploads/`.
+- `render.yaml` for a Render Blueprint deployment
+- `Dockerfile` with a production health check
+- `.github/workflows/ci.yml` for syntax and regression checks on pushes and pull requests
 
-## Deploy
-
-This version is meant to run on a Node host because the owner editor and outreach inbox need server-side routes.
-
-Static GitHub Pages can still serve the public page, but the owner login, save flow, resume upload, and message capture will not work there unless you replace the backend with another hosted API.
-
-## Hosting
-
-The simplest real host options are:
-
-- Render: create a new Web Service from the repo, runtime `Node`, build command blank, start command `npm start`
-- Railway: deploy the repo and set the start command to `npm start`
-- VPS: install Node, clone the repo, run `npm start`, and put Nginx/Caddy in front of it
-
-For Render or Railway, add a persistent disk or move `data/*.json` and `assets/uploads/` to real storage if you want owner edits, uploaded resumes, outreach messages, and login history to survive redeploys. Without persistent storage, the public site still works, but backend-edited data may reset when the host rebuilds.
-
-## What You Still Need To Add
-
-- A real calendar booking link if you want scheduling to work
-- `Handshake`, `Indeed`, and `ZipRecruiter` profile links if you want the career section fully filled in
-- A real webhook/service if you want owner login alerts to send email or text messages
-- Better screenshots or sharper summaries for your top projects if you want the projects section to read stronger
-- Production persistent storage for `data/*.json` and `assets/uploads/` on the chosen host
-- Fresh owner credential hashes set in production environment variables after rotating the owner code
+This version needs no database, persistent disk, credentials, owner login, or public message storage.

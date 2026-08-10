@@ -2,9 +2,13 @@
   "name": "aden-portfolio-site",
   "private": true,
   "version": "1.0.0",
-  "description": "Portfolio site with a lightweight Node backend for owner edits and recruiter outreach.",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Editorial software engineering portfolio with project case studies.",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check script.js"
+    "check": "node --check server.js && node --check script.js && node --test",
+    "test": "node --test"
   }
 }

@@ -1,388 +1,129 @@
 const http = require("http");
-const fs = require("fs");
-const fsp = require("fs/promises");
+const fs = require("fs/promises");
 const path = require("path");
-const crypto = require("crypto");
 
 const rootDir = __dirname;
-const dataDir = path.join(rootDir, "data");
-const uploadsDir = path.join(rootDir, "assets", "uploads");
-const profilePath = path.join(dataDir, "profile.json");
-const projectsPath = path.join(dataDir, "projects.json");
-const submissionsPath = path.join(dataDir, "submissions.json");
-const loginEventsPath = path.join(dataDir, "login-events.json");
 const port = Number(process.env.PORT || 3000);
-const alertWebhookUrl = process.env.OWNER_LOGIN_ALERT_WEBHOOK_URL || "";
+const configuredSiteUrl = String(process.env.SITE_URL || "").replace(/\/+$/, "");
+const profilePath = path.join(rootDir, "data", "profile.json");
+const projectsPath = path.join(rootDir, "data", "projects.json");
+const publicFiles = new Map([
+  ["/styles.css", path.join(rootDir, "styles.css")],
+  ["/polish.css", path.join(rootDir, "polish.css")],
+  ["/script.js", path.join(rootDir, "script.js")],
+  ["/assets/aden-profile.jpg", path.join(rootDir, "assets", "aden-profile.jpg")],
+  ["/assets/aden-headshot.png", path.join(rootDir, "assets", "aden-headshot.png")],
+  ["/assets/profile.jpg", path.join(rootDir, "assets", "profile.jpg")],
+  ["/assets/Aden_Ramirez_Resume.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume.pdf")]
+]);
+const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
 
-const sessionCookieName = "aden_session";
-const sessionStore = new Map();
-const sessionTtlMs = 1000 * 60 * 60 * 12;
-
-const defaultOwnerEmailHashes = "59795ed154274b4e3b71016ed8a5546f981d03b321269f4d506644b449f58b0c";
-const defaultOwnerCodeHashes = "5dab66f7acd97a490f29037436f6a973c9c7178103914f2c8c7447e37db716f0";
-
-const allowedEmailHashes = hashSetFromEnv("OWNER_EMAIL_HASHES", defaultOwnerEmailHashes);
-const allowedCodeHashes = hashSetFromEnv("OWNER_CODE_HASHES", defaultOwnerCodeHashes);
-
-const mimeTypes = {
-  ".css": "text/css; charset=utf-8",
-  ".html": "text/html; charset=utf-8",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".js": "application/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".pdf": "application/pdf",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".webp": "image/webp"
-};
-
-function sha256(value) {
-  return crypto.createHash("sha256").update(value).digest("hex");
-}
-
-function hashSetFromEnv(name, fallback) {
-  return new Set(
-    String(process.env[name] || fallback)
-      .split(",")
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean)
-  );
-}
-
-function ensureWithinRoot(targetPath) {
-  const resolved = path.resolve(targetPath);
-  const relative = path.relative(rootDir, resolved);
-  if (relative.startsWith("..") || path.isAbsolute(relative)) {
-    throw new Error("Path escapes workspace root.");
-  }
-  return resolved;
-}
-
-function commonHeaders(extra = {}) {
-  return {
-    "X-Content-Type-Options": "nosniff",
+function securityHeaders(type, cache = "no-cache") {
+  const headers = {
+    "Content-Type": type,
+    "Cache-Control": cache,
+    "Content-Security-Policy": "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    ...extra
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Cross-Origin-Opener-Policy": "same-origin"
   };
+  if (process.env.NODE_ENV === "production") headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+  return headers;
 }
 
-async function ensureDataFiles() {
-  await fsp.mkdir(uploadsDir, { recursive: true });
-  if (!fs.existsSync(submissionsPath)) {
-    await fsp.writeFile(submissionsPath, JSON.stringify({ submissions: [] }, null, 2) + "\n", "utf8");
-  }
-  if (!fs.existsSync(loginEventsPath)) {
-    await fsp.writeFile(loginEventsPath, JSON.stringify({ events: [] }, null, 2) + "\n", "utf8");
-  }
+function send(res, status, body, type = "text/plain; charset=utf-8", cache) {
+  res.writeHead(status, securityHeaders(type, cache));
+  if (res.req?.method === "HEAD") return res.end();
+  res.end(body);
 }
 
-function parseCookies(header = "") {
-  return header
-    .split(";")
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .reduce((acc, cookie) => {
-      const index = cookie.indexOf("=");
-      if (index === -1) return acc;
-      const key = cookie.slice(0, index).trim();
-      const value = cookie.slice(index + 1).trim();
-      acc[key] = decodeURIComponent(value);
-      return acc;
-    }, {});
+function sendJson(res, status, value) {
+  send(res, status, JSON.stringify(value), "application/json; charset=utf-8", "public, max-age=300");
 }
 
-function readJsonBody(req) {
-  return new Promise((resolve, reject) => {
-    let raw = "";
-    req.on("data", (chunk) => {
-      raw += chunk;
-      if (raw.length > 5 * 1024 * 1024) {
-        reject(new Error("Request body too large."));
-        req.destroy();
-      }
-    });
-    req.on("end", () => {
-      try {
-        resolve(raw ? JSON.parse(raw) : {});
-      } catch {
-        reject(new Error("Invalid JSON body."));
-      }
-    });
-    req.on("error", reject);
-  });
+async function readJson(file) {
+  return JSON.parse(await fs.readFile(file, "utf8"));
 }
 
-async function readJsonFile(filePath) {
-  return JSON.parse(await fsp.readFile(filePath, "utf8"));
+function escapeHtml(value = "") {
+  return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 }
 
-async function writeJsonFile(filePath, payload) {
-  await fsp.writeFile(filePath, JSON.stringify(payload, null, 2) + "\n", "utf8");
+function displayName(value = "") {
+  return String(value).replace(/^./, (letter) => letter.toUpperCase());
 }
 
-async function recordLoginEvent(email, req) {
-  const file = await readJsonFile(loginEventsPath);
-  const event = {
-    id: crypto.randomUUID(),
-    email,
-    createdAt: new Date().toISOString(),
-    ip: req.socket?.remoteAddress || "",
-    userAgent: req.headers["user-agent"] || ""
+function metaForPath(pathname, projects) {
+  const fallback = {
+    title: "Aden Ramirez | Software Engineer",
+    description: "Aden Ramirez is a computer science student and software engineer building careful backend, systems, and full-stack projects."
   };
-  file.events = [event, ...(file.events || [])].slice(0, 200);
-  await writeJsonFile(loginEventsPath, file);
-
-  if (alertWebhookUrl) {
-    try {
-      await fetch(alertWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "owner_login",
-          event
-        })
-      });
-    } catch {
-      // Best-effort alert hook only.
-    }
-  }
+  if (pathname === "/work") return { title: "Work | Aden Ramirez", description: "Projects, experiments, and systems built by Aden Ramirez." };
+  if (pathname === "/jobs" || pathname === "/experience") return { title: "Jobs | Aden Ramirez", description: "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work." };
+  if (pathname === "/about") return { title: "About | Aden Ramirez", description: "About Aden Ramirez, a UTEP computer science student and software engineer in El Paso." };
+  if (pathname === "/contact") return { title: "Contact | Aden Ramirez", description: "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration." };
+  const match = pathname.match(/^\/projects\/([^/]+)\/?$/);
+  if (!match) return fallback;
+  const project = projects.repos.find((item) => item.slug === match[1]);
+  if (!project) return fallback;
+  return { title: `${displayName(project.name)} | Aden Ramirez`, description: project.description || `A project by Aden Ramirez: ${project.name}.` };
 }
 
-function sendJson(res, statusCode, payload, headers = {}) {
-  res.writeHead(statusCode, {
-    ...commonHeaders({
-      "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store"
-    }),
-    ...headers
-  });
-  res.end(JSON.stringify(payload));
+async function renderApp(pathname, origin) {
+  const [template, projects] = await Promise.all([fs.readFile(path.join(rootDir, "index.html"), "utf8"), readJson(projectsPath)]);
+  const meta = metaForPath(pathname, projects);
+  return template
+    .replaceAll("{{TITLE}}", escapeHtml(meta.title))
+    .replaceAll("{{DESCRIPTION}}", escapeHtml(meta.description))
+    .replaceAll("{{CANONICAL}}", escapeHtml(`${origin}${pathname === "/" ? "" : pathname}`))
+    .replaceAll("{{SITE_URL}}", escapeHtml(origin));
 }
 
-function sendText(res, statusCode, message) {
-  res.writeHead(statusCode, commonHeaders({ "Content-Type": "text/plain; charset=utf-8" }));
-  res.end(message);
-}
-
-function getSession(req) {
-  const cookies = parseCookies(req.headers.cookie);
-  const token = cookies[sessionCookieName];
-  if (!token) return null;
-  const session = sessionStore.get(token);
-  if (!session) return null;
-  if (Date.now() > session.expiresAt) {
-    sessionStore.delete(token);
-    return null;
-  }
-  return { token, ...session };
-}
-
-function requireAuth(req, res) {
-  const session = getSession(req);
-  if (!session) {
-    sendJson(res, 401, { error: "Owner authentication required." });
-    return null;
-  }
-  return session;
-}
-
-async function handleApi(req, res, pathname) {
-  if (req.method === "GET" && pathname === "/api/profile") {
-    sendJson(res, 200, await readJsonFile(profilePath));
-    return true;
-  }
-
-  if (req.method === "GET" && pathname === "/api/projects") {
-    sendJson(res, 200, await readJsonFile(projectsPath));
-    return true;
-  }
-
-  if (req.method === "GET" && pathname === "/api/auth/session") {
-    sendJson(res, 200, { authenticated: Boolean(getSession(req)) });
-    return true;
-  }
-
-  if (req.method === "GET" && pathname === "/api/health") {
-    sendJson(res, 200, { ok: true });
-    return true;
-  }
-
-  if (req.method === "POST" && pathname === "/api/auth/login") {
-    const body = await readJsonBody(req);
-    const email = String(body.email || "").trim().toLowerCase();
-    const code = String(body.code || "").trim();
-
-    const emailValid = allowedEmailHashes.has(sha256(email));
-    const codeValid = allowedCodeHashes.has(sha256(code));
-
-    if (!emailValid || !codeValid) {
-      sendJson(res, 401, { error: "That email and code combination did not match." });
-      return true;
-    }
-
-    const token = crypto.randomBytes(24).toString("hex");
-    sessionStore.set(token, {
-      email,
-      expiresAt: Date.now() + sessionTtlMs
-    });
-    await recordLoginEvent(email, req);
-
-    sendJson(
-      res,
-      200,
-      { authenticated: true },
-      {
-        "Set-Cookie": `${sessionCookieName}=${token}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${sessionTtlMs / 1000}`
-      }
-    );
-    return true;
-  }
-
-  if (req.method === "POST" && pathname === "/api/auth/logout") {
-    const session = getSession(req);
-    if (session) sessionStore.delete(session.token);
-    sendJson(
-      res,
-      200,
-      { authenticated: false },
-      {
-        "Set-Cookie": `${sessionCookieName}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`
-      }
-    );
-    return true;
-  }
-
-  if (req.method === "PUT" && pathname === "/api/profile") {
-    if (!requireAuth(req, res)) return true;
-    const body = await readJsonBody(req);
-    await writeJsonFile(profilePath, body);
-    sendJson(res, 200, body);
-    return true;
-  }
-
-  if (req.method === "POST" && pathname === "/api/upload/resume") {
-    if (!requireAuth(req, res)) return true;
-    const body = await readJsonBody(req);
-    const filename = String(body.filename || "resume.pdf");
-    const contentBase64 = String(body.contentBase64 || "");
-
-    if (!contentBase64) {
-      sendJson(res, 400, { error: "Missing file content." });
-      return true;
-    }
-
-    const ext = path.extname(filename).toLowerCase() || ".pdf";
-    if (ext !== ".pdf") {
-      sendJson(res, 400, { error: "Only PDF resumes are supported." });
-      return true;
-    }
-
-    const safeBase = path.basename(filename, ext).replace(/[^a-z0-9-_]/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "") || "resume";
-    const stampedName = `${safeBase}-${Date.now()}.pdf`;
-    const targetPath = ensureWithinRoot(path.join(uploadsDir, stampedName));
-    const bytes = Buffer.from(contentBase64, "base64");
-
-    await fsp.writeFile(targetPath, bytes);
-
-    const profile = await readJsonFile(profilePath);
-    profile.resume = `assets/uploads/${stampedName}`;
-    await writeJsonFile(profilePath, profile);
-
-    sendJson(res, 200, { resume: profile.resume });
-    return true;
-  }
-
-  if (req.method === "GET" && pathname === "/api/submissions") {
-    if (!requireAuth(req, res)) return true;
-    sendJson(res, 200, await readJsonFile(submissionsPath));
-    return true;
-  }
-
-  if (req.method === "GET" && pathname === "/api/login-events") {
-    if (!requireAuth(req, res)) return true;
-    sendJson(res, 200, await readJsonFile(loginEventsPath));
-    return true;
-  }
-
-  if (req.method === "POST" && pathname === "/api/submissions") {
-    const body = await readJsonBody(req);
-    if (!body.name || !body.email || !body.message || !body.topic) {
-      sendJson(res, 400, { error: "Name, email, topic, and message are required." });
-      return true;
-    }
-
-    const file = await readJsonFile(submissionsPath);
-    const next = {
-      id: crypto.randomUUID(),
-      name: String(body.name).trim(),
-      company: String(body.company || "").trim(),
-      email: String(body.email).trim(),
-      link: String(body.link || "").trim(),
-      topic: String(body.topic).trim(),
-      timeline: String(body.timeline || "").trim(),
-      message: String(body.message).trim(),
-      createdAt: new Date().toISOString()
-    };
-
-    file.submissions = [next, ...(file.submissions || [])].slice(0, 200);
-    await writeJsonFile(submissionsPath, file);
-    sendJson(res, 201, { ok: true, submission: next });
-    return true;
-  }
-
-  return false;
-}
-
-async function serveStatic(res, pathname) {
-  const requestedPath = pathname === "/" ? "/index.html" : pathname;
-  const targetPath = ensureWithinRoot(path.join(rootDir, requestedPath));
-  let stats;
-
-  try {
-    stats = await fsp.stat(targetPath);
-  } catch {
-    sendText(res, 404, "Not found");
-    return;
-  }
-
-  const filePath = stats.isDirectory() ? path.join(targetPath, "index.html") : targetPath;
-  const ext = path.extname(filePath).toLowerCase();
-  const contentType = mimeTypes[ext] || "application/octet-stream";
-
-  try {
-    const content = await fsp.readFile(filePath);
-    res.writeHead(
-      200,
-      commonHeaders({
-        "Content-Type": contentType,
-        "Cache-Control": requestedPath === "/index.html" ? "no-cache" : "public, max-age=3600"
-      })
-    );
-    res.end(content);
-  } catch {
-    sendText(res, 404, "Not found");
-  }
+async function sitemap(req) {
+  const projects = await readJson(projectsPath);
+  const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
+  const paths = ["/", "/work", "/jobs", "/about", "/contact", ...projects.repos.filter((project) => project.slug && project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((item) => `<url><loc>${origin}${item}</loc></url>`).join("")}</urlset>`;
 }
 
 const server = http.createServer(async (req, res) => {
   try {
-    await ensureDataFiles();
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const pathname = decodeURIComponent(url.pathname);
-
-    if (pathname.startsWith("/api/")) {
-      const handled = await handleApi(req, res, pathname);
-      if (!handled) sendJson(res, 404, { error: "API route not found." });
-      return;
+    const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname).replace(/\/+$/, "") || "/";
+    if (!["GET", "HEAD"].includes(req.method)) return sendJson(res, 405, { error: "Method not allowed." });
+    if (pathname === "/api/health") return sendJson(res, 200, { ok: true });
+    if (pathname === "/api/profile") return sendJson(res, 200, await readJson(profilePath));
+    if (pathname === "/api/projects") return sendJson(res, 200, await readJson(projectsPath));
+    if (pathname === "/robots.txt") return send(res, 200, "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n", "text/plain; charset=utf-8", "public, max-age=86400");
+    if (pathname === "/sitemap.xml") return send(res, 200, await sitemap(req), "application/xml; charset=utf-8", "public, max-age=3600");
+    if (pathname === "/contact.vcf") {
+      const profile = await readJson(profilePath);
+      const card = ["BEGIN:VCARD", "VERSION:3.0", `FN:${profile.name}`, `EMAIL;TYPE=INTERNET:${profile.email}`, `EMAIL;TYPE=INTERNET:${profile.school_email}`, `TEL;TYPE=CELL:${profile.phone_href.replace("tel:", "")}`, `URL:${profile.linkedin}`, `NOTE:Portfolio ${configuredSiteUrl || ""}`, "END:VCARD"].join("\r\n");
+      return send(res, 200, card, "text/vcard; charset=utf-8", "public, max-age=3600");
     }
-
-    await serveStatic(res, pathname);
-  } catch (error) {
-    sendJson(res, 500, { error: error.message || "Internal server error." });
+    if (publicFiles.has(pathname)) {
+      const file = publicFiles.get(pathname);
+      const cache = [".js", ".css"].includes(path.extname(file)) ? "no-cache" : "public, max-age=86400";
+      return send(res, 200, await fs.readFile(file), mimeTypes[path.extname(file)] || "application/octet-stream", cache);
+    }
+    if (pathname.startsWith("/assets/") || pathname.startsWith("/data/") || pathname.startsWith("/.git") || pathname.includes(".")) return send(res, 404, "Not found");
+    const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
+    if (["/", "/work", "/jobs", "/experience", "/about", "/contact"].includes(pathname)) {
+      return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
+    }
+    if (/^\/projects\/[a-z0-9-]+$/i.test(pathname)) {
+      const projects = await readJson(projectsPath);
+      const slug = pathname.split("/")[2];
+      if (!projects.repos.some((project) => project.slug === slug)) return send(res, 404, "Not found");
+      return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
+    }
+    return send(res, 404, "Not found");
+  } catch {
+    return sendJson(res, 500, { error: "Internal server error." });
   }
 });
 
-server.listen(port, () => {
-  console.log(`Portfolio server running at http://127.0.0.1:${port}`);
-});
+server.listen(port, "0.0.0.0", () => console.log(`Portfolio server running on port ${port}`));
+
+module.exports = { server, escapeHtml, metaForPath };

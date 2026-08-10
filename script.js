@@ -1,990 +1,162 @@
-const iconPaths = {
-  phone:
-    "M3.75 5.25a1.5 1.5 0 0 1 1.5-1.5h2.11a1.5 1.5 0 0 1 1.47 1.19l.44 2.03a1.5 1.5 0 0 1-.8 1.66l-1.47.74a12.1 12.1 0 0 0 5.76 5.76l.74-1.47a1.5 1.5 0 0 1 1.66-.8l2.03.44a1.5 1.5 0 0 1 1.19 1.47v2.11a1.5 1.5 0 0 1-1.5 1.5h-.75C9.75 20.25 3.75 14.25 3.75 6v-.75Z",
-  mail:
-    "M3.75 6.75A2.25 2.25 0 0 1 6 4.5h12A2.25 2.25 0 0 1 20.25 6.75v10.5A2.25 2.25 0 0 1 18 19.5H6a2.25 2.25 0 0 1-2.25-2.25V6.75Zm2.37-.75 5.95 4.46a1.5 1.5 0 0 0 1.86 0L19.88 6",
-  github:
-    "M12 2.85c-5.05 0-9.15 4.1-9.15 9.16 0 4.05 2.63 7.48 6.28 8.69.46.09.63-.2.63-.45 0-.22-.01-.95-.01-1.72-2.56.56-3.1-1.08-3.1-1.08-.42-1.07-1.03-1.35-1.03-1.35-.84-.58.06-.57.06-.57.93.07 1.42.95 1.42.95.82 1.41 2.16 1 2.68.77.08-.6.32-1 .59-1.23-2.05-.24-4.2-1.03-4.2-4.57 0-1.01.36-1.83.95-2.48-.1-.23-.41-1.17.09-2.43 0 0 .77-.25 2.52.95a8.8 8.8 0 0 1 4.58 0c1.75-1.2 2.52-.95 2.52-.95.5 1.26.19 2.2.09 2.43.59.65.95 1.47.95 2.48 0 3.55-2.15 4.33-4.21 4.56.33.28.63.84.63 1.7 0 1.22-.01 2.21-.01 2.51 0 .25.17.55.64.45a9.17 9.17 0 0 0 6.27-8.69c0-5.06-4.1-9.16-9.15-9.16Z",
-  linkedin:
-    "M5.25 8.25a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm-1.12 2.25h2.25v8.25H4.13V10.5Zm5.25 0h2.16v1.13h.03c.3-.57 1.03-1.19 2.13-1.19 2.28 0 2.7 1.5 2.7 3.45v4.86h-2.25v-4.31c0-1.03-.02-2.35-1.43-2.35-1.43 0-1.65 1.12-1.65 2.28v4.38H9.38V10.5Z",
-  file:
-    "M7.5 3.75h6l4.5 4.5v10.5A2.25 2.25 0 0 1 15.75 21h-8.25a2.25 2.25 0 0 1-2.25-2.25V6A2.25 2.25 0 0 1 7.5 3.75Zm5.25 1.5v3h3",
-  calendar:
-    "M6.75 2.25v2.25m10.5-2.25v2.25M4.5 8.25h15m-13.5 12h9a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 15 4.5H9A2.25 2.25 0 0 0 6.75 6.75V18A2.25 2.25 0 0 0 9 20.25Z",
-  arrow:
-    "M5.25 12h13.5m0 0-4.5-4.5m4.5 4.5-4.5 4.5",
-  star:
-    "m12 3.75 2.62 5.3 5.85.85-4.24 4.13 1 5.84L12 17.1l-5.23 2.77 1-5.84-4.24-4.13 5.85-.85L12 3.75Z",
-  marker:
-    "M12 21s-6-4.35-6-10.5a6 6 0 1 1 12 0C18 16.65 12 21 12 21Zm0-8.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z",
-  handshake:
-    "M5.57 13.5 8.4 10.67a2.25 2.25 0 0 1 3.18 0l.84.84a2.25 2.25 0 0 0 3.18 0l2.83-2.83m-9.86 7.64L4.5 20.25m15-15L15.43 9.32m-10.86.01L2.25 7.01 7 2.26l2.32 2.32m5.36 0L17 2.26l4.75 4.75-2.32 2.32",
-  briefcase:
-    "M8.25 7.5V6A2.25 2.25 0 0 1 10.5 3.75h3A2.25 2.25 0 0 1 15.75 6v1.5m-10.5 0h13.5A2.25 2.25 0 0 1 21 9.75v6A2.25 2.25 0 0 1 18.75 18H5.25A2.25 2.25 0 0 1 3 15.75v-6A2.25 2.25 0 0 1 5.25 7.5Z"
-};
+const state = { profile: null, projects: [], query: "", filter: "all" };
+const root = document.querySelector("#content");
 
-const socialItems = [
-  { key: "email", label: "Email", icon: "mail", hrefKey: "email_href" },
-  { key: "phone", label: "Phone", icon: "phone", hrefKey: "phone_href" }
-];
+const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+const safeUrl = (value) => { try { const url = new URL(value, location.origin); return ["http:", "https:", "mailto:", "tel:"].includes(url.protocol) ? url.href : ""; } catch { return ""; } };
+const external = (url, label, className = "text-link") => url ? `<a class="${className}" href="${escapeHtml(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)} <span aria-hidden="true">↗</span></a>` : "";
+const formatDate = (value) => value ? new Intl.DateTimeFormat("en-US", { year: "numeric", month: "short" }).format(new Date(value)) : "In progress";
+const projectYear = (project) => project.pushed_at ? new Date(project.pushed_at).getFullYear() : "Private";
+const projectStatus = (project) => project.is_private ? "Private work" : project.homepage ? "Live" : project.latest_release ? project.latest_release : "Repository";
+const technologies = (project, limit = 6) => (project.tech || project.languages || []).filter(Boolean).slice(0, limit);
+const projectHref = (project) => `/projects/${encodeURIComponent(project.slug)}`;
+const displayName = (value = "") => String(value).replace(/^./, (letter) => letter.toUpperCase());
+const plainText = (value = "") => String(value).replace(/\*\*|`/g, "").replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1").trim();
 
-const actionItems = [
-  { key: "resume", label: "Resume", icon: "file" },
-  { key: "github", label: "GitHub", icon: "github" },
-  { key: "linkedin", label: "LinkedIn", icon: "linkedin" }
-];
-
-const careerItems = [
-  { key: "linkedin", label: "LinkedIn", icon: "linkedin", note: "Primary profile" },
-  { key: "handshake", label: "Handshake", icon: "handshake", note: "Campus applications" },
-  { key: "indeed", label: "Indeed", icon: "briefcase", note: "General search" },
-  { key: "ziprecruiter", label: "ZipRecruiter", icon: "briefcase", note: "Application profile" }
-];
-
-const paletteByTech = {
-  Java: ["#b8c7de", "#f3ebe0"],
-  Python: ["#a8c6bc", "#edf4ee"],
-  TypeScript: ["#a9bedb", "#eef4fb"],
-  React: ["#a7c9d1", "#edf7f8"],
-  HTML: ["#d8b1a4", "#fbf1ec"],
-  CSS: ["#c1c7e2", "#f5f5fe"],
-  default: ["#b9c3d3", "#f5efe5"]
-};
-
-let baseProfile = null;
-let currentProfile = null;
-let projectsData = null;
-let ownerAuthenticated = false;
-
-function icon(name) {
-  return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="${iconPaths[name]}"></path></svg>`;
+function projectArt(project, featured = false) {
+  if (project.screenshot && safeUrl(project.screenshot)) return `<img src="${escapeHtml(project.screenshot)}" alt="Screenshot of ${escapeHtml(project.name)}" loading="lazy">`;
+  const words = (project.readme_preview || []).filter((line) => line && !line.startsWith("#") && !line.startsWith("[")).slice(0, 4);
+  return `<div class="project-art-fallback ${featured ? "is-featured" : ""}" aria-hidden="true"><span>${escapeHtml(displayName(project.name))}</span><pre>${escapeHtml(plainText(words.join("\n").slice(0, 280) || project.description || "A project still taking shape."))}</pre></div>`;
 }
 
-function formatDate(value) {
-  if (!value) return "Private repo";
-  return new Date(value).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric"
-  });
+function projectActions(project) {
+  return `<a class="text-link" href="${projectHref(project)}" data-link>Case study <span aria-hidden="true">→</span></a>${project.url ? external(project.url, "Code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}`;
 }
 
-async function requestJson(url, options = {}) {
-  const response = await fetch(url, {
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers ?? {})
-    },
-    ...options
-  });
-
-  const contentType = response.headers.get("content-type") ?? "";
-  const payload = contentType.includes("application/json") ? await response.json() : await response.text();
-
-  if (!response.ok) {
-    const message =
-      typeof payload === "object" && payload && "error" in payload
-        ? payload.error
-        : typeof payload === "string"
-          ? payload
-          : `Request failed for ${url}`;
-    throw new Error(message);
-  }
-
-  return payload;
+function projectRow(project, featured = false) {
+  return `<article class="project-row ${featured ? "featured" : "compact"}" data-project data-search="${escapeHtml([project.name, project.description, ...technologies(project, 20), ...(project.topics || [])].join(" ").toLowerCase())}" data-kinds="${escapeHtml(projectKinds(project).join(" "))}">
+    ${featured ? `<a class="project-media" href="${projectHref(project)}" data-link aria-label="Read ${escapeHtml(project.name)} case study">${projectArt(project, true)}</a>` : ""}
+    <div class="project-copy-block"><div class="project-heading"><h2><a href="${projectHref(project)}" data-link>${escapeHtml(displayName(project.name))}</a></h2><span>${projectYear(project)} · ${escapeHtml(projectStatus(project))}</span></div>
+    <p>${escapeHtml(project.description || "A project, experiment, or learning build from my GitHub archive.")}</p>
+    <div class="tech-line">${technologies(project).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+    <div class="project-actions">${projectActions(project)}</div></div>
+  </article>`;
 }
 
-async function loadProfile() {
-  try {
-    return await requestJson("/api/profile");
-  } catch {
-    return requestJson("data/profile.json");
-  }
+function projectKinds(project) {
+  const haystack = [...technologies(project, 30), ...(project.topics || [])].join(" ").toLowerCase();
+  const kinds = ["all"];
+  if (project.homepage) kinds.push("live");
+  if ((project.highlights || []).length || project.is_pinned) kinds.push("featured");
+  if (/python|fastapi|java|node|sql|redis|docker|backend|api/.test(haystack)) kinds.push("backend");
+  if (/typescript|javascript|react|html|css|next|vite|full.?stack/.test(haystack)) kinds.push("full-stack");
+  if (/game|chess|wordle|minimax/.test(`${haystack} ${project.name} ${project.description}`.toLowerCase())) kinds.push("games");
+  return kinds;
 }
 
-async function loadProjects() {
-  try {
-    return await requestJson("/api/projects");
-  } catch {
-    return requestJson("data/projects.json");
-  }
+function homePage() {
+  const profile = state.profile;
+  const projects = state.projects.filter((project) => project.slug !== "portfolio-site");
+  const preferred = ["sentinel", "cardforge", "dominion", "storygen", "atlas"];
+  const selected = preferred.map((slug) => projects.find((project) => project.slug === slug)).filter(Boolean).slice(0, 3);
+  const google = profile.experience.find((role) => /google/i.test(role.company));
+  return `<section class="hero">
+    <div class="hero-copy"><h1>Aden<br>Ramirez</h1><p class="hero-role">Software engineer and computer science student.</p><p class="hero-line">I build careful software for real people.</p><div class="hero-actions"><a class="button" href="/work" data-link>See my work <span aria-hidden="true">→</span></a><a class="text-link" href="mailto:${escapeHtml(profile.email)}">Say hello</a></div></div>
+    <figure class="portrait"><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Aden Ramirez outdoors in San Francisco"><figcaption>Curious. Pragmatic. Detail-oriented. Human.</figcaption></figure>
+  </section>
+  <section class="selected-work section-rule"><div class="section-intro"><h2>A few things I've built.</h2><p>Recent systems and products where the interesting work lives in the details.</p></div>${selected.map((project) => projectRow(project, true)).join("")}<a class="button secondary" href="/work" data-link>Browse all ${projects.length} projects</a></section>
+  <section class="proof section-rule"><div><h2>Software should hold up after the demo.</h2><p>I care about readable systems, useful interfaces, and the rollout work between “it runs” and “it is ready.”</p><p>Before and alongside engineering, I have also worked in education, customer support, retail, and food service. Every one of those jobs shaped how I communicate and show up for a team.</p></div><div class="proof-story"><span>${escapeHtml(google?.dates || "May–Aug 2025")}</span><h3>${escapeHtml(google?.title || "STEP Intern, Software Engineering")}</h3><p>${escapeHtml(google?.company || "Google")} · ${escapeHtml(google?.context || "Google Cloud")}</p><ul>${(google?.bullets || []).slice(0, 2).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><a class="text-link" href="/jobs" data-link>See every job <span aria-hidden="true">→</span></a></div></section>
+  <section class="about-strip section-rule"><div><h2>About me.</h2>${profile.about.slice(0, 2).map((item) => `<p>${escapeHtml(item)}</p>`).join("")}<a class="text-link" href="/about" data-link>More about me <span aria-hidden="true">→</span></a></div><blockquote>“The best part of engineering is turning a messy problem into something another person can trust.”</blockquote></section>
+  <section class="contact-callout"><h2>Let's build something meaningful.</h2><p>I'm open to software engineering internships and thoughtful technical collaborations.</p><div><a class="button" href="/contact" data-link>Contact me <span aria-hidden="true">→</span></a><a class="text-link direct-email" href="mailto:${escapeHtml(profile.email)}">Email directly</a></div></section>`;
 }
 
-function projectPalette(project) {
-  const primary = project.tech?.[0] ?? project.languages?.[0] ?? "default";
-  return paletteByTech[primary] ?? paletteByTech.default;
+function workPage() {
+  const projects = state.projects.filter((project) => project.slug !== "portfolio-site");
+  const featured = projects.filter((project) => ["sentinel", "cardforge", "dominion"].includes(project.slug));
+  const archive = projects.filter((project) => !featured.includes(project));
+  return `<header class="page-lead"><h1>Work</h1><p>Projects, experiments, and systems I've built while learning how software holds up in the real world.</p></header>
+    <section class="project-tools" aria-label="Project filters"><div class="filters" role="group" aria-label="Filter projects">${["all","featured","live","backend","full-stack","games"].map((filter) => `<button type="button" data-filter="${filter}" class="${filter === "all" ? "active" : ""}">${filter === "full-stack" ? "Full-stack" : filter[0].toUpperCase()+filter.slice(1)}</button>`).join("")}</div><label class="search"><span class="sr-only">Search projects</span><input type="search" id="project-search" placeholder="Search projects" autocomplete="off"></label></section>
+    <div id="project-list" class="project-list"><div class="featured-list">${featured.map((project) => projectRow(project, true)).join("")}</div><div class="archive-list">${archive.map((project) => projectRow(project)).join("")}</div></div><p id="empty-projects" class="empty" hidden>No projects match that search yet.</p>`;
 }
 
-function coverData(project) {
-  const [start, end] = projectPalette(project);
-  const label = project.name.slice(0, 2).toUpperCase();
-  const subtitle = (project.tech?.[0] ?? project.languages?.[0] ?? "Project").slice(0, 18);
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="${project.name}">
-      <defs>
-        <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stop-color="${start}" />
-          <stop offset="100%" stop-color="${end}" />
-        </linearGradient>
-      </defs>
-      <rect width="640" height="400" rx="36" fill="url(#g)" />
-      <circle cx="530" cy="88" r="88" fill="rgba(255,255,255,0.42)" />
-      <circle cx="112" cy="310" r="104" fill="rgba(255,255,255,0.28)" />
-      <text x="48" y="122" fill="#26313a" font-family="Inter, sans-serif" font-size="96" font-weight="800">${label}</text>
-      <text x="52" y="316" fill="#4d5b68" font-family="IBM Plex Mono, monospace" font-size="24">${subtitle}</text>
-    </svg>
-  `;
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+function jobKind(role) {
+  if (/Google/i.test(role.company)) return "Software engineering";
+  if (/Education at Work|Intuit/i.test(role.company)) return "Customer and product support";
+  if (/Boys & Girls/i.test(role.company)) return "Education and youth programs";
+  if (/Best Buy/i.test(role.company)) return "Retail and sales";
+  return "Food service and operations";
 }
 
-function anchor(href, label, className, iconName, extraText) {
-  const external = href.startsWith("http");
-  const target = external ? ' target="_blank" rel="noopener"' : "";
-  return `<a class="${className}" href="${href}"${target}>${icon(iconName)}<span>${label}</span>${extraText ? `<strong>${extraText}</strong>` : ""}</a>`;
+function jobsPage() {
+  const profile = state.profile;
+  const rank = { "Boys & Girls Club of El Paso": 1, "Education at Work x Intuit": 2, "Best Buy": 3, "Google": 4, "Peter Piper Pizza": 5 };
+  const jobs = [...profile.experience, ...(profile.additional_experience || [])].sort((a, b) => (rank[a.company] || 99) - (rank[b.company] || 99));
+  return `<header class="page-lead jobs-lead"><div><h1>Jobs</h1><p>Every paid role—not only the technical ones.</p></div><aside><strong>${jobs.length} roles</strong><span>Engineering, education, support, retail, and service.</span></aside></header><section class="jobs-note"><p>I am proud of the full path. Each job taught me something different about reliability, patience, communication, customers, or the people depending on the work.</p></section><section class="timeline jobs-timeline">${jobs.map((role, index) => `<article><div class="timeline-meta"><span>${escapeHtml(role.dates)}</span><span>${escapeHtml(role.location || "El Paso, TX")}</span><span class="job-number">${String(index + 1).padStart(2, "0")}</span></div><div><p class="company">${escapeHtml(role.company)}</p><h2>${escapeHtml(role.title)}</h2><p class="job-kind">${escapeHtml(jobKind(role))}</p><p>${escapeHtml(role.context)}</p>${role.bullets?.length ? `<ul>${role.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}<div class="tech-line">${(role.tags || []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div></article>`).join("")}</section><section class="education section-rule"><h2>Education alongside work</h2><div><p><strong>${escapeHtml(profile.education.degree)}</strong></p><p>${escapeHtml(profile.education.school)}</p><p>${escapeHtml(profile.education.graduation)} · GPA ${escapeHtml(profile.education.gpa)}</p><p>${profile.education.honors.map(escapeHtml).join(" · ")}</p></div></section>`;
 }
 
-function placeholderLink(label, iconName, note, className = "contact-link contact-link-muted") {
-  return `<span class="${className}" aria-label="${label}: ${note}">${icon(iconName)}<span>${label}</span><strong>${note}</strong></span>`;
+function aboutPage() {
+  const profile = state.profile;
+  return `<header class="page-lead about-lead"><h1>About</h1><p>I'm Aden—a computer science student who likes the cleanup-heavy parts of engineering as much as the first build.</p></header><section class="about-layout"><figure><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Aden Ramirez in San Francisco"><figcaption>San Francisco, during my 2025 internship.</figcaption></figure><div class="prose">${profile.about.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}<h2>How I work</h2>${profile.focus_areas.map((item) => `<section><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.copy)}</p></section>`).join("")}</div></section><section class="personal-note section-rule"><h2>Outside the editor</h2><p>I teach STEAM, stay involved with UTEP's engineering community, and enjoy work that lets me explain complicated things plainly. This site is deliberately a little quieter than most developer portfolios: the work should do the talking.</p></section>`;
 }
 
-function renderHero(profile) {
-  document.querySelector("#hero-heading").textContent = profile.name;
-  document.querySelector("#hero-pitch").textContent = profile.title;
-  document.querySelector("#hero-pitch-secondary").textContent = profile.subtitle;
-  document.querySelector("#status-line").textContent = profile.current_status;
-  document.querySelector("#availability-line").textContent = profile.availability;
-  const heroPhoto = document.querySelector("#hero-photo-image");
-  if (heroPhoto && profile.hero_image) heroPhoto.src = profile.hero_image;
-
-  document.querySelector("#hero-actions").innerHTML = actionItems
-    .map((item) => anchor(profile[item.key], item.label, "action-banner", item.icon))
-    .join("");
-
-  document.querySelector("#hero-facts").innerHTML = profile.hero_facts
-    .map(
-      (fact) => `
-        <article class="fact-card">
-          <p class="fact-label">${fact.label}</p>
-          <p class="fact-value">${fact.value}</p>
-        </article>
-      `
-    )
-    .join("");
-
-  document.querySelector("#current-focus-title").textContent = profile.current_focus.title;
-  document.querySelector("#current-focus-copy").textContent = profile.current_focus.copy;
-  document.querySelector("#hero-highlights").innerHTML = profile.current_focus.points
-    .map((point) => `<div class="hero-highlight">${point}</div>`)
-    .join("");
+function contactPage() {
+  const profile = state.profile;
+  const subject = encodeURIComponent("Portfolio inquiry for Aden Ramirez");
+  return `<header class="page-lead contact-lead"><h1>Contact</h1><p>If you have an internship, role, project, referral, or useful conversation in mind, I would like to hear from you.</p></header><section class="contact-grid"><article class="contact-primary"><p class="company">Best first step</p><h2>Email me</h2><p>${escapeHtml(profile.connect_note)}</p><a class="button" href="mailto:${escapeHtml(profile.email)}?subject=${subject}">Start an email <span aria-hidden="true">→</span></a><button class="copy-button" type="button" data-copy="${escapeHtml(profile.email)}">Copy email</button></article><div class="contact-methods"><article><span>Personal email</span><a href="mailto:${escapeHtml(profile.email)}">${escapeHtml(profile.email)}</a><button type="button" data-copy="${escapeHtml(profile.email)}">Copy</button></article><article><span>University email</span><a href="mailto:${escapeHtml(profile.school_email)}">${escapeHtml(profile.school_email)}</a><button type="button" data-copy="${escapeHtml(profile.school_email)}">Copy</button></article><article><span>Phone</span><a href="${escapeHtml(profile.phone_href)}">${escapeHtml(profile.phone)}</a><button type="button" data-copy="${escapeHtml(profile.phone)}">Copy</button></article><article><span>LinkedIn</span>${external(profile.linkedin, "Connect on LinkedIn")} </article><article><span>GitHub</span>${external(profile.github, "See my GitHub")}</article><article><span>Résumé</span><a class="text-link" href="/${escapeHtml(profile.resume)}">Open résumé <span aria-hidden="true">↗</span></a></article></div></section><section class="contact-details section-rule"><div><h2>Good reasons to reach out</h2><ul><li>Software engineering internships and part-time technical work</li><li>Entry-level opportunities and early-career programs</li><li>Project collaboration, student organizations, and referrals</li><li>Backend, full-stack, systems, testing, or practical AI work</li></ul></div><aside><h2>Save my contact</h2><p>Download a standard contact card for your phone or address book.</p><a class="button secondary" href="/contact.vcf" download="Aden-Ramirez.vcf">Download vCard</a><p class="contact-location">Based in ${escapeHtml(profile.location)} · Open to relocating for the right opportunity.</p></aside></section><p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>`;
 }
 
-function renderContact(profile) {
-  const contactItems = socialItems
-    .map((item) => {
-      const href = profile[item.hrefKey ?? item.key];
-      const text = profile[item.key];
-      return anchor(href, item.label, "contact-link", item.icon, text);
-    })
-    .join("");
-
-  const calendar = profile.calendar?.href
-    ? anchor(profile.calendar.href, profile.calendar.label, "contact-link contact-link-accent", "calendar", "Book time")
-    : placeholderLink("Calendar", "calendar", profile.calendar.note, "contact-link contact-link-accent");
-
-  document.querySelector("#contact-items").innerHTML = `${contactItems}${calendar}`;
-}
-
-function renderAbout(profile) {
-  document.querySelector("#about-copy").innerHTML = profile.about.map((item) => `<p>${item}</p>`).join("");
-  document.querySelector("#snapshot-grid").innerHTML = profile.snapshot
-    .map(
-      (item) => `
-        <article class="snapshot-item">
-          <p class="snapshot-label">${item.label}</p>
-          <p class="snapshot-value">${item.value}</p>
-        </article>
-      `
-    )
-    .join("");
-
-  document.querySelector("#focus-pillars").innerHTML = profile.focus_areas
-    .map(
-      (item) => `
-        <article class="pillar-card">
-          <p class="eyebrow">Focus</p>
-          <h3>${item.title}</h3>
-          <p>${item.copy}</p>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderEducation(profile) {
-  const honors = profile.education.honors.map((item) => `<li>${item}</li>`).join("");
-  document.querySelector("#education-summary").innerHTML = `
-    <p class="eyebrow">School</p>
-    <h3>${profile.education.school}</h3>
-    <p class="detail-copy">${profile.education.degree}</p>
-    <div class="detail-meta">
-      <span>${profile.education.graduation}</span>
-      <span>GPA ${profile.education.gpa}</span>
-      <span>${profile.location}</span>
-    </div>
-    <ul class="detail-list">${honors}</ul>
-  `;
-
-  document.querySelector("#semester-focus").innerHTML = `
-    <p class="eyebrow">This season</p>
-    <p>${profile.semester_focus}</p>
-  `;
-
-  document.querySelector("#coursework-chips").innerHTML = profile.education.coursework
-    .map((course) => `<span class="chip">${course}</span>`)
-    .join("");
-}
-
-function renderExperience(profile) {
-  const [featuredRole, ...relevantRoles] = profile.experience;
-
-  document.querySelector("#experience-featured").innerHTML = featuredRole
-    ? `
-        <article class="experience-card">
-          <div class="role-topline">
-            <p class="eyebrow">${featuredRole.company}</p>
-            <span class="role-dates">${featuredRole.dates}</span>
-          </div>
-          <h3>${featuredRole.title}</h3>
-          <p class="role-meta">${icon("marker")}<span>${featuredRole.location}</span></p>
-          <p class="experience-context">${featuredRole.context}</p>
-          <ul class="detail-list">${featuredRole.bullets.map((bullet) => `<li>${bullet}</li>`).join("")}</ul>
-          <div class="tag-list">${featuredRole.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-        </article>
-      `
-    : "";
-
-  document.querySelector("#experience-cards").innerHTML = relevantRoles
-    .map(
-      (role) => `
-        <article class="experience-card">
-          <div class="role-topline">
-            <p class="eyebrow">${role.company}</p>
-            <span class="role-dates">${role.dates}</span>
-          </div>
-          <h3>${role.title}</h3>
-          <p class="role-meta">${icon("marker")}<span>${role.location}</span></p>
-          <p class="experience-context">${role.context}</p>
-          <ul class="detail-list">${role.bullets.map((bullet) => `<li>${bullet}</li>`).join("")}</ul>
-          <div class="tag-list">${role.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-        </article>
-      `
-    )
-    .join("");
-
-  document.querySelector("#additional-grid").innerHTML = profile.additional_experience
-    .map(
-      (role) => `
-        <article class="additional-card">
-          <div class="role-topline">
-            <p class="eyebrow">${role.company}</p>
-            <span class="role-dates">${role.dates}</span>
-          </div>
-          <h3>${role.title}</h3>
-          <p class="additional-context">${role.context}</p>
-        </article>
-      `
-    )
-    .join("");
-}
-
-function renderProfilePreviews(profile, projects) {
-  const repos = projects.repos.filter((project) => project.slug !== "portfolio-site");
-  const pinned = repos.filter((project) => project.is_pinned);
-  const latest = repos.find((project) => project.pushed_at);
-  const githubPreview = document.querySelector("#github-preview");
-  const linkedinPreview = document.querySelector("#linkedin-preview");
-
-  githubPreview.innerHTML = `
-    <div class="profile-preview-head">
-      <div>
-        <p class="eyebrow">GitHub preview</p>
-        <h3 class="profile-preview-title">A look at my actual code profile</h3>
-      </div>
-      <span class="profile-preview-handle">@adeelone</span>
-    </div>
-    <p class="profile-preview-copy">Recent repos, pinned work, and the projects that usually matter most when someone wants to check how I build.</p>
-    <div class="profile-preview-stats">
-      <div class="profile-preview-stat">
-        <span class="profile-preview-stat-label">Repos</span>
-        <strong>${repos.length}</strong>
-      </div>
-      <div class="profile-preview-stat">
-        <span class="profile-preview-stat-label">Pinned</span>
-        <strong>${pinned.length || "0"}</strong>
-      </div>
-      <div class="profile-preview-stat">
-        <span class="profile-preview-stat-label">Latest</span>
-        <strong>${latest ? latest.name : "Active"}</strong>
-      </div>
-    </div>
-    <div class="tag-list">${repos.slice(0, 4).map((repo) => `<span class="tag">${repo.name}</span>`).join("")}</div>
-    <div class="profile-preview-actions">
-      ${anchor(profile.github, "Open GitHub", "action-banner", "github")}
-    </div>
-  `;
-
-  linkedinPreview.innerHTML = `
-    <div class="profile-preview-head">
-      <div>
-        <p class="eyebrow">LinkedIn preview</p>
-        <h3 class="profile-preview-title">The professional profile I keep most current</h3>
-      </div>
-      <span class="profile-preview-handle">Aden Ramirez</span>
-    </div>
-    <p class="profile-preview-copy">${profile.subtitle}</p>
-    <div class="profile-preview-meta">
-      <span>${profile.location}</span>
-      <span>${profile.education.school}</span>
-      <span>${profile.education.graduation}</span>
-    </div>
-    <div class="tag-list">
-      <span class="tag">Backend</span>
-      <span class="tag">Full-stack</span>
-      <span class="tag">Testing</span>
-      <span class="tag">Student Engineer</span>
-    </div>
-    <div class="profile-preview-actions">
-      ${anchor(profile.linkedin, "Open LinkedIn", "action-banner", "linkedin")}
-    </div>
-  `;
-}
-
-function projectCard(project) {
-  const cover = project.screenshot
-    ? `<img src="${project.screenshot}" alt="${project.name} project cover" loading="lazy" />`
-    : `<img src="${coverData(project)}" alt="${project.name} generated project cover" loading="lazy" />`;
-  const chips = (project.tech ?? []).slice(0, 5).map((tag) => `<span class="project-chip">${tag}</span>`).join("");
-  const highlights = project.highlights?.length
-    ? `<ul class="detail-list project-list">${project.highlights.slice(0, 3).map((item) => `<li>${item}</li>`).join("")}</ul>`
-    : `<p class="project-copy">${project.description || "No description yet."}</p>`;
-  const stars = project.stars > 0 ? `<span class="project-mini">${icon("star")} ${project.stars}</span>` : "";
-  const live = project.homepage
-    ? anchor(project.homepage, "Live", "project-link", "arrow")
-    : project.is_private
-      ? `<span class="private-pill">Private repo</span>`
-      : "";
-  const code = project.url
-    ? anchor(project.url, "Code", "project-link project-link-primary", "arrow")
-    : `<span class="private-pill">Private repo</span>`;
-
-  return `
-    <article class="project-card">
-      <div class="project-cover">${cover}</div>
-      <div class="project-body">
-        <div class="project-topline">
-          <div>
-            <h3 class="project-name">${project.name}</h3>
-            <p class="project-copy">${project.description || "No description yet."}</p>
-          </div>
-          ${stars}
-        </div>
-        ${highlights}
-        <div class="project-tech">${chips}</div>
-        <div class="project-footer">
-          <span class="project-mini">${project.pushed_at ? `Updated ${formatDate(project.pushed_at)}` : "Private repo"}</span>
-          <div class="project-actions">${code}${live}</div>
-        </div>
-      </div>
-    </article>
-  `;
-}
-
-function renderProjects(projects, profile) {
-  const sorted = [...projects.repos]
-    .filter((project) => project.slug !== "portfolio-site")
-    .sort((a, b) => {
-      if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1;
-      const aDate = a.pushed_at ? new Date(a.pushed_at).getTime() : 0;
-      const bDate = b.pushed_at ? new Date(b.pushed_at).getTime() : 0;
-      return bDate - aDate;
-    });
-
-  const featured = sorted.slice(0, 6);
-  const pinned = sorted.filter((project) => project.is_pinned).map((project) => project.name);
-  const generated = projects.generated_at
-    ? new Date(projects.generated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : "unknown";
-
-  document.querySelector("#projects-grid").innerHTML = featured.map(projectCard).join("");
-  document.querySelector("#projects-profile-link").href = profile.github;
-  document.querySelector("#project-summary-banner").innerHTML = `
-    <div class="summary-pill">
-      <span class="summary-label">Repos in feed</span>
-      <strong>${sorted.length}</strong>
-    </div>
-    <div class="summary-pill">
-      <span class="summary-label">Pinned on GitHub</span>
-      <strong>${pinned.length ? pinned.join(", ") : "None right now"}</strong>
-    </div>
-    <div class="summary-pill">
-      <span class="summary-label">Last sync</span>
-      <strong>${generated}</strong>
-    </div>
-  `;
-}
-
-function renderCareer(profile) {
-  document.querySelector("#career-note-title").textContent = profile.career_note.title;
-  document.querySelector("#career-note-copy").textContent = profile.career_note.copy;
-
-  document.querySelector("#career-links").innerHTML = careerItems
-    .map((item) => {
-      const href = profile.career_links?.[item.key];
-      if (href) return anchor(href, item.label, "stack-link", item.icon, item.note);
-      return placeholderLink(item.label, item.icon, "Add link in owner mode", "stack-link contact-link-muted");
-    })
-    .join("");
-}
-
-function renderCommunity(profile) {
-  document.querySelector("#community-banner").textContent = profile.community.banner;
-  document.querySelector("#community-copy").textContent = profile.community.copy;
-  document.querySelector("#community-links").innerHTML = [
-    placeholderLink("Internships", "briefcase", "Recruiting, referrals, part-time tech roles", "stack-link contact-link-muted"),
-    placeholderLink("Projects", "github", "Build conversations, collaboration, student work", "stack-link contact-link-muted"),
-    placeholderLink("Scheduling", "calendar", profile.calendar?.href ? "Use the calendar link in the contact bar" : "Add a booking link in owner mode", "stack-link contact-link-muted")
-  ].join("");
-}
-
-function renderFooter(projects) {
-  const generated = projects.generated_at
-    ? new Date(projects.generated_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : "unknown";
-  document.querySelector("#footer-built").innerHTML =
-    `Built with HTML, CSS, JavaScript, and a small Node backend for owner edits and outreach capture. Project data last synced ${generated}. <a class="section-link" href="https://github.com/adeelone/portfolio-site" target="_blank" rel="noopener">Source</a>`;
-}
-
-function renderAll() {
-  renderHero(currentProfile);
-  renderContact(currentProfile);
-  renderAbout(currentProfile);
-  renderEducation(currentProfile);
-  renderExperience(currentProfile);
-  renderProjects(projectsData, currentProfile);
-  renderCareer(currentProfile);
-  renderProfilePreviews(currentProfile, projectsData);
-  renderCommunity(currentProfile);
-  renderFooter(projectsData);
-}
-
-function enableStickyContact() {
-  if (getComputedStyle(document.querySelector(".contact-bar")).position !== "sticky") return;
-  const hero = document.querySelector(".hero");
-  const bar = document.querySelector(".contact-bar");
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      bar.classList.toggle("is-condensed", !entry.isIntersecting);
-    },
-    { threshold: 0.18 }
-  );
-  observer.observe(hero);
-}
-
-function enableScrollspy() {
-  const links = [...document.querySelectorAll(".site-nav a")];
-  const sections = links.map((link) => document.querySelector(link.getAttribute("href"))).filter(Boolean);
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const href = `#${entry.target.id}`;
-        links.forEach((link) => link.removeAttribute("aria-current"));
-        links.find((link) => link.getAttribute("href") === href)?.setAttribute("aria-current", "true");
-      });
-    },
-    { rootMargin: "-25% 0px -55% 0px", threshold: 0 }
-  );
-  sections.forEach((section) => observer.observe(section));
-}
-
-function enableMenu() {
-  const header = document.querySelector(".site-header");
-  const button = document.querySelector(".menu-toggle");
-  const navLinks = [...document.querySelectorAll(".site-nav a")];
-  button.addEventListener("click", () => {
-    const open = header.classList.toggle("is-open");
-    button.setAttribute("aria-expanded", String(open));
-  });
-  navLinks.forEach((link) =>
-    link.addEventListener("click", () => {
-      header.classList.remove("is-open");
-      button.setAttribute("aria-expanded", "false");
-    })
-  );
-}
-
-function enableReveals() {
-  const elements = document.querySelectorAll(".reveal");
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add("is-visible");
-        observer.unobserve(entry.target);
-      });
-    },
-    { threshold: 0.1, rootMargin: "0px 0px -6% 0px" }
-  );
-  elements.forEach((element) => observer.observe(element));
-}
-
-function ownerElements() {
+function narrative(project) {
+  const preview = (project.readme_preview || []).filter((line) => line && !/^#|^```|^\[!|^\|/.test(line));
+  const highlights = (project.highlights || []).length ? project.highlights : preview.filter((line) => !line.startsWith("-")).slice(0, 2);
+  const bullets = preview.filter((line) => line.startsWith("-")).map((line) => line.replace(/^-\s*/, "")).slice(0, 5);
   return {
-    trigger: document.querySelector("#owner-trigger"),
-    modal: document.querySelector("#owner-modal"),
-    modalBackdrop: document.querySelector("#owner-modal-backdrop"),
-    loginForm: document.querySelector("#owner-login-form"),
-    email: document.querySelector("#owner-email"),
-    code: document.querySelector("#owner-code"),
-    error: document.querySelector("#owner-error"),
-    cancel: document.querySelector("#owner-cancel"),
-    drawer: document.querySelector("#owner-drawer"),
-    close: document.querySelector("#owner-close"),
-    editor: document.querySelector("#owner-editor"),
-    status: document.querySelector("#editor-status"),
-    resume: document.querySelector("#editor-resume"),
-    linkedin: document.querySelector("#editor-linkedin"),
-    github: document.querySelector("#editor-github"),
-    calendar: document.querySelector("#editor-calendar"),
-    handshake: document.querySelector("#editor-handshake"),
-    indeed: document.querySelector("#editor-indeed"),
-    ziprecruiter: document.querySelector("#editor-ziprecruiter"),
-    about0: document.querySelector("#editor-about-0"),
-    experience: document.querySelector("#editor-experience"),
-    additional: document.querySelector("#editor-additional"),
-    json: document.querySelector("#editor-json"),
-    exportButton: document.querySelector("#owner-export"),
-    importInput: document.querySelector("#owner-import"),
-    resetButton: document.querySelector("#owner-reset"),
-    logoutButton: document.querySelector("#owner-logout"),
-    saveNote: document.querySelector("#owner-save-note"),
-    uploadFile: document.querySelector("#owner-resume-file"),
-    uploadButton: document.querySelector("#owner-upload-resume"),
-    refreshSubmissions: document.querySelector("#owner-refresh-submissions"),
-    submissionsList: document.querySelector("#owner-submissions-list"),
-    refreshLogins: document.querySelector("#owner-refresh-logins"),
-    loginsList: document.querySelector("#owner-logins-list")
+    problem: plainText(project.description || `I built ${project.name} to explore a concrete product and engineering problem.`),
+    built: plainText(highlights[0] || `A working ${technologies(project, 3).join(" and ") || "software"} project with a focus on the complete user flow.`),
+    works: (bullets.length ? bullets : ["The repository includes the implementation, setup notes, and the decisions that shaped the current version."]).map(plainText),
+    limits: project.is_private ? "This work is private, so the public case study intentionally avoids implementation details and repository links." : project.homepage ? "The live build is a portfolio demonstration. Availability and external services can vary, and the repository remains the source of truth." : "This project does not currently have a hosted demo. Run and verification instructions live in the repository when available.",
+    learned: plainText(highlights[1] || "Finishing the surrounding documentation, tests, and edge cases taught me more than the first working version did.")
   };
 }
 
-function openOwnerModal() {
-  const ui = ownerElements();
-  ui.modal.hidden = false;
-  ui.error.hidden = true;
-  ui.email.focus();
+function projectPage(slug) {
+  const project = state.projects.find((item) => item.slug === slug);
+  if (!project) return `<section class="not-found"><p>404</p><h1>That project isn't here.</h1><a class="button" href="/work" data-link>Back to work</a></section>`;
+  const story = narrative(project);
+  const related = state.projects.filter((item) => item.slug !== project.slug && item.slug !== "portfolio-site").slice(0, 3);
+  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/work" data-link>Work</a><span>/</span><span aria-current="page">${escapeHtml(project.name)}</span></nav><header class="case-hero"><div><h1>${escapeHtml(project.name)}</h1><p>${escapeHtml(project.description || story.built)}</p><div class="project-actions">${project.url ? external(project.url, "View code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}<a class="text-link" href="/work" data-link>Back to all work <span aria-hidden="true">←</span></a></div></div><dl><div><dt>Status</dt><dd>${escapeHtml(projectStatus(project))}</dd></div><div><dt>Updated</dt><dd>${escapeHtml(formatDate(project.pushed_at))}</dd></div><div><dt>Tools</dt><dd>${escapeHtml(technologies(project).join(", ") || "See repository")}</dd></div></dl></header><div class="case-visual">${projectArt(project, true)}</div><section class="case-layout"><div class="case-story"><section><h2>The problem</h2><p>${escapeHtml(story.problem)}</p></section><section><h2>What I built</h2><p>${escapeHtml(story.built)}</p></section><section><h2>How it works</h2><ul>${story.works.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h2>Tradeoffs and limits</h2><p>${escapeHtml(story.limits)}</p></section><section><h2>What I learned</h2><p>${escapeHtml(story.learned)}</p></section></div><aside><h2>Project details</h2><h3>Technologies</h3><p>${escapeHtml(technologies(project, 12).join(", ") || "See repository")}</p><h3>Links</h3>${project.url ? external(project.url, "Source code") : `<p>Private repository</p>`}${project.homepage ? external(project.homepage, "Live project") : ""}<h3>Repository notes</h3><p>${project.latest_release ? `Latest release: ${escapeHtml(project.latest_release)}.` : "No public release is listed."}</p></aside></section><section class="related section-rule"><h2>Keep exploring</h2>${related.map((item) => `<a href="${projectHref(item)}" data-link><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.description || "View project")}</span></a>`).join("")}</section>`;
 }
 
-function closeOwnerModal() {
-  ownerElements().modal.hidden = true;
+function currentPath() { return location.pathname.replace(/\/+$/, "") || "/"; }
+function render() {
+  const path = currentPath();
+  if (path === "/") root.innerHTML = homePage();
+  else if (path === "/work") root.innerHTML = workPage();
+  else if (path === "/jobs" || path === "/experience") root.innerHTML = jobsPage();
+  else if (path === "/about") root.innerHTML = aboutPage();
+  else if (path === "/contact") root.innerHTML = contactPage();
+  else if (path.startsWith("/projects/")) root.innerHTML = projectPage(decodeURIComponent(path.split("/")[2] || ""));
+  else root.innerHTML = `<section class="not-found"><p>404</p><h1>That page isn't here.</h1><a class="button" href="/" data-link>Go home</a></section>`;
+  const project = path.startsWith("/projects/") ? state.projects.find((item) => item.slug === decodeURIComponent(path.split("/")[2] || "")) : null;
+  document.title = project ? `${displayName(project.name)} | Aden Ramirez` : path === "/work" ? "Work | Aden Ramirez" : ["/jobs", "/experience"].includes(path) ? "Jobs | Aden Ramirez" : path === "/about" ? "About | Aden Ramirez" : path === "/contact" ? "Contact | Aden Ramirez" : "Aden Ramirez | Software Engineer";
+  document.querySelector("#canonical-link").href = `${location.origin}${path}`;
+  document.querySelectorAll("#nav a[data-link]").forEach((link) => link.toggleAttribute("aria-current", link.getAttribute("href") === path || (path.startsWith("/projects/") && link.getAttribute("href") === "/work")));
+  bindPage(); root.focus({ preventScroll: true }); window.scrollTo(0, 0);
 }
 
-function openOwnerDrawer() {
-  const ui = ownerElements();
-  ui.drawer.hidden = false;
-  ui.trigger.classList.add("is-active");
-}
-
-function closeOwnerDrawer() {
-  const ui = ownerElements();
-  ui.drawer.hidden = true;
-  ui.trigger.classList.remove("is-active");
-}
-
-function syncOwnerEditor() {
-  const ui = ownerElements();
-  if (!ui.editor || !currentProfile) return;
-  ui.status.value = currentProfile.current_status;
-  ui.resume.value = currentProfile.resume;
-  ui.linkedin.value = currentProfile.linkedin;
-  ui.github.value = currentProfile.github;
-  ui.calendar.value = currentProfile.calendar?.href ?? "";
-  ui.handshake.value = currentProfile.career_links?.handshake ?? "";
-  ui.indeed.value = currentProfile.career_links?.indeed ?? "";
-  ui.ziprecruiter.value = currentProfile.career_links?.ziprecruiter ?? "";
-  ui.about0.value = currentProfile.about?.[0] ?? "";
-  ui.experience.value = JSON.stringify(currentProfile.experience, null, 2);
-  ui.additional.value = JSON.stringify(currentProfile.additional_experience, null, 2);
-  ui.json.value = JSON.stringify(currentProfile, null, 2);
-}
-
-function exportProfileJson() {
-  const blob = new Blob([`${JSON.stringify(currentProfile, null, 2)}\n`], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "profile.json";
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-function applyQuickForm(profile, ui) {
-  const next = structuredClone(profile);
-  next.current_status = ui.status.value.trim() || next.current_status;
-  next.resume = ui.resume.value.trim() || next.resume;
-  next.linkedin = ui.linkedin.value.trim() || next.linkedin;
-  next.github = ui.github.value.trim() || next.github;
-  next.calendar.href = ui.calendar.value.trim();
-  next.career_links.handshake = ui.handshake.value.trim();
-  next.career_links.indeed = ui.indeed.value.trim();
-  next.career_links.ziprecruiter = ui.ziprecruiter.value.trim();
-  if (next.about?.length) next.about[0] = ui.about0.value.trim() || next.about[0];
-  next.experience = JSON.parse(ui.experience.value);
-  next.additional_experience = JSON.parse(ui.additional.value);
-  return next;
-}
-
-function currentProfileJson() {
-  return JSON.stringify(currentProfile, null, 2);
-}
-
-async function saveProfileToBackend(profile) {
-  const saved = await requestJson("/api/profile", {
-    method: "PUT",
-    body: JSON.stringify(profile)
-  });
-  baseProfile = structuredClone(saved);
-  currentProfile = structuredClone(saved);
-  renderAll();
-  syncOwnerEditor();
-  return saved;
-}
-
-async function uploadResume(file) {
-  const bytes = await file.arrayBuffer();
-  const base64 = btoa(String.fromCharCode(...new Uint8Array(bytes)));
-  const response = await requestJson("/api/upload/resume", {
-    method: "POST",
-    body: JSON.stringify({
-      filename: file.name,
-      contentBase64: base64
-    })
-  });
-  currentProfile.resume = response.resume;
-  baseProfile.resume = response.resume;
-  renderAll();
-  syncOwnerEditor();
-  return response.resume;
-}
-
-function submissionCard(submission) {
-  const when = submission.createdAt
-    ? new Date(submission.createdAt).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-      })
-    : "Unknown time";
-
-  return `
-    <article class="submission-card">
-      <div class="role-topline">
-        <p class="eyebrow">${submission.topic || "General outreach"}</p>
-        <span class="role-dates">${when}</span>
-      </div>
-      <h3>${submission.name || "Anonymous"}${submission.company ? ` &middot; ${submission.company}` : ""}</h3>
-      <p class="detail-copy">${submission.email || "No email provided"}${submission.timeline ? ` &middot; ${submission.timeline}` : ""}</p>
-      ${submission.link ? `<p class="detail-copy"><a class="section-link" href="${submission.link}" target="_blank" rel="noopener">${submission.link}</a></p>` : ""}
-      <p class="additional-context">${submission.message || ""}</p>
-    </article>
-  `;
-}
-
-async function loadSubmissions() {
-  const ui = ownerElements();
-  if (!ownerAuthenticated) {
-    ui.submissionsList.innerHTML = `<p class="owner-copy">Unlock owner mode to view outreach.</p>`;
-    return;
-  }
-
-  ui.submissionsList.innerHTML = `<p class="owner-copy">Loading outreach...</p>`;
-  try {
-    const payload = await requestJson("/api/submissions");
-    const submissions = payload.submissions ?? [];
-    ui.submissionsList.innerHTML = submissions.length
-      ? submissions.map(submissionCard).join("")
-      : `<p class="owner-copy">No recruiter or community submissions yet.</p>`;
-  } catch (error) {
-    ui.submissionsList.innerHTML = `<p class="owner-error">${error.message}</p>`;
-  }
-}
-
-function loginEventCard(event) {
-  const when = event.createdAt
-    ? new Date(event.createdAt).toLocaleString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit"
-      })
-    : "Unknown time";
-
-  return `
-    <article class="submission-card">
-      <div class="role-topline">
-        <p class="eyebrow">Owner login</p>
-        <span class="role-dates">${when}</span>
-      </div>
-      <h3>${event.email || "Unknown email"}</h3>
-      <p class="detail-copy">${event.ip || "Unknown IP"}</p>
-      <p class="additional-context">${event.userAgent || "No user agent recorded."}</p>
-    </article>
-  `;
-}
-
-async function loadLoginEvents() {
-  const ui = ownerElements();
-  if (!ownerAuthenticated) {
-    ui.loginsList.innerHTML = `<p class="owner-copy">Unlock owner mode to view login history.</p>`;
-    return;
-  }
-
-  ui.loginsList.innerHTML = `<p class="owner-copy">Loading login history...</p>`;
-  try {
-    const payload = await requestJson("/api/login-events");
-    const events = payload.events ?? [];
-    ui.loginsList.innerHTML = events.length
-      ? events.map(loginEventCard).join("")
-      : `<p class="owner-copy">No owner login events recorded yet.</p>`;
-  } catch (error) {
-    ui.loginsList.innerHTML = `<p class="owner-error">${error.message}</p>`;
-  }
-}
-
-async function restoreSession() {
-  try {
-    const session = await requestJson("/api/auth/session");
-    ownerAuthenticated = Boolean(session.authenticated);
-    if (ownerAuthenticated) {
-      openOwnerDrawer();
-      syncOwnerEditor();
-      await loadSubmissions();
-      await loadLoginEvents();
-    }
-  } catch {
-    ownerAuthenticated = false;
-  }
-}
-
-function setOwnerMessage(message, isError = false) {
-  const ui = ownerElements();
-  ui.saveNote.textContent = message;
-  ui.saveNote.classList.toggle("owner-error", isError);
-}
-
-function setLoginError(message = "That combination did not match.") {
-  const ui = ownerElements();
-  ui.error.textContent = message;
-  ui.error.hidden = false;
-}
-
-function enableOwnerMode() {
-  const ui = ownerElements();
-  let triggerCount = 0;
-  let triggerTimer = null;
-
-  ui.trigger.addEventListener("click", () => {
-    if (ownerAuthenticated) {
-      if (ui.drawer.hidden) openOwnerDrawer();
-      else closeOwnerDrawer();
-      return;
-    }
-    triggerCount += 1;
-    clearTimeout(triggerTimer);
-    triggerTimer = setTimeout(() => {
-      triggerCount = 0;
-    }, 1200);
-    if (triggerCount >= 4) {
-      triggerCount = 0;
-      openOwnerModal();
-    }
-  });
-
-  ui.cancel.addEventListener("click", closeOwnerModal);
-  ui.modalBackdrop.addEventListener("click", closeOwnerModal);
-  ui.close.addEventListener("click", closeOwnerDrawer);
-
-  window.addEventListener("keydown", (event) => {
-    if (event.shiftKey && event.key.toLowerCase() === "l") {
-      event.preventDefault();
-      if (ownerAuthenticated) openOwnerDrawer();
-      else openOwnerModal();
-    }
-  });
-
-  ui.loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    ui.error.hidden = true;
+function bindPage() {
+  document.querySelectorAll('img[src*="aden-headshot"]').forEach((image) => { image.alt = "Professional headshot of Aden Ramirez"; });
+  const aboutCaption = document.querySelector(".about-layout figcaption");
+  if (aboutCaption) aboutCaption.textContent = "Aden Ramirez, computer science student and software engineer.";
+  document.querySelectorAll("[data-filter]").forEach((button) => button.addEventListener("click", () => { state.filter = button.dataset.filter; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("active", item === button)); filterProjects(); }));
+  document.querySelector("#project-search")?.addEventListener("input", (event) => { state.query = event.target.value.trim().toLowerCase(); filterProjects(); });
+  document.querySelectorAll("[data-copy]").forEach((button) => button.addEventListener("click", async () => {
+    const status = document.querySelector("#copy-status");
     try {
-      const session = await requestJson("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: ui.email.value.trim(),
-          code: ui.code.value.trim()
-        })
-      });
-      ownerAuthenticated = Boolean(session.authenticated);
-      ui.code.value = "";
-      closeOwnerModal();
-      openOwnerDrawer();
-      syncOwnerEditor();
-      setOwnerMessage("Owner mode unlocked. Changes now save to the backend profile file.");
-      await loadSubmissions();
-      await loadLoginEvents();
-    } catch (error) {
-      setLoginError(error.message);
+      await navigator.clipboard.writeText(button.dataset.copy);
+      if (status) status.textContent = `${button.dataset.copy} copied to your clipboard.`;
+      button.textContent = "Copied";
+    } catch {
+      if (status) status.textContent = `Copy was unavailable. Select ${button.dataset.copy} manually.`;
     }
-  });
-
-  ui.editor.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    try {
-      const jsonChanged = ui.json.value.trim() !== currentProfileJson().trim();
-      const next = jsonChanged ? JSON.parse(ui.json.value.trim()) : applyQuickForm(currentProfile, ui);
-      await saveProfileToBackend(next);
-      setOwnerMessage("Profile saved to the backend. Reloading this site will keep the update.");
-    } catch (error) {
-      setOwnerMessage(`Could not save changes: ${error.message}`, true);
-    }
-  });
-
-  ui.exportButton.addEventListener("click", exportProfileJson);
-
-  ui.resetButton.addEventListener("click", async () => {
-    try {
-      const profile = await loadProfile();
-      baseProfile = structuredClone(profile);
-      currentProfile = structuredClone(profile);
-      renderAll();
-      syncOwnerEditor();
-      setOwnerMessage("Reloaded the saved backend profile.");
-    } catch (error) {
-      setOwnerMessage(`Could not reload profile: ${error.message}`, true);
-    }
-  });
-
-  ui.logoutButton.addEventListener("click", async () => {
-    try {
-      await requestJson("/api/auth/logout", { method: "POST", body: JSON.stringify({}) });
-    } catch {}
-    ownerAuthenticated = false;
-    closeOwnerDrawer();
-    setOwnerMessage("Owner mode locked.");
-  });
-
-  ui.importInput.addEventListener("change", async () => {
-    const file = ui.importInput.files?.[0];
-    if (!file) return;
-    try {
-      const parsed = JSON.parse(await file.text());
-      await saveProfileToBackend(parsed);
-      setOwnerMessage("Imported JSON and saved it to the backend.");
-    } catch (error) {
-      setOwnerMessage(`Import failed: ${error.message}`, true);
-    } finally {
-      ui.importInput.value = "";
-    }
-  });
-
-  ui.uploadButton.addEventListener("click", async () => {
-    const file = ui.uploadFile.files?.[0];
-    if (!file) {
-      setOwnerMessage("Choose a PDF first.", true);
-      return;
-    }
-    try {
-      const resumePath = await uploadResume(file);
-      ui.resume.value = resumePath;
-      setOwnerMessage(`Resume uploaded to ${resumePath}.`);
-    } catch (error) {
-      setOwnerMessage(`Resume upload failed: ${error.message}`, true);
-    } finally {
-      ui.uploadFile.value = "";
-    }
-  });
-
-  ui.refreshSubmissions.addEventListener("click", () => {
-    void loadSubmissions();
-  });
-
-  ui.refreshLogins.addEventListener("click", () => {
-    void loadLoginEvents();
-  });
+  }));
+}
+function filterProjects() {
+  let visible = 0; document.querySelectorAll("[data-project]").forEach((item) => { const match = item.dataset.search.includes(state.query) && item.dataset.kinds.split(" ").includes(state.filter); item.hidden = !match; if (match) visible += 1; });
+  const empty = document.querySelector("#empty-projects"); if (empty) empty.hidden = visible > 0;
 }
 
-function enableCommunityForm() {
-  const form = document.querySelector("#community-form");
-  const result = document.querySelector("#community-result");
-  const copyEmail = document.querySelector("#community-copy-email");
-  const copyPhone = document.querySelector("#community-copy-phone");
+document.addEventListener("click", (event) => { const link = event.target.closest("a[data-link]"); if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); history.pushState({}, "", link.href); render(); document.querySelector("#nav").classList.remove("open"); document.querySelector(".menu-button").setAttribute("aria-expanded", "false"); });
+window.addEventListener("popstate", render);
+document.querySelector(".menu-button").addEventListener("click", (event) => { const open = document.querySelector("#nav").classList.toggle("open"); event.currentTarget.setAttribute("aria-expanded", String(open)); });
+document.querySelector("#year").textContent = new Date().getFullYear();
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const data = new FormData(form);
-    const payload = {
-      name: String(data.get("name") ?? "").trim(),
-      company: String(data.get("company") ?? "").trim(),
-      email: String(data.get("email") ?? "").trim(),
-      link: String(data.get("link") ?? "").trim(),
-      topic: String(data.get("topic") ?? "").trim(),
-      timeline: String(data.get("timeline") ?? "").trim(),
-      message: String(data.get("message") ?? "").trim()
-    };
-
-    try {
-      await requestJson("/api/submissions", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      form.reset();
-      result.textContent = "Message sent. Aden can now see it in the owner panel.";
-      if (ownerAuthenticated) void loadSubmissions();
-    } catch (error) {
-      result.textContent = `Could not send message: ${error.message}`;
-    }
-  });
-
-  copyEmail.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(currentProfile.email);
-    result.textContent = "Email copied.";
-  });
-
-  copyPhone.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(currentProfile.phone);
-    result.textContent = "Phone number copied.";
-  });
-}
-
-async function init() {
-  try {
-    const [profile, projects] = await Promise.all([loadProfile(), loadProjects()]);
-    baseProfile = structuredClone(profile);
-    currentProfile = structuredClone(profile);
-    projectsData = projects;
-    renderAll();
-    enableScrollspy();
-    enableMenu();
-    enableReveals();
-    enableOwnerMode();
-    enableCommunityForm();
-    syncOwnerEditor();
-    await restoreSession();
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-init();
+Promise.all([fetch("/api/profile").then((response) => response.json()), fetch("/api/projects").then((response) => response.json())]).then(([profile, projects]) => { state.profile = profile; state.projects = projects.repos || []; render(); }).catch(() => { root.innerHTML = `<section class="not-found"><h1>The portfolio could not load.</h1><p>Please try again in a moment.</p></section>`; });
