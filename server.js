@@ -13,8 +13,14 @@ const publicFiles = new Map([
   ["/script.js", path.join(rootDir, "script.js")],
   ["/assets/aden-profile.jpg", path.join(rootDir, "assets", "aden-profile.jpg")],
   ["/assets/aden-headshot.png", path.join(rootDir, "assets", "aden-headshot.png")],
+  ["/assets/project-sentinel.png", path.join(rootDir, "assets", "project-sentinel.png")],
+  ["/assets/project-cardforge.png", path.join(rootDir, "assets", "project-cardforge.png")],
+  ["/assets/project-dominion.png", path.join(rootDir, "assets", "project-dominion.png")],
+  ["/assets/resume-technical-preview.png", path.join(rootDir, "assets", "resume-technical-preview.png")],
+  ["/assets/resume-general-preview.png", path.join(rootDir, "assets", "resume-general-preview.png")],
   ["/assets/profile.jpg", path.join(rootDir, "assets", "profile.jpg")],
-  ["/assets/Aden_Ramirez_Resume.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume.pdf")]
+  ["/assets/Aden_Ramirez_Resume.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume.pdf")],
+  ["/assets/Aden_Ramirez_Resume_General.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume_General.pdf")]
 ]);
 const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
 
@@ -62,6 +68,7 @@ function metaForPath(pathname, projects) {
   };
   if (pathname === "/work") return { title: "Work | Aden Ramirez", description: "Projects, experiments, and systems built by Aden Ramirez." };
   if (pathname === "/jobs" || pathname === "/experience") return { title: "Jobs | Aden Ramirez", description: "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work." };
+  if (pathname === "/education") return { title: "Education | Aden Ramirez", description: "Aden Ramirez's computer science education at UTEP, including mathematics, coursework, honors, and current studies." };
   if (pathname === "/about") return { title: "About | Aden Ramirez", description: "About Aden Ramirez, a UTEP computer science student and software engineer in El Paso." };
   if (pathname === "/contact") return { title: "Contact | Aden Ramirez", description: "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration." };
   const match = pathname.match(/^\/projects\/([^/]+)\/?$/);
@@ -84,7 +91,7 @@ async function renderApp(pathname, origin) {
 async function sitemap(req) {
   const projects = await readJson(projectsPath);
   const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
-  const paths = ["/", "/work", "/jobs", "/about", "/contact", ...projects.repos.filter((project) => project.slug && project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  const paths = ["/", "/work", "/jobs", "/education", "/about", "/contact", ...projects.repos.filter((project) => project.slug && project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((item) => `<url><loc>${origin}${item}</loc></url>`).join("")}</urlset>`;
 }
 
@@ -109,7 +116,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname.startsWith("/assets/") || pathname.startsWith("/data/") || pathname.startsWith("/.git") || pathname.includes(".")) return send(res, 404, "Not found");
     const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
-    if (["/", "/work", "/jobs", "/experience", "/about", "/contact"].includes(pathname)) {
+    if (["/", "/work", "/jobs", "/experience", "/education", "/about", "/contact"].includes(pathname)) {
       return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
     }
     if (/^\/projects\/[a-z0-9-]+$/i.test(pathname)) {

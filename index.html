@@ -26,9 +26,10 @@
       <nav id="nav" aria-label="Primary navigation">
         <a href="/work" data-link>Work</a>
         <a href="/jobs" data-link>Jobs</a>
+        <a href="/education" data-link>Education</a>
         <a href="/about" data-link>About</a>
         <a href="/contact" data-link>Contact</a>
-        <a href="/assets/Aden_Ramirez_Resume.pdf">Resume</a>
+        <button class="nav-resume" type="button" data-resume-open>Resume</button>
       </nav>
     </header>
     <main id="content" tabindex="-1"><div class="loading">Loading the work…</div></main>
@@ -37,6 +38,18 @@
       <div class="footer-links"><a href="/contact" data-link>Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://linkedin.com/in/aden-ramirez-cs" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
       <small>© <span id="year"></span> Aden Ramirez. Built by hand, kept honest.</small>
     </footer>
+    <dialog class="resume-dialog" id="resume-dialog" aria-labelledby="resume-title">
+      <div class="resume-dialog-header">
+        <div><span class="eyebrow">Documents</span><h2 id="resume-title">Resume</h2></div>
+        <button class="resume-close" type="button" data-resume-close aria-label="Close resume viewer">Close</button>
+      </div>
+      <div class="resume-switcher" role="group" aria-label="Choose resume version">
+        <button type="button" class="active" data-resume-src="/assets/Aden_Ramirez_Resume.pdf" data-resume-preview="/assets/resume-technical-preview.png">Technical</button>
+        <button type="button" data-resume-src="/assets/Aden_Ramirez_Resume_General.pdf" data-resume-preview="/assets/resume-general-preview.png">General</button>
+        <a id="resume-download" href="/assets/Aden_Ramirez_Resume.pdf" download>Download PDF</a>
+      </div>
+      <div class="resume-preview"><img id="resume-frame" alt="Preview of Aden Ramirez's technical resume" src="/assets/resume-technical-preview.png"></div>
+    </dialog>
     <noscript>This portfolio needs JavaScript to display project data.</noscript>
   </body>
 </html>

@@ -1,5 +1,44 @@
 #content:focus { outline: none; }
 html, body { overflow-x: hidden; }
+.nav-resume,.inline-resume { border: 0; background: none; color: var(--blue); padding: .4rem 0; cursor: pointer; font-weight: 700; }
+.nav-resume { color: inherit; border-bottom: 2px solid transparent; font-weight: 400; }
+
+/* Fixed tag geometry keeps long and short labels aligned without collisions. */
+.tech-line { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: .5rem; align-items: stretch; width: 100%; }
+.tech-line span { display: inline-flex; align-items: center; justify-content: center; min-width: 0; min-height: 34px; padding: .35rem .65rem; border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent); background: color-mix(in srgb, var(--blue) 5%, transparent); text-align: center; line-height: 1.15; overflow-wrap: anywhere; }
+.tech-line span+span:before { content: none; }
+.project-row.compact .tech-line { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.project-logo { background: #06172f; object-fit: cover !important; aspect-ratio: 1; }
+
+.resume-dialog { width: min(1100px, calc(100vw - 32px)); height: min(900px, calc(100vh - 32px)); padding: 0; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
+.resume-dialog::backdrop { background: rgb(8 15 24 / .72); backdrop-filter: blur(6px); }
+.resume-dialog-header { min-height: 92px; display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1rem 1.4rem; border-bottom: 1px solid var(--line); }
+.resume-dialog-header h2 { margin: 0; font-size: 2rem; }
+.eyebrow { color: var(--rust); font: 700 .72rem var(--mono); text-transform: uppercase; letter-spacing: .08em; }
+.resume-close { border: 1px solid var(--line); background: transparent; padding: .65rem .9rem; cursor: pointer; }
+.resume-switcher { display: flex; align-items: center; gap: .5rem; padding: .75rem 1.4rem; border-bottom: 1px solid var(--line); }
+.resume-switcher button,.resume-switcher a { border: 1px solid var(--line); background: transparent; padding: .55rem .85rem; cursor: pointer; }
+.resume-switcher button.active { background: var(--blue); border-color: var(--blue); color: white; }
+.resume-switcher a { margin-left: auto; color: var(--blue); }
+.resume-preview { height: calc(100% - 151px); overflow: auto; padding: 1.5rem; background: #d9d9d7; }
+.resume-preview img { width: min(850px, 100%); height: auto; margin: 0 auto; box-shadow: 0 12px 40px rgb(0 0 0 / .18); }
+
+.education-lead { display: grid; grid-template-columns: 1fr 280px; gap: 4rem; align-items: end; }
+.education-lead h1 { margin-bottom: 1rem; }
+.education-lead aside { display: flex; flex-direction: column; gap: .4rem; border-left: 1px solid var(--line); padding-left: 1.5rem; }
+.education-lead aside span { color: var(--muted); }
+.education-lead aside strong { color: var(--blue); font-size: 1.25rem; }
+.education-overview { display: grid; grid-template-columns: 1.1fr .9fr; gap: 7vw; border-top: 1px solid var(--ink); padding: 3rem 0; }
+.education-overview dl { margin: 0; }
+.education-overview dl div { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+.education-overview dt { color: var(--muted); }
+.education-overview dd { margin: 0; }
+.coursework { display: grid; grid-template-columns: .6fr 1.4fr; gap: 6vw; padding-bottom: 2rem; }
+.course-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.course-grid span { padding: 1rem .5rem 1rem 0; border-bottom: 1px solid var(--line); }
+.education-note { margin: 5rem 0; padding: 3rem; background: #10243b; color: white; }
+.education-note p { color: #c9d7e8; }
+.education-note .button { color: white; border-color: #93b8e7; }
 .project-heading h2 a,
 .case-hero h1,
 .breadcrumb [aria-current],
@@ -51,6 +90,8 @@ html, body { overflow-x: hidden; }
   .jobs-lead { grid-template-columns: 1fr; gap: 1rem; }
   .jobs-lead aside { border-left: 0; border-top: 1px solid var(--line); padding: 1rem 0 0; }
   .jobs-note { padding-left: 0; }
+  .education-lead,.education-overview,.coursework { grid-template-columns: 1fr; gap: 2rem; }
+  .education-lead aside { border-left: 0; border-top: 1px solid var(--line); padding: 1rem 0 0; }
 }
 
 .direct-email { margin-left: 1rem; }
@@ -80,4 +121,10 @@ html, body { overflow-x: hidden; }
   .contact-methods article { grid-template-columns: 1fr auto; }
   .contact-methods article > span { grid-column: 1 / -1; }
   .direct-email { display: block; margin: 1rem 0 0; }
+  .tech-line,.project-row.compact .tech-line { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .resume-switcher { flex-wrap: wrap; }
+  .resume-switcher a { width: 100%; margin-left: 0; text-align: center; }
+  .resume-preview { height: calc(100% - 200px); padding: .65rem; }
+  .course-grid { grid-template-columns: 1fr; }
+  .education-note { padding: 2rem 1.25rem; }
 }

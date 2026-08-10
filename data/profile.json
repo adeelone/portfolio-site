@@ -26,7 +26,7 @@
     },
     {
       "label": "GPA",
-      "value": "3.97 / 4.0"
+    "value": "3.73 / 4.0"
     }
   ],
   "current_focus": {
@@ -99,9 +99,10 @@
   "connect_note": "If you're reaching out about internships, projects, student org work, or part-time tech roles, email is usually the safest bet. LinkedIn and GitHub stay current too.",
   "education": {
     "school": "The University of Texas at El Paso",
-    "degree": "B.S. in Computer Science",
+    "degree": "Bachelor of Science in Computer Science",
+    "minor": "Mathematics",
     "graduation": "Expected May 2028",
-    "gpa": "3.97 / 4.0",
+    "gpa": "3.73 / 4.0",
     "honors": [
       "Dean's List: Fall 2024, Spring 2025, Fall 2025",
       "2025 Hispanic Scholarship Fund Scholar"
@@ -115,7 +116,16 @@
       "Discrete Mathematics",
       "Calculus II",
       "Matrix Algebra"
-    ]
+    ],
+    "in_progress": [
+      "Programming Language Concepts",
+      "Parallel Computing",
+      "Database Systems",
+      "Operating Systems Concepts",
+      "Probability and Statistics"
+    ],
+    "earned_hours": "86 total earned hours",
+    "college": "College of Engineering"
   },
   "about": [
     "I'm a computer science student at UTEP who likes building software that feels solid, not just impressive in a screenshot.",

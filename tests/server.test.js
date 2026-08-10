@@ -28,6 +28,9 @@ test("serves the app and project routes with route-specific metadata", async () 
   const jobs = await fetch(`${origin}/jobs`);
   assert.equal(jobs.status, 200);
   assert.match(await jobs.text(), /Jobs \| Aden Ramirez/);
+  const education = await fetch(`${origin}/education`);
+  assert.equal(education.status, 200);
+  assert.match(await education.text(), /Education \| Aden Ramirez/);
   const contact = await fetch(`${origin}/contact`);
   assert.equal(contact.status, 200);
   const contactHtml = await contact.text();
@@ -64,10 +67,31 @@ test("serves the professional headshot as an explicit public asset", async () =>
   assert.ok((await response.arrayBuffer()).byteLength > 100000);
 });
 
+test("serves project artwork and both resume versions", async () => {
+  for (const pathname of [
+    "/assets/project-sentinel.png",
+    "/assets/project-cardforge.png",
+    "/assets/project-dominion.png",
+    "/assets/resume-technical-preview.png",
+    "/assets/resume-general-preview.png"
+  ]) {
+    const response = await fetch(`${origin}${pathname}`);
+    assert.equal(response.status, 200, pathname);
+    assert.equal(response.headers.get("content-type"), "image/png");
+    assert.ok((await response.arrayBuffer()).byteLength > 100000, pathname);
+  }
+  for (const pathname of ["/assets/Aden_Ramirez_Resume.pdf", "/assets/Aden_Ramirez_Resume_General.pdf"]) {
+    const response = await fetch(`${origin}${pathname}`);
+    assert.equal(response.status, 200, pathname);
+    assert.equal(response.headers.get("content-type"), "application/pdf");
+  }
+});
+
 test("provides robots and a project sitemap", async () => {
   assert.match(await (await fetch(`${origin}/robots.txt`)).text(), /Sitemap:/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/projects\/sentinel/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/jobs/);
+  assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/education/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/contact/);
 });
 
