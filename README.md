@@ -2,6 +2,8 @@
 
 An editorial, route-based portfolio for Aden Ramirez. One dependency-free Node service delivers the public application, read-only content APIs, individual project case studies, route-specific metadata, and security headers.
 
+**Live portfolio:** [https://aden-ramirez-portfolio.onrender.com](https://aden-ramirez-portfolio.onrender.com)
+
 ## Run and verify
 
 ```powershell
@@ -17,6 +19,7 @@ Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, AP
 - `/work` — searchable, filterable archive of every synced project
 - `/projects/:slug` — a case study for every project record
 - `/jobs` — the complete employment history, including technical and non-technical work
+- `/education` — verified UTEP degree progress, honors, coursework, and current classes
 - `/about` — background and working style
 - `/contact` — email, phone, professional profiles, résumé, and downloadable vCard
 - `/sitemap.xml` and `/robots.txt` — search discovery
@@ -32,7 +35,7 @@ The server exposes only an explicit set of public assets. Repository source, `.g
 
 ## Deployment
 
-Deploy as one Node service with `npm start`. Set `PORT` only if the host does not provide it. Set `SITE_URL` to the final HTTPS origin, such as `https://portfolio.example.com`, so canonical URLs, social metadata, and the sitemap use the public domain. Set `NODE_ENV=production` to enable HSTS.
+The production site runs at [https://aden-ramirez-portfolio.onrender.com](https://aden-ramirez-portfolio.onrender.com). Deploy as one Node service with `npm start`. Set `PORT` only if the host does not provide it. Set `SITE_URL=https://aden-ramirez-portfolio.onrender.com` so canonical URLs, social metadata, and the sitemap use the public domain. Set `NODE_ENV=production` to enable HSTS.
 
 The repository includes:
 
