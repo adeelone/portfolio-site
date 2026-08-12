@@ -67,11 +67,11 @@ test("serves the professional headshot as an explicit public asset", async () =>
   assert.ok((await response.arrayBuffer()).byteLength > 100000);
 });
 
-test("serves project artwork and both resume versions", async () => {
+test("serves artwork for every project and both resume versions", async () => {
+  const projectData = await (await fetch(`${origin}/api/projects`)).json();
+  const artworkPaths = projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/assets/project-${project.slug}.png`);
   for (const pathname of [
-    "/assets/project-sentinel.png",
-    "/assets/project-cardforge.png",
-    "/assets/project-dominion.png",
+    ...artworkPaths,
     "/assets/resume-technical-preview.png",
     "/assets/resume-general-preview.png"
   ]) {

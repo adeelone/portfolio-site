@@ -22,6 +22,8 @@ const publicFiles = new Map([
   ["/assets/Aden_Ramirez_Resume.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume.pdf")],
   ["/assets/Aden_Ramirez_Resume_General.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume_General.pdf")]
 ]);
+const projectArtSlugs = ["sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
+for (const slug of projectArtSlugs) publicFiles.set(`/assets/project-${slug}.png`, path.join(rootDir, "assets", `project-${slug}.png`));
 const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
 
 function securityHeaders(type, cache = "no-cache") {

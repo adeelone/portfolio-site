@@ -11,10 +11,32 @@ const technologies = (project, limit = 6) => (project.tech || project.languages 
 const projectHref = (project) => `/projects/${encodeURIComponent(project.slug)}`;
 const displayName = (value = "") => String(value).replace(/^./, (letter) => letter.toUpperCase());
 const plainText = (value = "") => String(value).replace(/\*\*|`/g, "").replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1").trim();
-const projectArtwork = {
-  sentinel: "/assets/project-sentinel.png",
-  cardforge: "/assets/project-cardforge.png",
-  dominion: "/assets/project-dominion.png"
+const projectArtSlugs = ["sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
+const projectArtwork = Object.fromEntries(projectArtSlugs.map((slug) => [slug, `/assets/project-${slug}.png`]));
+const projectLessons = {
+  sentinel: "I learned that an ML demo becomes believable only when model evaluation, serving, drift visibility, and explanations are designed as one system. Accuracy by itself is not enough if nobody can understand or operate the result.",
+  cardforge: "I learned how quickly a visual editor becomes a state-management problem. Keeping canvas changes, print dimensions, previews, exports, and browser navigation consistent mattered more than adding another design control.",
+  dominion: "I learned that simulation features need a stable event model before they need more AI. Separating player intent, world-state transitions, and generated narrative made the system easier to test and kept the model from owning core game rules.",
+  demiurge: "I learned that one event log can support very different scales of play when the domain boundaries are clear. Chronicle and Godhand could share history and consequences without forcing their interfaces or decision loops to be identical.",
+  meridian: "I learned to treat search quality as a product decision, not just an API response. Query modes, citations, caching, saved collections, and exports all shape whether a result is actually useful after it is retrieved.",
+  "weather-compare": "I learned that comparison tools work best when every location uses the same visual hierarchy and units. The hard part was not fetching weather data; it was making five cities understandable at a glance without hiding uncertainty or edge cases.",
+  atlas: "I learned that generated plans should stay editable. Modeling booked anchors, flexible day items, budgets, packing, and calendar export separately made the itinerary useful after the first AI response instead of turning it into a static answer.",
+  reel: "I learned that a personal database needs strong defaults and quiet interaction design. Discovery, tracking, ratings, and the decision of what to watch tonight have different jobs, so combining them required restraint rather than more controls.",
+  stockpilot: "I learned to keep market data separate from portfolio accounting. A deterministic order engine and local persistence made paper trades reproducible even when quote providers, refresh timing, or network access changed.",
+  storygen: "I learned that generative storytelling needs continuity constraints. Streaming progress made the wait feel shorter, but consistent characters, safe prompts, and a predictable four-scene structure were what made the finished story feel coherent.",
+  volley: "I learned that game feel comes from many small systems agreeing with each other. Ball physics, input timing, particles, sound, scoring, and reset behavior each needed tuning before a simple Pong loop felt polished.",
+  relay: "I learned that long-running AI work should not block the request that starts it. Decoupling intake, workers, provider adapters, status events, and results made failures visible and let each part scale or retry independently.",
+  myreadlist: "I learned that browser-side extraction has to be conservative around somebody else's page structure. Clear parsing rules, useful exports, and graceful handling of missing fields mattered more than pretending every library page would look identical.",
+  aurora: "I learned how much performance depends on object lifecycles in animation-heavy interfaces. Pooling particles, separating composition from rendering, and coordinating audio and capture tools kept the canvas responsive as scenes became more complex.",
+  compass: "I learned that job matching should explain itself. Transparent keyword evidence, document parsing, and a visible application workflow were more trustworthy than presenting one unexplained AI score as the answer.",
+  "medelite-report-gen": "I learned to separate authoritative public facility data from user-entered operational context. That boundary made the assessment easier to verify and kept the exported report clear about what came from CMS and what came from the operator.",
+  "price-deal-watcher": "I learned that monitoring is mostly about normalization and failure handling. Products, travel, tickets, and custom checks expose different signals, so the useful abstraction was a durable observation and alert pipeline rather than one universal scraper.",
+  chessgen: "I learned how much search improves when the algorithm can discard work safely. Alpha-beta pruning, move ordering, and legal-state validation made the engine responsive while preserving the same minimax decision logic.",
+  leximatch: "I learned that a clean MVC boundary makes game rules easier to test and reuse. Keeping dictionary lookup, guess evaluation, difficulty rules, and interface code separate let the Java and browser versions share the same mental model.",
+  "simple-chess-game": "I learned the value of modeling domain rules before wiring the interface. Piece behavior, legal moves, turns, and end states needed clear ownership so the Swing board could remain a view instead of becoming the game engine.",
+  "miner-eats": "I learned the fundamentals of turning a small classroom idea into cooperating Java classes. Even this early project showed me why data models, control flow, and user-facing choices should not all live in one place.",
+  "nebula-stat-proto": "I learned how to choose a narrow end-to-end slice under hackathon pressure. Connecting the React interface, Supabase data, analytics, and AI-assisted steps for a working demonstration was more valuable than leaving several ambitious flows half built.",
+  "shpe-utep-website": "I learned that practical frontend work is often editorial and operational. Compressing leadership photos, reorganizing content, and loading media intentionally improved the real experience more than a visual redesign would have on its own."
 };
 
 function projectArt(project, featured = false) {
@@ -118,7 +140,7 @@ function narrative(project) {
     built: plainText(highlights[0] || `A working ${technologies(project, 3).join(" and ") || "software"} project with a focus on the complete user flow.`),
     works: (bullets.length ? bullets : ["The repository includes the implementation, setup notes, and the decisions that shaped the current version."]).map(plainText),
     limits: project.is_private ? "This work is private, so the public case study intentionally avoids implementation details and repository links." : project.homepage ? "The live build is a portfolio demonstration. Availability and external services can vary, and the repository remains the source of truth." : "This project does not currently have a hosted demo. Run and verification instructions live in the repository when available.",
-    learned: plainText(highlights[1] || "Finishing the surrounding documentation, tests, and edge cases taught me more than the first working version did.")
+    learned: projectLessons[project.slug] || plainText(highlights[1] || "Finishing the surrounding documentation, tests, and edge cases taught me more than the first working version did.")
   };
 }
 
