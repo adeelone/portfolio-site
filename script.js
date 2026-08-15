@@ -50,9 +50,9 @@ function projectActions(project) {
   return `<a class="text-link" href="${projectHref(project)}" data-link>Case study <span aria-hidden="true">→</span></a>${project.url ? external(project.url, "Code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}`;
 }
 
-function projectRow(project, featured = false) {
-  return `<article class="project-row ${featured ? "featured" : "compact"}" data-project data-search="${escapeHtml([project.name, project.description, ...technologies(project, 20), ...(project.topics || [])].join(" ").toLowerCase())}" data-kinds="${escapeHtml(projectKinds(project).join(" "))}">
-    ${featured ? `<a class="project-media" href="${projectHref(project)}" data-link aria-label="Read ${escapeHtml(project.name)} case study">${projectArt(project, true)}</a>` : ""}
+function projectRow(project, featured = false, showMedia = featured) {
+  return `<article class="project-row ${featured ? "featured" : "compact"}${showMedia ? " has-media" : ""}" data-project data-search="${escapeHtml([project.name, project.description, ...technologies(project, 20), ...(project.topics || [])].join(" ").toLowerCase())}" data-kinds="${escapeHtml(projectKinds(project).join(" "))}">
+    ${showMedia ? `<a class="project-media" href="${projectHref(project)}" data-link aria-label="Read ${escapeHtml(project.name)} case study">${projectArt(project, featured)}</a>` : ""}
     <div class="project-copy-block"><div class="project-heading"><h2><a href="${projectHref(project)}" data-link>${escapeHtml(displayName(project.name))}</a></h2><span>${projectYear(project)} · ${escapeHtml(projectStatus(project))}</span></div>
     <p>${escapeHtml(project.description || "A project, experiment, or learning build from my GitHub archive.")}</p>
     <div class="tech-line">${technologies(project).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
@@ -93,7 +93,7 @@ function workPage() {
   const archive = projects.filter((project) => !featured.includes(project));
   return `<header class="page-lead"><h1>Work</h1><p>Projects, experiments, and systems I've built while learning how software holds up in the real world.</p></header>
     <section class="project-tools" aria-label="Project filters"><div class="filters" role="group" aria-label="Filter projects">${["all","featured","live","backend","full-stack","games"].map((filter) => `<button type="button" data-filter="${filter}" class="${filter === "all" ? "active" : ""}">${filter === "full-stack" ? "Full-stack" : filter[0].toUpperCase()+filter.slice(1)}</button>`).join("")}</div><label class="search"><span class="sr-only">Search projects</span><input type="search" id="project-search" placeholder="Search projects" autocomplete="off"></label></section>
-    <div id="project-list" class="project-list"><div class="featured-list">${featured.map((project) => projectRow(project, true)).join("")}</div><div class="archive-list">${archive.map((project) => projectRow(project)).join("")}</div></div><p id="empty-projects" class="empty" hidden>No projects match that search yet.</p>`;
+    <div id="project-list" class="project-list"><div class="featured-list">${featured.map((project) => projectRow(project, false, true)).join("")}</div><div class="archive-list">${archive.map((project) => projectRow(project, false, true)).join("")}</div></div><p id="empty-projects" class="empty" hidden>No projects match that search yet.</p>`;
 }
 
 function jobKind(role) {
