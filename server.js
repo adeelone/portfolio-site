@@ -3,7 +3,7 @@ const fs = require("fs/promises");
 const path = require("path");
 
 const rootDir = __dirname;
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT) || 3000;
 const configuredSiteUrl = String(process.env.SITE_URL || "").replace(/\/+$/, "");
 const profilePath = path.join(rootDir, "data", "profile.json");
 const projectsPath = path.join(rootDir, "data", "projects.json");
@@ -22,7 +22,7 @@ const publicFiles = new Map([
   ["/assets/Aden_Ramirez_Resume.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume.pdf")],
   ["/assets/Aden_Ramirez_Resume_General.pdf", path.join(rootDir, "assets", "Aden_Ramirez_Resume_General.pdf")]
 ]);
-const projectArtSlugs = ["sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
+const projectArtSlugs = ["dwell-signal", "sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
 for (const slug of projectArtSlugs) publicFiles.set(`/assets/project-${slug}.png`, path.join(rootDir, "assets", `project-${slug}.png`));
 const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
 
@@ -60,6 +60,9 @@ function escapeHtml(value = "") {
 }
 
 function displayName(value = "") {
+  const projectDisplayNames = { "dwell-signal": "DwellSignal" };
+  if (projectDisplayNames[value]) return projectDisplayNames[value];
+  if (/^[a-z0-9]+(?:[-_][a-z0-9]+)+$/.test(value)) return String(value).split(/[-_]+/).map((word) => word.replace(/^./, (letter) => letter.toUpperCase())).join(" ");
   return String(value).replace(/^./, (letter) => letter.toUpperCase());
 }
 
@@ -124,15 +127,24 @@ const server = http.createServer(async (req, res) => {
     if (/^\/projects\/[a-z0-9-]+$/i.test(pathname)) {
       const projects = await readJson(projectsPath);
       const slug = pathname.split("/")[2];
-      if (!projects.repos.some((project) => project.slug === slug)) return send(res, 404, "Not found");
-      return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
+      const status = projects.repos.some((project) => project.slug === slug) ? 200 : 404;
+      return send(res, status, await renderApp(pathname, origin), "text/html; charset=utf-8");
     }
-    return send(res, 404, "Not found");
-  } catch {
+    return send(res, 404, await renderApp(pathname, origin), "text/html; charset=utf-8");
+  } catch (error) {
+    console.error(error);
     return sendJson(res, 500, { error: "Internal server error." });
   }
 });
 
 server.listen(port, "0.0.0.0", () => console.log(`Portfolio server running on port ${port}`));
+
+function shutdown(signal) {
+  console.log(`${signal} received, closing server.`);
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 10000).unref();
+}
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 
 module.exports = { server, escapeHtml, metaForPath };

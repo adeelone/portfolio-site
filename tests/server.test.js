@@ -25,6 +25,9 @@ test("serves the app and project routes with route-specific metadata", async () 
   const project = await fetch(`${origin}/projects/sentinel`);
   assert.equal(project.status, 200);
   assert.match(await project.text(), /Sentinel \| Aden Ramirez/);
+  const dwellSignal = await fetch(`${origin}/projects/dwell-signal`);
+  assert.equal(dwellSignal.status, 200);
+  assert.match(await dwellSignal.text(), /DwellSignal \| Aden Ramirez/);
   const jobs = await fetch(`${origin}/jobs`);
   assert.equal(jobs.status, 200);
   assert.match(await jobs.text(), /Jobs \| Aden Ramirez/);

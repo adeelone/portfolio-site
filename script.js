@@ -1,5 +1,6 @@
 const state = { profile: null, projects: [], query: "", filter: "all" };
 const root = document.querySelector("#content");
+const projectDisplayNames = { "dwell-signal": "DwellSignal" };
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 const safeUrl = (value) => { try { const url = new URL(value, location.origin); return ["http:", "https:", "mailto:", "tel:"].includes(url.protocol) ? url.href : ""; } catch { return ""; } };
@@ -9,11 +10,13 @@ const projectYear = (project) => project.pushed_at ? new Date(project.pushed_at)
 const projectStatus = (project) => project.is_private ? "Private work" : project.homepage ? "Live" : project.latest_release ? project.latest_release : "Repository";
 const technologies = (project, limit = 6) => (project.tech || project.languages || []).filter(Boolean).slice(0, limit);
 const projectHref = (project) => `/projects/${encodeURIComponent(project.slug)}`;
-const displayName = (value = "") => String(value).replace(/^./, (letter) => letter.toUpperCase());
+const displayName = (value = "") => projectDisplayNames[value] || (/^[a-z0-9]+(?:[-_][a-z0-9]+)+$/.test(value) ? String(value).split(/[-_]+/).map((word) => word.replace(/^./, (letter) => letter.toUpperCase())).join(" ") : String(value).replace(/^./, (letter) => letter.toUpperCase()));
+const normalizeSearch = (value = "") => String(value).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const plainText = (value = "") => String(value).replace(/\*\*|`/g, "").replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1").trim();
-const projectArtSlugs = ["sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
+const projectArtSlugs = ["dwell-signal", "sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
 const projectArtwork = Object.fromEntries(projectArtSlugs.map((slug) => [slug, `/assets/project-${slug}.png`]));
 const projectLessons = {
+  "dwell-signal": "I learned that role-based workflows work best when every participant shares one visible request lifecycle. Keeping routing transparent and owner-controlled made the maintenance flow easier to trust than hiding decisions behind automation.",
   sentinel: "I learned that an ML demo becomes believable only when model evaluation, serving, drift visibility, and explanations are designed as one system. Accuracy by itself is not enough if nobody can understand or operate the result.",
   cardforge: "I learned how quickly a visual editor becomes a state-management problem. Keeping canvas changes, print dimensions, previews, exports, and browser navigation consistent mattered more than adding another design control.",
   dominion: "I learned that simulation features need a stable event model before they need more AI. Separating player intent, world-state transitions, and generated narrative made the system easier to test and kept the model from owning core game rules.",
@@ -149,7 +152,7 @@ function projectPage(slug) {
   if (!project) return `<section class="not-found"><p>404</p><h1>That project isn't here.</h1><a class="button" href="/work" data-link>Back to work</a></section>`;
   const story = narrative(project);
   const related = state.projects.filter((item) => item.slug !== project.slug && item.slug !== "portfolio-site").slice(0, 3);
-  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/work" data-link>Work</a><span>/</span><span aria-current="page">${escapeHtml(project.name)}</span></nav><header class="case-hero"><div><h1>${escapeHtml(project.name)}</h1><p>${escapeHtml(project.description || story.built)}</p><div class="project-actions">${project.url ? external(project.url, "View code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}<a class="text-link" href="/work" data-link>Back to all work <span aria-hidden="true">←</span></a></div></div><dl><div><dt>Status</dt><dd>${escapeHtml(projectStatus(project))}</dd></div><div><dt>Updated</dt><dd>${escapeHtml(formatDate(project.pushed_at))}</dd></div><div><dt>Tools</dt><dd>${escapeHtml(technologies(project).join(", ") || "See repository")}</dd></div></dl></header><div class="case-visual">${projectArt(project, true)}</div><section class="case-layout"><div class="case-story"><section><h2>The problem</h2><p>${escapeHtml(story.problem)}</p></section><section><h2>What I built</h2><p>${escapeHtml(story.built)}</p></section><section><h2>How it works</h2><ul>${story.works.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h2>Tradeoffs and limits</h2><p>${escapeHtml(story.limits)}</p></section><section><h2>What I learned</h2><p>${escapeHtml(story.learned)}</p></section></div><aside><h2>Project details</h2><h3>Technologies</h3><p>${escapeHtml(technologies(project, 12).join(", ") || "See repository")}</p><h3>Links</h3>${project.url ? external(project.url, "Source code") : `<p>Private repository</p>`}${project.homepage ? external(project.homepage, "Live project") : ""}<h3>Repository notes</h3><p>${project.latest_release ? `Latest release: ${escapeHtml(project.latest_release)}.` : "No public release is listed."}</p></aside></section><section class="related section-rule"><h2>Keep exploring</h2>${related.map((item) => `<a href="${projectHref(item)}" data-link><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.description || "View project")}</span></a>`).join("")}</section>`;
+  return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/work" data-link>Work</a><span>/</span><span aria-current="page">${escapeHtml(displayName(project.name))}</span></nav><header class="case-hero"><div><h1>${escapeHtml(displayName(project.name))}</h1><p>${escapeHtml(project.description || story.built)}</p><div class="project-actions">${project.url ? external(project.url, "View code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}<a class="text-link" href="/work" data-link>Back to all work <span aria-hidden="true">←</span></a></div></div><dl><div><dt>Status</dt><dd>${escapeHtml(projectStatus(project))}</dd></div><div><dt>Updated</dt><dd>${escapeHtml(formatDate(project.pushed_at))}</dd></div><div><dt>Tools</dt><dd>${escapeHtml(technologies(project).join(", ") || "See repository")}</dd></div></dl></header><div class="case-visual">${projectArt(project, true)}</div><section class="case-layout"><div class="case-story"><section><h2>The problem</h2><p>${escapeHtml(story.problem)}</p></section><section><h2>What I built</h2><p>${escapeHtml(story.built)}</p></section><section><h2>How it works</h2><ul>${story.works.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h2>Tradeoffs and limits</h2><p>${escapeHtml(story.limits)}</p></section><section><h2>What I learned</h2><p>${escapeHtml(story.learned)}</p></section></div><aside><h2>Project details</h2><h3>Technologies</h3><p>${escapeHtml(technologies(project, 12).join(", ") || "See repository")}</p><h3>Links</h3>${project.url ? external(project.url, "Source code") : `<p>Private repository</p>`}${project.homepage ? external(project.homepage, "Live project") : ""}<h3>Repository notes</h3><p>${project.latest_release ? `Latest release: ${escapeHtml(project.latest_release)}.` : "No public release is listed."}</p></aside></section><section class="related section-rule"><h2>Keep exploring</h2>${related.map((item) => `<a href="${projectHref(item)}" data-link><strong>${escapeHtml(displayName(item.name))}</strong><span>${escapeHtml(item.description || "View project")}</span></a>`).join("")}</section>`;
 }
 
 function currentPath() { return location.pathname.replace(/\/+$/, "") || "/"; }
@@ -171,9 +174,6 @@ function render() {
 }
 
 function bindPage() {
-  document.querySelectorAll('img[src*="aden-headshot"]').forEach((image) => { image.alt = "Professional headshot of Aden Ramirez"; });
-  const aboutCaption = document.querySelector(".about-layout figcaption");
-  if (aboutCaption) aboutCaption.textContent = "Aden Ramirez, computer science student and software engineer.";
   document.querySelectorAll("[data-filter]").forEach((button) => button.addEventListener("click", () => { state.filter = button.dataset.filter; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("active", item === button)); filterProjects(); }));
   document.querySelector("#project-search")?.addEventListener("input", (event) => { state.query = event.target.value.trim().toLowerCase(); filterProjects(); });
   document.querySelectorAll("[data-copy]").forEach((button) => button.addEventListener("click", async () => {
@@ -188,7 +188,9 @@ function bindPage() {
   }));
 }
 function filterProjects() {
-  let visible = 0; document.querySelectorAll("[data-project]").forEach((item) => { const match = item.dataset.search.includes(state.query) && item.dataset.kinds.split(" ").includes(state.filter); item.hidden = !match; if (match) visible += 1; });
+  const query = normalizeSearch(state.query);
+  const compactQuery = query.replaceAll(" ", "");
+  let visible = 0; document.querySelectorAll("[data-project]").forEach((item) => { const search = normalizeSearch(item.dataset.search); const textMatch = search.includes(query) || search.replaceAll(" ", "").includes(compactQuery); const match = textMatch && item.dataset.kinds.split(" ").includes(state.filter); item.hidden = !match; if (match) visible += 1; });
   const empty = document.querySelector("#empty-projects"); if (empty) empty.hidden = visible > 0;
 }
 
@@ -197,7 +199,11 @@ window.addEventListener("popstate", render);
 document.querySelector(".menu-button").addEventListener("click", (event) => { const open = document.querySelector("#nav").classList.toggle("open"); event.currentTarget.setAttribute("aria-expanded", String(open)); });
 const resumeDialog = document.querySelector("#resume-dialog");
 document.addEventListener("click", (event) => {
-  if (event.target.closest("[data-resume-open]")) resumeDialog.showModal();
+  if (event.target.closest("[data-resume-open]")) {
+    const frame = document.querySelector("#resume-frame");
+    if (!frame.src) frame.src = document.querySelector("[data-resume-src].active").dataset.resumePreview;
+    resumeDialog.showModal();
+  }
   if (event.target.closest("[data-resume-close]")) resumeDialog.close();
   const choice = event.target.closest("[data-resume-src]");
   if (choice) {
