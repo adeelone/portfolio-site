@@ -1,0 +1,22 @@
+# Aden Ramirez Portfolio
+
+> Public portfolio for Aden Ramirez, a computer science student and software engineer in El Paso, Texas.
+
+Canonical site: https://aden-ramirez-portfolio.onrender.com
+
+## Main pages
+
+- / — overview and selected work
+- /work — complete public project archive
+- /jobs — employment history
+- /education — UTEP education and coursework
+- /about — background and working style
+- /contact — professional contact information and resume
+- /sitemap.xml — complete index of public routes and project case studies
+
+## Public data
+
+- /api/profile — public profile data
+- /api/projects — public project data
+
+Content may be summarized with attribution. Private repository files and non-public data are not part of this site.

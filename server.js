@@ -1,6 +1,7 @@
 const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
+const { escapeHtml, metaForPath, renderPage, structuredDataForPath } = require("./render");
 
 const rootDir = __dirname;
 const port = Number(process.env.PORT) || 3000;
@@ -10,7 +11,9 @@ const projectsPath = path.join(rootDir, "data", "projects.json");
 const publicFiles = new Map([
   ["/styles.css", path.join(rootDir, "styles.css")],
   ["/polish.css", path.join(rootDir, "polish.css")],
-  ["/script.js", path.join(rootDir, "script.js")],
+  ["/client.js", path.join(rootDir, "client.js")],
+  ["/favicon.svg", path.join(rootDir, "favicon.svg")],
+  ["/llms.txt", path.join(rootDir, "llms.txt")],
   ["/assets/aden-profile.jpg", path.join(rootDir, "assets", "aden-profile.jpg")],
   ["/assets/aden-headshot.png", path.join(rootDir, "assets", "aden-headshot.png")],
   ["/assets/project-sentinel.png", path.join(rootDir, "assets", "project-sentinel.png")],
@@ -24,7 +27,7 @@ const publicFiles = new Map([
 ]);
 const projectArtSlugs = ["dwell-signal", "sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"];
 for (const slug of projectArtSlugs) publicFiles.set(`/assets/project-${slug}.png`, path.join(rootDir, "assets", `project-${slug}.png`));
-const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
+const mimeTypes = { ".css": "text/css; charset=utf-8", ".js": "application/javascript; charset=utf-8", ".svg": "image/svg+xml; charset=utf-8", ".txt": "text/plain; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".pdf": "application/pdf" };
 
 function securityHeaders(type, cache = "no-cache") {
   const headers = {
@@ -51,46 +54,28 @@ function sendJson(res, status, value) {
   send(res, status, JSON.stringify(value), "application/json; charset=utf-8", "public, max-age=300");
 }
 
+function redirect(res, status, location) {
+  res.writeHead(status, { ...securityHeaders("text/plain; charset=utf-8"), Location: location });
+  res.end();
+}
+
 async function readJson(file) {
   return JSON.parse(await fs.readFile(file, "utf8"));
 }
 
-function escapeHtml(value = "") {
-  return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
-}
-
-function displayName(value = "") {
-  const projectDisplayNames = { "dwell-signal": "DwellSignal" };
-  if (projectDisplayNames[value]) return projectDisplayNames[value];
-  if (/^[a-z0-9]+(?:[-_][a-z0-9]+)+$/.test(value)) return String(value).split(/[-_]+/).map((word) => word.replace(/^./, (letter) => letter.toUpperCase())).join(" ");
-  return String(value).replace(/^./, (letter) => letter.toUpperCase());
-}
-
-function metaForPath(pathname, projects) {
-  const fallback = {
-    title: "Aden Ramirez | Software Engineer",
-    description: "Aden Ramirez is a computer science student and software engineer building careful backend, systems, and full-stack projects."
-  };
-  if (pathname === "/work") return { title: "Work | Aden Ramirez", description: "Projects, experiments, and systems built by Aden Ramirez." };
-  if (pathname === "/jobs" || pathname === "/experience") return { title: "Jobs | Aden Ramirez", description: "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work." };
-  if (pathname === "/education") return { title: "Education | Aden Ramirez", description: "Aden Ramirez's computer science education at UTEP, including mathematics, coursework, honors, and current studies." };
-  if (pathname === "/about") return { title: "About | Aden Ramirez", description: "About Aden Ramirez, a UTEP computer science student and software engineer in El Paso." };
-  if (pathname === "/contact") return { title: "Contact | Aden Ramirez", description: "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration." };
-  const match = pathname.match(/^\/projects\/([^/]+)\/?$/);
-  if (!match) return fallback;
-  const project = projects.repos.find((item) => item.slug === match[1]);
-  if (!project) return fallback;
-  return { title: `${displayName(project.name)} | Aden Ramirez`, description: project.description || `A project by Aden Ramirez: ${project.name}.` };
-}
-
 async function renderApp(pathname, origin) {
-  const [template, projects] = await Promise.all([fs.readFile(path.join(rootDir, "index.html"), "utf8"), readJson(projectsPath)]);
-  const meta = metaForPath(pathname, projects);
+  const [template, profile, projects] = await Promise.all([fs.readFile(path.join(rootDir, "index.html"), "utf8"), readJson(profilePath), readJson(projectsPath)]);
+  const meta = metaForPath(pathname, projects.repos);
+  const canonicalPath = pathname === "/experience" ? "/jobs" : pathname;
+  const canonical = `${origin}${canonicalPath === "/" ? "" : canonicalPath}`;
   return template
     .replaceAll("{{TITLE}}", escapeHtml(meta.title))
     .replaceAll("{{DESCRIPTION}}", escapeHtml(meta.description))
-    .replaceAll("{{CANONICAL}}", escapeHtml(`${origin}${pathname === "/" ? "" : pathname}`))
-    .replaceAll("{{SITE_URL}}", escapeHtml(origin));
+    .replaceAll("{{ROBOTS_META}}", meta.found ? "index, follow" : "noindex, follow")
+    .replaceAll("{{CANONICAL}}", escapeHtml(canonical))
+    .replaceAll("{{SITE_URL}}", escapeHtml(origin))
+    .replace("{{STRUCTURED_DATA}}", structuredDataForPath(canonicalPath, origin, profile, meta))
+    .replace("{{CONTENT}}", renderPage(pathname, profile, projects.repos));
 }
 
 async function sitemap(req) {
@@ -104,10 +89,19 @@ const server = http.createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname).replace(/\/+$/, "") || "/";
     if (!["GET", "HEAD"].includes(req.method)) return sendJson(res, 405, { error: "Method not allowed." });
+    const requestHost = String(req.headers["x-forwarded-host"] || req.headers.host || "").split(",")[0].trim();
+    if (configuredSiteUrl && process.env.NODE_ENV === "production" && /\.vercel\.app(?::\d+)?$/i.test(requestHost) && !configuredSiteUrl.includes(requestHost)) {
+      return redirect(res, 308, `${configuredSiteUrl}${pathname === "/" ? "" : pathname}`);
+    }
     if (pathname === "/api/health") return sendJson(res, 200, { ok: true });
     if (pathname === "/api/profile") return sendJson(res, 200, await readJson(profilePath));
     if (pathname === "/api/projects") return sendJson(res, 200, await readJson(projectsPath));
-    if (pathname === "/robots.txt") return send(res, 200, "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n", "text/plain; charset=utf-8", "public, max-age=86400");
+    if (pathname === "/robots.txt") {
+      const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
+      const agents = ["*", "GPTBot", "ChatGPT-User", "OAI-SearchBot", "ClaudeBot", "PerplexityBot", "Google-Extended"];
+      const body = `${agents.map((agent) => `User-agent: ${agent}\nAllow: /`).join("\n\n")}\n\nSitemap: ${origin}/sitemap.xml\n`;
+      return send(res, 200, body, "text/plain; charset=utf-8", "public, max-age=86400");
+    }
     if (pathname === "/sitemap.xml") return send(res, 200, await sitemap(req), "application/xml; charset=utf-8", "public, max-age=3600");
     if (pathname === "/contact.vcf") {
       const profile = await readJson(profilePath);
@@ -121,6 +115,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (pathname.startsWith("/assets/") || pathname.startsWith("/data/") || pathname.startsWith("/.git") || pathname.includes(".")) return send(res, 404, "Not found");
     const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
+    if (pathname === "/experience") return redirect(res, 308, `${origin}/jobs`);
     if (["/", "/work", "/jobs", "/experience", "/education", "/about", "/contact"].includes(pathname)) {
       return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
     }

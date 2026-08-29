@@ -21,10 +21,16 @@ test.after(() => child?.kill());
 test("serves the app and project routes with route-specific metadata", async () => {
   const home = await fetch(`${origin}/`);
   assert.equal(home.status, 200);
-  assert.match(await home.text(), /Aden Ramirez \| Software Engineer/);
+  const homeHtml = await home.text();
+  assert.match(homeHtml, /Aden Ramirez \| Software Engineer/);
+  assert.match(homeHtml, /<main[^>]*>[\s\S]*<h1>Aden<br>Ramirez<\/h1>/);
+  assert.doesNotMatch(homeHtml, /Loading the work/);
+  assert.equal((homeHtml.match(/<h1[ >]/g) || []).length, 1);
   const project = await fetch(`${origin}/projects/sentinel`);
   assert.equal(project.status, 200);
-  assert.match(await project.text(), /Sentinel \| Aden Ramirez/);
+  const projectHtml = await project.text();
+  assert.match(projectHtml, /Sentinel \| Aden Ramirez/);
+  assert.equal((projectHtml.match(/<h1[ >]/g) || []).length, 1);
   const dwellSignal = await fetch(`${origin}/projects/dwell-signal`);
   assert.equal(dwellSignal.status, 200);
   assert.match(await dwellSignal.text(), /DwellSignal \| Aden Ramirez/);
@@ -39,7 +45,34 @@ test("serves the app and project routes with route-specific metadata", async () 
   const contactHtml = await contact.text();
   assert.match(contactHtml, /Contact \| Aden Ramirez/);
   assert.match(contactHtml, /property="og:url" content="http:\/\/127\.0\.0\.1:3199\/contact"/);
-  assert.equal((await fetch(`${origin}/projects/not-a-real-project`)).status, 404);
+  const missing = await fetch(`${origin}/projects/not-a-real-project`);
+  assert.equal(missing.status, 404);
+  const missingHtml = await missing.text();
+  assert.match(missingHtml, /Page Not Found \| Aden Ramirez/);
+  assert.match(missingHtml, /name="robots" content="noindex, follow"/);
+  assert.match(missingHtml, /<h1>That project isn't here\.<\/h1>/);
+  assert.equal((missingHtml.match(/<h1[ >]/g) || []).length, 1);
+});
+
+test("provides complete route metadata and structured data in source HTML", async () => {
+  const projectData = await (await fetch(`${origin}/api/projects`)).json();
+  const pages = ["/", "/work", "/jobs", "/education", "/about", "/contact", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  const titles = new Set();
+  for (const pathname of pages) {
+    const html = await (await fetch(`${origin}${pathname}`)).text();
+    const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+    assert.ok(title, `${pathname} title`);
+    assert.ok(!titles.has(title), `${pathname} title must be unique`);
+    titles.add(title);
+    assert.match(html, /<html lang="en">/);
+    assert.match(html, /<meta name="description" content="[^"]+"/);
+    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.png"/);
+    assert.match(html, /<link rel="canonical"[^>]+href="http:\/\/127\.0\.0\.1:3199/);
+    assert.match(html, /<link rel="icon" href="\/favicon\.svg"/);
+    assert.match(html, /<script type="application\/ld\+json"[^>]*>\{"@context":"https:\/\/schema\.org"/);
+    assert.equal((html.match(/<h1[ >]/g) || []).length, 1, `${pathname} h1 count`);
+    for (const image of html.matchAll(/<img\b[^>]*>/g)) assert.match(image[0], /\balt="[^"]*"/, `${pathname} image alt`);
+  }
 });
 
 test("blocks repository and private data files", async () => {
@@ -91,11 +124,34 @@ test("serves artwork for every project and both resume versions", async () => {
 });
 
 test("provides robots and a project sitemap", async () => {
-  assert.match(await (await fetch(`${origin}/robots.txt`)).text(), /Sitemap:/);
+  const robots = await (await fetch(`${origin}/robots.txt`)).text();
+  assert.match(robots, /User-agent: \*/);
+  assert.match(robots, /User-agent: GPTBot\nAllow: \//);
+  assert.match(robots, /User-agent: ClaudeBot\nAllow: \//);
+  assert.match(robots, /Sitemap: http:\/\/127\.0\.0\.1:3199\/sitemap\.xml/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/projects\/sentinel/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/jobs/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/education/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /\/contact/);
+});
+
+test("serves favicon and llms discovery while refusing source maps", async () => {
+  const favicon = await fetch(`${origin}/favicon.svg`);
+  assert.equal(favicon.status, 200);
+  assert.match(favicon.headers.get("content-type"), /image\/svg\+xml/);
+  const llms = await fetch(`${origin}/llms.txt`);
+  assert.equal(llms.status, 200);
+  assert.match(await llms.text(), /# Aden Ramirez Portfolio/);
+  assert.equal((await fetch(`${origin}/client.js.map`)).status, 404);
+  const client = await (await fetch(`${origin}/client.js`)).text();
+  assert.ok(Buffer.byteLength(client) < 10000, "browser JavaScript should stay under 10 KB uncompressed");
+  assert.doesNotMatch(client, /sourceMappingURL|\bReact\b|\bVite\b/);
+});
+
+test("redirects alternate Vercel hostnames to the configured production origin", async () => {
+  const response = await fetch(`${origin}/work`, { headers: { "x-forwarded-host": "portfolio-preview.vercel.app" }, redirect: "manual" });
+  assert.equal(response.status, 308);
+  assert.equal(response.headers.get("location"), `${origin}/work`);
 });
 
 test("provides a downloadable contact card", async () => {

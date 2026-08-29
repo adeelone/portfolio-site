@@ -5,18 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{TITLE}}</title>
     <meta name="description" content="{{DESCRIPTION}}" />
+    <meta name="robots" content="{{ROBOTS_META}}" />
     <meta name="theme-color" content="#f7f5ef" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="{{TITLE}}" />
     <meta property="og:description" content="{{DESCRIPTION}}" />
     <meta property="og:image" content="{{SITE_URL}}/assets/aden-headshot.png" />
+    <meta property="og:image:alt" content="Portrait of Aden Ramirez" />
     <meta property="og:url" content="{{CANONICAL}}" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESCRIPTION}}" />
+    <meta name="twitter:image" content="{{SITE_URL}}/assets/aden-headshot.png" />
     <link rel="canonical" id="canonical-link" href="{{CANONICAL}}" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/aden-headshot.png" />
     <link rel="stylesheet" href="/styles.css?v=2" />
     <link rel="stylesheet" href="/polish.css?v=2" />
-    <script type="application/ld+json" id="structured-data">{"@context":"https://schema.org","@type":"Person","name":"Aden Ramirez","url":"{{SITE_URL}}/","image":"{{SITE_URL}}/assets/aden-headshot.png","email":"mailto:adeemra@gmail.com","jobTitle":"Software Engineer and Computer Science Student","sameAs":["https://github.com/adeelone","https://linkedin.com/in/aden-ramirez-cs"]}</script>
-    <script src="/script.js?v=2" defer></script>
+    <script type="application/ld+json" id="structured-data">{{STRUCTURED_DATA}}</script>
+    <script src="/client.js?v=3" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
@@ -32,7 +39,7 @@
         <button class="nav-resume" type="button" data-resume-open>Resume</button>
       </nav>
     </header>
-    <main id="content" tabindex="-1"><div class="loading">Loading the work…</div></main>
+    <main id="content" tabindex="-1">{{CONTENT}}</main>
     <footer class="site-footer">
       <div><strong>Aden Ramirez</strong><span>Software engineer and CS student in El Paso.</span></div>
       <div class="footer-links"><a href="/contact" data-link>Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://linkedin.com/in/aden-ramirez-cs" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
@@ -50,6 +57,6 @@
       </div>
       <div class="resume-preview"><img id="resume-frame" alt="Preview of Aden Ramirez's technical resume"></div>
     </dialog>
-    <noscript>This portfolio needs JavaScript to display project data.</noscript>
+    <noscript>JavaScript is optional; interactive filters and the resume dialog require it.</noscript>
   </body>
 </html>
