@@ -41,6 +41,10 @@ function projectHref(project) {
   return `/projects/${encodeURIComponent(project.slug)}`;
 }
 
+function publicRepos(repos) {
+  return repos.filter((project) => project.slug !== "portfolio-site");
+}
+
 function projectStatus(project) {
   return project.is_private ? "Private work" : project.homepage ? "Live" : project.latest_release ? project.latest_release : "Repository";
 }
@@ -80,7 +84,7 @@ function projectRow(project, showMedia = true) {
 }
 
 function homePage(profile, repos) {
-  const projects = repos.filter((project) => project.slug !== "portfolio-site");
+  const projects = publicRepos(repos);
   const preferred = ["sentinel", "cardforge", "dominion", "storygen", "atlas"];
   const selected = preferred.map((slug) => projects.find((project) => project.slug === slug)).filter(Boolean).slice(0, 3);
   const google = profile.experience.find((role) => /google/i.test(role.company));
@@ -95,7 +99,7 @@ function homePage(profile, repos) {
 }
 
 function workPage(repos) {
-  const projects = repos.filter((project) => project.slug !== "portfolio-site");
+  const projects = publicRepos(repos);
   const featured = projects.filter((project) => ["sentinel", "cardforge", "dominion"].includes(project.slug));
   const archive = projects.filter((project) => !featured.includes(project));
   return `<header class="page-lead"><h1>Work</h1><p>Projects, experiments, and systems I've built while learning how software holds up in the real world.</p></header>
@@ -144,8 +148,25 @@ function narrative(project) {
 
 function projectPage(project, repos) {
   const story = narrative(project);
-  const related = repos.filter((item) => item.slug !== project.slug && item.slug !== "portfolio-site").slice(0, 3);
+  const related = publicRepos(repos).filter((item) => item.slug !== project.slug).slice(0, 3);
   return `<nav class="breadcrumb" aria-label="Breadcrumb"><a href="/work">Work</a><span>/</span><span aria-current="page">${escapeHtml(displayName(project.name))}</span></nav><header class="case-hero"><div><h1>${escapeHtml(displayName(project.name))}</h1><p>${escapeHtml(project.description || story.built)}</p><div class="project-actions">${project.url ? external(project.url, "View code") : ""}${project.homepage ? external(project.homepage, "Live site") : ""}<a class="text-link" href="/work">Back to all work <span aria-hidden="true">←</span></a></div></div><dl><div><dt>Status</dt><dd>${escapeHtml(projectStatus(project))}</dd></div><div><dt>Updated</dt><dd>${escapeHtml(formatDate(project.pushed_at))}</dd></div><div><dt>Tools</dt><dd>${escapeHtml(technologies(project).join(", ") || "See repository")}</dd></div></dl></header><div class="case-visual">${projectArt(project, true)}</div><section class="case-layout"><div class="case-story"><section><h2>The problem</h2><p>${escapeHtml(story.problem)}</p></section><section><h2>What I built</h2><p>${escapeHtml(story.built)}</p></section><section><h2>How it works</h2><ul>${story.works.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section><section><h2>Tradeoffs and limits</h2><p>${escapeHtml(story.limits)}</p></section><section><h2>What I learned</h2><p>${escapeHtml(story.learned)}</p></section></div><aside><h2>Project details</h2><h3>Technologies</h3><p>${escapeHtml(technologies(project, 12).join(", ") || "See repository")}</p><h3>Links</h3>${project.url ? external(project.url, "Source code") : "<p>Private repository</p>"}${project.homepage ? external(project.homepage, "Live project") : ""}<h3>Repository notes</h3><p>${project.latest_release ? `Latest release: ${escapeHtml(project.latest_release)}.` : "No public release is listed."}</p></aside></section><section class="related section-rule"><h2>Keep exploring</h2>${related.map((item) => `<a href="${projectHref(item)}"><strong>${escapeHtml(displayName(item.name))}</strong><span>${escapeHtml(item.description || "View project")}</span></a>`).join("")}</section>`;
+}
+
+function playPage() {
+  return `<header class="page-lead play-lead"><h1>Play</h1><p>A small, dependency-free game of Snake. Arrow keys or WASD on a keyboard, on-screen buttons on a touch device.</p></header>
+  <section class="play-area">
+    <div class="play-hud"><span>Score <strong id="play-score">0</strong></span><span>Best <strong id="play-best">0</strong></span><button type="button" id="play-toggle">Start</button></div>
+    <div class="play-board">
+      <canvas id="play-canvas" width="440" height="440" role="img" aria-label="Snake game board"></canvas>
+      <p id="play-status" class="play-status" role="status" aria-live="polite">Press Start, or hit any arrow key to begin.</p>
+    </div>
+    <div class="play-controls" aria-label="Touch controls">
+      <button type="button" data-direction="up" aria-label="Move up">↑</button>
+      <div><button type="button" data-direction="left" aria-label="Move left">←</button><button type="button" data-direction="down" aria-label="Move down">↓</button><button type="button" data-direction="right" aria-label="Move right">→</button></div>
+    </div>
+    <p class="play-note">Your best score is saved on this device only. Nothing is sent anywhere.</p>
+    <noscript>This game needs JavaScript. Everything else on this site works without it.</noscript>
+  </section>`;
 }
 
 function notFoundPage(project = false) {
@@ -159,6 +180,7 @@ function renderPage(pathname, profile, repos) {
   if (pathname === "/education") return educationPage(profile);
   if (pathname === "/about") return aboutPage(profile);
   if (pathname === "/contact") return contactPage(profile);
+  if (pathname === "/play") return playPage();
   const match = pathname.match(/^\/projects\/([^/]+)$/);
   if (match) {
     const project = repos.find((item) => item.slug === match[1]);
@@ -175,7 +197,8 @@ function metaForPath(pathname, repos) {
     "/experience": ["Jobs | Aden Ramirez", "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work."],
     "/education": ["Education | Aden Ramirez", "Aden Ramirez's computer science education at UTEP, including mathematics, coursework, honors, and current studies."],
     "/about": ["About | Aden Ramirez", "About Aden Ramirez, a UTEP computer science student and software engineer in El Paso."],
-    "/contact": ["Contact | Aden Ramirez", "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration."]
+    "/contact": ["Contact | Aden Ramirez", "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration."],
+    "/play": ["Play | Aden Ramirez", "A small, dependency-free Snake game built into Aden Ramirez's portfolio. Arrow keys or touch controls; best score saved locally."]
   };
   if (routes[pathname]) return { title: routes[pathname][0], description: routes[pathname][1], found: true };
   const match = pathname.match(/^\/projects\/([^/]+)$/);
@@ -211,4 +234,4 @@ function structuredDataForPath(pathname, origin, profile, meta) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": [person, page] }).replace(/</g, "\\u003c");
 }
 
-module.exports = { escapeHtml, metaForPath, renderPage, structuredDataForPath };
+module.exports = { escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs };

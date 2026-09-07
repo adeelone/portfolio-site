@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
+const { projectArtSlugs } = require("../render");
 
 const port = 3199;
 const origin = `http://127.0.0.1:${port}`;
@@ -45,6 +46,15 @@ test("serves the app and project routes with route-specific metadata", async () 
   const contactHtml = await contact.text();
   assert.match(contactHtml, /Contact \| Aden Ramirez/);
   assert.match(contactHtml, /property="og:url" content="http:\/\/127\.0\.0\.1:3199\/contact"/);
+  const play = await fetch(`${origin}/play`);
+  assert.equal(play.status, 200);
+  const playHtml = await play.text();
+  assert.match(playHtml, /Play \| Aden Ramirez/);
+  assert.match(playHtml, /<canvas id="play-canvas"/);
+  assert.match(playHtml, /<script src="\/snake\.js\?v=1" defer><\/script><script src="\/play\.js\?v=1" defer><\/script>/);
+  assert.equal((playHtml.match(/<h1[ >]/g) || []).length, 1);
+  const home2 = await fetch(`${origin}/`);
+  assert.doesNotMatch(await home2.text(), /snake\.js|play\.js/, "the game scripts must not load on unrelated pages");
   const missing = await fetch(`${origin}/projects/not-a-real-project`);
   assert.equal(missing.status, 404);
   const missingHtml = await missing.text();
@@ -56,7 +66,7 @@ test("serves the app and project routes with route-specific metadata", async () 
 
 test("provides complete route metadata and structured data in source HTML", async () => {
   const projectData = await (await fetch(`${origin}/api/projects`)).json();
-  const pages = ["/", "/work", "/jobs", "/education", "/about", "/contact", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  const pages = ["/", "/work", "/jobs", "/education", "/about", "/contact", "/play", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
   const titles = new Set();
   for (const pathname of pages) {
     const html = await (await fetch(`${origin}${pathname}`)).text();
@@ -103,9 +113,10 @@ test("serves the professional headshot as an explicit public asset", async () =>
   assert.ok((await response.arrayBuffer()).byteLength > 100000);
 });
 
-test("serves artwork for every project and both resume versions", async () => {
+test("serves artwork for every curated project and both resume versions", async () => {
   const projectData = await (await fetch(`${origin}/api/projects`)).json();
-  const artworkPaths = projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/assets/project-${project.slug}.png`);
+  const currentSlugs = new Set(projectData.repos.map((project) => project.slug));
+  const artworkPaths = [...projectArtSlugs].filter((slug) => currentSlugs.has(slug)).map((slug) => `/assets/project-${slug}.png`);
   for (const pathname of [
     ...artworkPaths,
     "/assets/resume-technical-preview.png",
@@ -146,6 +157,17 @@ test("serves favicon and llms discovery while refusing source maps", async () =>
   const client = await (await fetch(`${origin}/client.js`)).text();
   assert.ok(Buffer.byteLength(client) < 10000, "browser JavaScript should stay under 10 KB uncompressed");
   assert.doesNotMatch(client, /sourceMappingURL|\bReact\b|\bVite\b/);
+});
+
+test("serves the game scripts as small, dependency-free browser JavaScript", async () => {
+  for (const pathname of ["/snake.js", "/play.js"]) {
+    const response = await fetch(`${origin}${pathname}`);
+    assert.equal(response.status, 200, pathname);
+    assert.match(response.headers.get("content-type"), /application\/javascript/, pathname);
+    const body = await response.text();
+    assert.ok(Buffer.byteLength(body) < 8000, `${pathname} should stay under 8 KB uncompressed`);
+    assert.doesNotMatch(body, /sourceMappingURL|\bReact\b|\bVite\b/, pathname);
+  }
 });
 
 test("redirects alternate Vercel hostnames to the configured production origin", async () => {

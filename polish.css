@@ -128,3 +128,25 @@ html, body { overflow-x: hidden; }
   .course-grid { grid-template-columns: 1fr; }
   .education-note { padding: 2rem 1.25rem; }
 }
+
+.play-area { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; padding-bottom: 5rem; }
+.play-hud { display: flex; align-items: center; gap: 1.5rem; font: 700 .85rem var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.play-hud strong { color: var(--rust); font-size: 1.1rem; }
+.play-hud button { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: .6rem 1.1rem; font: 700 .85rem var(--sans); cursor: pointer; text-transform: none; letter-spacing: 0; }
+.play-hud button:hover { background: var(--blue); border-color: var(--blue); }
+.play-board { display: flex; flex-direction: column; align-items: center; gap: .75rem; }
+#play-canvas { width: min(440px, 100%); height: auto; aspect-ratio: 1 / 1; border: 1px solid var(--line); background: var(--paper); touch-action: none; }
+.play-status { margin: 0; color: var(--muted); font-size: .9rem; min-height: 1.4em; }
+.play-controls { display: none; flex-direction: column; align-items: center; gap: .5rem; }
+.play-controls div { display: flex; gap: .5rem; }
+.play-controls button { width: 3rem; height: 3rem; border: 1px solid var(--line); background: var(--paper); font-size: 1.2rem; cursor: pointer; }
+.play-controls button:active { background: var(--soft); }
+.play-note { color: var(--muted); font-size: .82rem; max-width: 40ch; text-align: center; margin: 0; }
+
+@media (hover: none) and (pointer: coarse) {
+  .play-controls { display: flex; }
+}
+
+@media (max-width: 540px) {
+  .play-hud { flex-wrap: wrap; justify-content: center; gap: .75rem 1.25rem; }
+}

@@ -8,7 +8,7 @@
   "description": "Editorial software engineering portfolio with project case studies.",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check render.js && node --check client.js && node --test",
+    "check": "node --check server.js && node --check render.js && node --check client.js && node --check snake.js && node --check play.js && node --test",
     "test": "node --test"
   }
 }

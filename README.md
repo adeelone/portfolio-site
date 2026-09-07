@@ -22,6 +22,7 @@ Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, AP
 - `/education` — verified UTEP degree progress, honors, coursework, and current classes
 - `/about` — background and working style
 - `/contact` — email, phone, professional profiles, résumé, and downloadable vCard
+- `/play` — a small, dependency-free Snake game (keyboard or touch controls, best score kept in `localStorage` only)
 - `/sitemap.xml`, `/robots.txt`, and `/llms.txt` — search and AI discovery
 
 ## Content

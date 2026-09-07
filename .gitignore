@@ -10,3 +10,4 @@ data/submissions.json
 data/login-events.json
 assets/uploads/
 .env
+.claude/

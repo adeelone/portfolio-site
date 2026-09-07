@@ -24,26 +24,27 @@
     <link rel="stylesheet" href="/polish.css?v=2" />
     <script type="application/ld+json" id="structured-data">{{STRUCTURED_DATA}}</script>
     <script src="/client.js?v=3" defer></script>
+    {{PAGE_SCRIPT}}
   </head>
   <body>
     <a class="skip-link" href="#content">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="/" data-link>Aden Ramirez</a>
+      <a class="brand" href="/">Aden Ramirez</a>
       <button class="menu-button" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
       <nav id="nav" aria-label="Primary navigation">
-        <a href="/work" data-link>Work</a>
-        <a href="/jobs" data-link>Jobs</a>
-        <a href="/education" data-link>Education</a>
-        <a href="/about" data-link>About</a>
-        <a href="/contact" data-link>Contact</a>
+        <a href="/work">Work</a>
+        <a href="/jobs">Jobs</a>
+        <a href="/education">Education</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
         <button class="nav-resume" type="button" data-resume-open>Resume</button>
       </nav>
     </header>
     <main id="content" tabindex="-1">{{CONTENT}}</main>
     <footer class="site-footer">
       <div><strong>Aden Ramirez</strong><span>Software engineer and CS student in El Paso.</span></div>
-      <div class="footer-links"><a href="/contact" data-link>Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://linkedin.com/in/aden-ramirez-cs" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
-      <small>© <span id="year"></span> Aden Ramirez. Built by hand, kept honest.</small>
+      <div class="footer-links"><a href="/contact">Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://linkedin.com/in/aden-ramirez-cs" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
+      <small>© <span id="year"></span> Aden Ramirez. Built by hand, kept honest. <a href="/play">Bored? Play a quick game.</a></small>
     </footer>
     <dialog class="resume-dialog" id="resume-dialog" aria-labelledby="resume-title">
       <div class="resume-dialog-header">
