@@ -90,7 +90,7 @@
   }
 
   function start() {
-    if (running) return;
+    if (running) stop();
     state = window.Snake.createGame(GRID, GRID);
     running = true;
     toggleButton.textContent = "Restart";
@@ -100,7 +100,7 @@
   }
 
   function steer(directionName) {
-    if (!running) return start();
+    if (!running) start();
     state = window.Snake.turn(state, directionName);
   }
 
@@ -115,7 +115,7 @@
       steer(direction);
       return;
     }
-    if (event.key === " " || event.key === "Enter") {
+    if (!running && event.target === document.body && (event.key === " " || event.key === "Enter")) {
       event.preventDefault();
       start();
     }
@@ -130,9 +130,8 @@
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && running) {
       stop();
-      toggleButton.textContent = "Resume";
-      announce("Paused while this tab was in the background. Press Start to resume.");
-      running = false;
+      toggleButton.textContent = "Start";
+      announce("Round ended while this tab was in the background. Press Start to play again.");
     }
   });
 

@@ -1,19 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
-import { basename, dirname, extname, join } from "node:path";
+import { join } from "node:path";
 
 const ROOT = process.cwd();
 const DATA_DIR = join(ROOT, "data");
-const ASSET_DIR = join(ROOT, "assets", "projects");
 const OWNER = "adeelone";
 const NON_DISPLAY_LANGUAGES = new Set(["Makefile", "Dockerfile", "HCL", "PowerShell"]);
 
 function gh(args) {
   return execFileSync("gh", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-}
-
-function ghBuffer(args) {
-  return execFileSync("gh", args, { cwd: ROOT, stdio: ["ignore", "pipe", "pipe"] });
 }
 
 function safeSlug(value) {
@@ -94,92 +89,6 @@ function graphqlPinned() {
   }
 }
 
-function repoContents(path) {
-  try {
-    const raw = gh(["api", path]);
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function downloadFile(apiPath, outPath) {
-  ensureDir(dirname(outPath));
-  const data = ghBuffer(["api", apiPath]);
-  writeFileSync(outPath, data);
-  return outPath;
-}
-
-function pickReadmeScreenshot(readmeLines) {
-  for (const line of readmeLines) {
-    const markdownImage = line.match(/!\[[^\]]*]\(([^)]+)\)/);
-    if (!markdownImage) continue;
-    const url = markdownImage[1];
-    if (/badge|shields\.io|actions\/workflows/i.test(url)) continue;
-    if (/\.(png|jpe?g|webp|gif|svg)$/i.test(url)) {
-      return url.replace(/^<|>$/g, "");
-    }
-  }
-  return null;
-}
-
-async function maybeDownloadScreenshot(repo, readmeLines) {
-  const repoDir = join(ASSET_DIR, safeSlug(repo.name));
-  ensureDir(repoDir);
-  const directReadmeImage = pickReadmeScreenshot(readmeLines);
-
-  if (directReadmeImage) {
-    if (/^https?:\/\//i.test(directReadmeImage)) {
-      if (!/raw\.githubusercontent\.com|githubusercontent\.com/i.test(directReadmeImage)) {
-        return null;
-      }
-      const ext = extname(new URL(directReadmeImage).pathname) || ".png";
-      const outPath = join(repoDir, `cover${ext}`);
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 8000);
-        const response = await fetch(directReadmeImage, { signal: controller.signal });
-        clearTimeout(timeout);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch ${directReadmeImage}`);
-        }
-        const data = Buffer.from(await response.arrayBuffer());
-        writeFileSync(outPath, data);
-        return `assets/projects/${safeSlug(repo.name)}/${basename(outPath)}`;
-      } catch {
-        return null;
-      }
-    }
-
-    const cleanPath = directReadmeImage.replace(/^\.\//, "");
-    const apiPath = `/repos/${OWNER}/${repo.name}/contents/${cleanPath}?ref=${repo.defaultBranchRef?.name ?? "main"}`;
-    const ext = extname(cleanPath) || ".png";
-    const outPath = join(repoDir, `cover${ext}`);
-    try {
-      downloadFile(apiPath, outPath);
-      return `assets/projects/${safeSlug(repo.name)}/${basename(outPath)}`;
-    } catch {
-      // fall through
-    }
-  }
-
-  for (const dirName of ["docs", "assets", "screenshots"]) {
-    const listing = repoContents(`/repos/${OWNER}/${repo.name}/contents/${dirName}?ref=${repo.defaultBranchRef?.name ?? "main"}`);
-    if (!Array.isArray(listing)) continue;
-    const file = listing.find((entry) => entry.type === "file" && /\.(png|jpe?g|webp|gif|svg)$/i.test(entry.name));
-    if (!file) continue;
-    const outPath = join(repoDir, file.name);
-    try {
-      downloadFile(`/repos/${OWNER}/${repo.name}/contents/${dirName}/${file.name}?ref=${repo.defaultBranchRef?.name ?? "main"}`, outPath);
-      return `assets/projects/${safeSlug(repo.name)}/${file.name}`;
-    } catch {
-      // try next directory
-    }
-  }
-
-  return null;
-}
-
 function repoDescription(repo, highlights) {
   if (repo.description?.trim()) return repo.description.trim();
   if (highlights?.length) return highlights[0];
@@ -187,9 +96,8 @@ function repoDescription(repo, highlights) {
   return readme?.trim() ?? "";
 }
 
-async function main() {
+function main() {
   ensureDir(DATA_DIR);
-  ensureDir(ASSET_DIR);
 
   const highlightsByName = readJson(join(DATA_DIR, "highlights.json"), {});
   const privateProjects = readJson(join(DATA_DIR, "private-projects.json"), []);
@@ -210,36 +118,35 @@ async function main() {
   const filteredRepos = repoList.filter((repo) => !repo.isFork && !repo.isArchived && !repo.isPrivate && repo.visibility === "PUBLIC");
 
   for (const repo of filteredRepos) {
-      const readmeLines = previewReadme(OWNER, repo.name);
-      const curatedHighlights = findHighlights(repo.name, highlightsByName);
-      const screenshot = await maybeDownloadScreenshot(repo, readmeLines);
+    const readmeLines = previewReadme(OWNER, repo.name);
+    const curatedHighlights = findHighlights(repo.name, highlightsByName);
 
-      repos.push({
-        name: repo.name,
-        slug: safeSlug(repo.name),
-        url: repo.url,
-        homepage: repo.homepageUrl || null,
-        description: repoDescription(repo, curatedHighlights),
-        languages: parseLanguages(repo.languages),
-        topics: parseTopics(repo.repositoryTopics),
-        tech: topTags(repo),
-        stars: repo.stargazerCount,
-        pushed_at: repo.pushedAt,
-        updated_at: repo.updatedAt,
-        is_pinned: pinned.has(repo.name),
-        is_private: false,
-        is_archived: false,
-        latest_release: repo.latestRelease?.tagName ?? null,
-        screenshot,
-        highlights: curatedHighlights,
-        readme_preview: readmeLines
-      });
+    repos.push({
+      name: repo.name,
+      slug: safeSlug(repo.name),
+      url: repo.url,
+      homepage: repo.homepageUrl || null,
+      description: repoDescription(repo, curatedHighlights),
+      languages: parseLanguages(repo.languages),
+      topics: parseTopics(repo.repositoryTopics),
+      tech: topTags(repo),
+      stars: repo.stargazerCount,
+      pushed_at: repo.pushedAt,
+      updated_at: repo.updatedAt,
+      is_pinned: pinned.has(repo.name),
+      is_private: false,
+      is_archived: false,
+      latest_release: repo.latestRelease?.tagName ?? null,
+      screenshot: null,
+      highlights: curatedHighlights,
+      readme_preview: readmeLines
+    });
   }
 
   repos.sort((a, b) => {
-      if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1;
-      return new Date(b.pushed_at) - new Date(a.pushed_at);
-    });
+    if (a.is_pinned !== b.is_pinned) return a.is_pinned ? -1 : 1;
+    return new Date(b.pushed_at) - new Date(a.pushed_at);
+  });
 
   for (const project of privateProjects) {
     repos.push({
@@ -257,10 +164,14 @@ async function main() {
     });
   }
 
-  writeJson(join(DATA_DIR, "projects.json"), {
+  const projectsPath = join(DATA_DIR, "projects.json");
+  const currentProjects = readJson(projectsPath, {});
+  const reposChanged = JSON.stringify(currentProjects.repos) !== JSON.stringify(repos);
+  if (!reposChanged && currentProjects.generated_at) return;
+  writeJson(projectsPath, {
     generated_at: new Date().toISOString(),
     repos
   });
 }
 
-await main();
+main();
