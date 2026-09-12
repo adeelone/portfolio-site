@@ -1,5 +1,8 @@
 #content:focus { outline: none; }
 html, body { overflow-x: hidden; }
+.brand-group { display: flex; align-items: center; gap: .6rem; }
+.play-icon { display: inline-flex; align-items: center; justify-content: center; padding: .3rem; color: var(--muted); }
+.play-icon:hover { color: var(--blue); }
 .nav-resume,.inline-resume { border: 0; background: none; color: var(--blue); padding: .4rem 0; cursor: pointer; font-weight: 700; }
 .nav-resume { color: inherit; border-bottom: 2px solid transparent; font-weight: 400; }
 
