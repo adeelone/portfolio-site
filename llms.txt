@@ -2,7 +2,7 @@
 
 > Public portfolio for Aden Ramirez, a computer science student and software engineer in El Paso, Texas.
 
-Canonical site: https://aden-ramirez-portfolio.onrender.com
+Canonical site: https://adenramirez.dev
 
 ## Main pages
 

@@ -101,6 +101,9 @@ test("sets production security headers", async () => {
 });
 
 test("exposes only read-only public APIs", async () => {
+  const health = await fetch(`${origin}/api/health`);
+  assert.equal(health.status, 200);
+  assert.equal(health.headers.get("cache-control"), "no-store");
   assert.equal((await fetch(`${origin}/api/profile`)).status, 200);
   assert.equal((await fetch(`${origin}/api/projects`)).status, 200);
   assert.equal((await fetch(`${origin}/api/submissions`, { method: "POST", body: "{}" })).status, 405);
@@ -170,10 +173,12 @@ test("serves the game scripts as small, dependency-free browser JavaScript", asy
   }
 });
 
-test("redirects alternate Vercel hostnames to the configured production origin", async () => {
-  const response = await fetch(`${origin}/work`, { headers: { "x-forwarded-host": "portfolio-preview.vercel.app" }, redirect: "manual" });
-  assert.equal(response.status, 308);
-  assert.equal(response.headers.get("location"), `${origin}/work`);
+test("redirects alternate public hostnames to the configured production origin", async () => {
+  for (const host of ["portfolio-preview.vercel.app", "mysite-bold-aurora-9442.fly.dev", "www.127.0.0.1"]) {
+    const response = await fetch(`${origin}/work?filter=live`, { headers: { "x-forwarded-host": host }, redirect: "manual" });
+    assert.equal(response.status, 308, host);
+    assert.equal(response.headers.get("location"), `${origin}/work?filter=live`, host);
+  }
 });
 
 test("provides a downloadable contact card", async () => {

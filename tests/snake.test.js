@@ -62,6 +62,17 @@ test("step kills the snake on self collision", () => {
   assert.equal(next.alive, false);
 });
 
+test("step allows the snake to enter the tail cell when the tail moves away", () => {
+  const state = Snake.createGame(4, 4);
+  state.snake = [{ x: 1, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 2 }, { x: 0, y: 1 }];
+  state.direction = Snake.DIRECTIONS.left;
+  state.pendingDirection = Snake.DIRECTIONS.left;
+  state.food = { x: 3, y: 3 };
+  const next = Snake.step(state);
+  assert.equal(next.alive, true);
+  assert.deepEqual(next.snake, [{ x: 0, y: 1 }, { x: 1, y: 1 }, { x: 1, y: 2 }, { x: 0, y: 2 }]);
+});
+
 test("turn and step are no-ops once the game has ended", () => {
   const dead = { ...Snake.createGame(10, 10), alive: false };
   assert.deepEqual(Snake.step(dead), dead);

@@ -90,6 +90,7 @@ html, body { overflow-x: hidden; }
 }
 
 @media (max-width: 850px) {
+  #nav { left: 0; right: 0; padding-inline: 18px; border-left: 0; border-right: 0; }
   .jobs-lead { grid-template-columns: 1fr; gap: 1rem; }
   .jobs-lead aside { border-left: 0; border-top: 1px solid var(--line); padding: 1rem 0 0; }
   .jobs-note { padding-left: 0; }

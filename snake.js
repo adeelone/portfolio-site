@@ -54,10 +54,11 @@
     const head = state.snake[0];
     const nextHead = { x: head.x + direction.x, y: head.y + direction.y };
     const hitWall = nextHead.x < 0 || nextHead.y < 0 || nextHead.x >= state.width || nextHead.y >= state.height;
-    const hitSelf = state.snake.some((segment) => segment.x === nextHead.x && segment.y === nextHead.y);
+    const ateFood = Boolean(state.food) && nextHead.x === state.food.x && nextHead.y === state.food.y;
+    const collisionBody = ateFood ? state.snake : state.snake.slice(0, -1);
+    const hitSelf = collisionBody.some((segment) => segment.x === nextHead.x && segment.y === nextHead.y);
     if (hitWall || hitSelf) return { ...state, direction, alive: false };
 
-    const ateFood = Boolean(state.food) && nextHead.x === state.food.x && nextHead.y === state.food.y;
     const body = ateFood ? state.snake : state.snake.slice(0, -1);
     const nextSnake = [nextHead, ...body];
     if (!ateFood) return { ...state, snake: nextSnake, direction };

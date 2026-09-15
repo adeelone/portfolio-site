@@ -49,8 +49,8 @@ function send(res, status, body, type = "text/plain; charset=utf-8", cache) {
   res.end(body);
 }
 
-function sendJson(res, status, value) {
-  send(res, status, JSON.stringify(value), "application/json; charset=utf-8", "public, max-age=300");
+function sendJson(res, status, value, cache = "public, max-age=300") {
+  send(res, status, JSON.stringify(value), "application/json; charset=utf-8", cache);
 }
 
 function redirect(res, status, location) {
@@ -87,13 +87,17 @@ async function sitemap(req) {
 
 const server = http.createServer(async (req, res) => {
   try {
-    const pathname = decodeURIComponent(new URL(req.url, "http://localhost").pathname).replace(/\/+$/, "") || "/";
+    const requestUrl = new URL(req.url, "http://localhost");
+    const pathname = decodeURIComponent(requestUrl.pathname).replace(/\/+$/, "") || "/";
     if (!["GET", "HEAD"].includes(req.method)) return sendJson(res, 405, { error: "Method not allowed." });
     const requestHost = String(req.headers["x-forwarded-host"] || req.headers.host || "").split(",")[0].trim();
-    if (configuredSiteUrl && process.env.NODE_ENV === "production" && /\.vercel\.app(?::\d+)?$/i.test(requestHost) && !configuredSiteUrl.includes(requestHost)) {
-      return redirect(res, 308, `${configuredSiteUrl}${pathname === "/" ? "" : pathname}`);
+    const requestHostname = requestHost.replace(/:\d+$/, "").toLowerCase();
+    const canonicalHostname = configuredSiteUrl ? new URL(configuredSiteUrl).hostname.toLowerCase() : "";
+    const alternatePublicHost = requestHostname === `www.${canonicalHostname}` || /\.(?:vercel\.app|fly\.dev)$/i.test(requestHostname);
+    if (configuredSiteUrl && process.env.NODE_ENV === "production" && alternatePublicHost && requestHostname !== canonicalHostname) {
+      return redirect(res, 308, `${configuredSiteUrl}${pathname === "/" ? "" : pathname}${requestUrl.search}`);
     }
-    if (pathname === "/api/health") return sendJson(res, 200, { ok: true });
+    if (pathname === "/api/health") return sendJson(res, 200, { ok: true }, "no-store");
     if (pathname === "/api/profile") return sendJson(res, 200, await readJson(profilePath));
     if (pathname === "/api/projects") return sendJson(res, 200, await readJson(projectsPath));
     if (pathname === "/robots.txt") {
