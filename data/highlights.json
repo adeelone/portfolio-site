@@ -1,4 +1,8 @@
 {
+  "flux-task-board": [
+    "Built a four-column Kanban board with drag-and-drop, guest accounts, teams, labels, due dates, and live status metrics.",
+    "Connected React and dnd-kit to Supabase Auth, Postgres, Realtime, and row-level security so each guest gets an isolated workspace."
+  ],
   "LexiMatch": [
     "Built a Java MVC Wordle clone with a 12K-word dictionary and difficulty modes.",
     "Kept guess evaluation under 50 ms while maintaining 92% unit test coverage."

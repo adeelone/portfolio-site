@@ -30,6 +30,19 @@ document.querySelectorAll("[data-filter]").forEach((button) => button.addEventLi
 
 document.querySelector("#project-search")?.addEventListener("input", filterProjects);
 
+const jobsViewToggle = document.querySelector("#jobs-view-toggle");
+jobsViewToggle?.addEventListener("click", () => {
+  const grouped = document.querySelector(".job-groups");
+  const chronological = document.querySelector(".jobs-chronological");
+  const description = document.querySelector("#jobs-view-description");
+  const merged = jobsViewToggle.getAttribute("aria-pressed") === "true";
+  jobsViewToggle.setAttribute("aria-pressed", String(!merged));
+  grouped.hidden = !merged;
+  chronological.hidden = merged;
+  jobsViewToggle.textContent = merged ? "Merge chronologically" : "Show grouped view";
+  if (description) description.textContent = merged ? "Grouped by relevance" : "All roles in chronological order";
+});
+
 menuButton?.addEventListener("click", () => {
   const open = nav.classList.toggle("open");
   menuButton.setAttribute("aria-expanded", String(open));

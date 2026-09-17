@@ -1,4 +1,4 @@
-const projectArtSlugs = new Set(["dwell-signal", "sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"]);
+const projectArtSlugs = new Set(["flux-task-board", "dwell-signal", "sentinel", "cardforge", "dominion", "demiurge", "meridian", "weather-compare", "atlas", "reel", "stockpilot", "storygen", "volley", "relay", "myreadlist", "aurora", "compass", "medelite-report-gen", "price-deal-watcher", "chessgen", "leximatch", "simple-chess-game", "miner-eats", "nebula-stat-proto", "shpe-utep-website"]);
 const projectDisplayNames = { "dwell-signal": "DwellSignal" };
 
 function escapeHtml(value = "") {
@@ -85,12 +85,12 @@ function projectRow(project, showMedia = true) {
 
 function homePage(profile, repos) {
   const projects = publicRepos(repos);
-  const preferred = ["sentinel", "cardforge", "dominion", "storygen", "atlas"];
+  const preferred = ["flux-task-board", "relay", "sentinel", "cardforge", "dominion"];
   const selected = preferred.map((slug) => projects.find((project) => project.slug === slug)).filter(Boolean).slice(0, 3);
   const google = profile.experience.find((role) => /google/i.test(role.company));
   return `<section class="hero">
     <div class="hero-copy"><h1>Aden<br>Ramirez</h1><p class="hero-role">Software engineer and computer science student.</p><p class="hero-line">I build careful software for real people.</p><div class="hero-actions"><a class="button" href="/work">See my work <span aria-hidden="true">→</span></a><a class="text-link" href="mailto:${escapeHtml(profile.email)}">Say hello</a></div></div>
-    <figure class="portrait"><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Aden Ramirez outdoors in San Francisco"><figcaption>Curious. Pragmatic. Detail-oriented. Human.</figcaption></figure>
+    <figure class="portrait"><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Professional headshot of Aden Ramirez"><figcaption>Curious. Pragmatic. Detail-oriented. Human.</figcaption></figure>
   </section>
   <section class="selected-work section-rule"><div class="section-intro"><h2>A few things I've built.</h2><p>Recent systems and products where the interesting work lives in the details.</p></div>${selected.map((project) => projectRow(project)).join("")}<a class="button secondary" href="/work">Browse all ${projects.length} projects</a></section>
   <section class="proof section-rule"><div><h2>Software should hold up after the demo.</h2><p>I care about readable systems, useful interfaces, and the rollout work between “it runs” and “it is ready.”</p><p>Before and alongside engineering, I have also worked in education, customer support, retail, and food service. Every one of those jobs shaped how I communicate and show up for a team.</p></div><div class="proof-story"><span>${escapeHtml(google?.dates || "May–Aug 2025")}</span><h3>${escapeHtml(google?.title || "STEP Intern, Software Engineering")}</h3><p>${escapeHtml(google?.company || "Google")} · ${escapeHtml(google?.context || "Google Cloud")}</p><ul>${(google?.bullets || []).slice(0, 2).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul><a class="text-link" href="/jobs">See every job <span aria-hidden="true">→</span></a></div></section>
@@ -100,7 +100,7 @@ function homePage(profile, repos) {
 
 function workPage(repos) {
   const projects = publicRepos(repos);
-  const featured = projects.filter((project) => ["sentinel", "cardforge", "dominion"].includes(project.slug));
+  const featured = projects.filter((project) => ["flux-task-board", "relay", "sentinel"].includes(project.slug));
   const archive = projects.filter((project) => !featured.includes(project));
   return `<header class="page-lead"><h1>Work</h1><p>Projects, experiments, and systems I've built while learning how software holds up in the real world.</p></header>
     <section class="project-tools" aria-label="Project filters"><div class="filters" role="group" aria-label="Filter projects">${["all", "featured", "live", "backend", "full-stack", "games"].map((filter) => `<button type="button" data-filter="${filter}" class="${filter === "all" ? "active" : ""}">${filter === "full-stack" ? "Full-stack" : filter[0].toUpperCase() + filter.slice(1)}</button>`).join("")}</div><label class="search"><span class="sr-only">Search projects</span><input type="search" id="project-search" placeholder="Search projects" autocomplete="off"></label></section>
@@ -108,10 +108,15 @@ function workPage(repos) {
 }
 
 function jobsPage(profile) {
-  const rank = { "Boys & Girls Club of El Paso": 1, "Education at Work x Intuit": 2, "Best Buy": 3, Google: 4, "Peter Piper Pizza": 5 };
+  const rank = { "The Cornerstone Project": 1, "Premiere Pet Sitters of Paso Del Norte": 2, "Boys & Girls Clubs of America": 3, "Education at Work x Intuit": 4, "Best Buy": 5, Google: 6, "Peter Piper Pizza": 7 };
   const jobs = [...profile.experience, ...(profile.additional_experience || [])].sort((a, b) => (rank[a.company] || 99) - (rank[b.company] || 99));
-  const kind = (role) => /Google/i.test(role.company) ? "Software engineering" : /Education at Work|Intuit/i.test(role.company) ? "Customer and product support" : /Boys & Girls/i.test(role.company) ? "Education and youth programs" : /Best Buy/i.test(role.company) ? "Retail and sales" : "Food service and operations";
-  return `<header class="page-lead jobs-lead"><div><h1>Jobs</h1><p>Every paid role—not only the technical ones.</p></div><aside><strong>${jobs.length} roles</strong><span>Engineering, education, support, retail, and service.</span></aside></header><section class="jobs-note"><p>I am proud of the full path. Each job taught me something different about reliability, patience, communication, customers, or the people depending on the work.</p></section><section class="timeline jobs-timeline">${jobs.map((role, index) => `<article><div class="timeline-meta"><span>${escapeHtml(role.dates)}</span><span>${escapeHtml(role.location || "El Paso, TX")}</span><span class="job-number">${String(index + 1).padStart(2, "0")}</span></div><div><p class="company">${escapeHtml(role.company)}</p><h2>${escapeHtml(role.title)}</h2><p class="job-kind">${escapeHtml(kind(role))}</p><p>${escapeHtml(role.context)}</p>${role.bullets?.length ? `<ul>${role.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}<div class="tech-line">${(role.tags || []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div></article>`).join("")}</section><section class="education section-rule"><h2>Education alongside work</h2><div><p><strong>${escapeHtml(profile.education.degree)}</strong></p><p>${escapeHtml(profile.education.school)}</p><p>${escapeHtml(profile.education.graduation)} · GPA ${escapeHtml(profile.education.gpa)}</p><a class="text-link" href="/education">See education details <span aria-hidden="true">→</span></a></div></section>`;
+  const technicalCompanies = new Set(["Google", "Education at Work x Intuit", "Boys & Girls Clubs of America"]);
+  const technicalJobs = jobs.filter((role) => technicalCompanies.has(role.company));
+  const generalJobs = jobs.filter((role) => !technicalCompanies.has(role.company));
+  const kind = (role) => /Google/i.test(role.company) ? "Software engineering" : /Cornerstone/i.test(role.company) ? "Civic engagement and outreach" : /Pet Sitters/i.test(role.company) ? "Client service and care" : /Education at Work|Intuit/i.test(role.company) ? "Customer and product support" : /Boys & Girls/i.test(role.company) ? "Education and youth programs" : /Best Buy/i.test(role.company) ? "Retail and sales" : "Food service and operations";
+  const renderRole = (role, index) => `<article><div class="timeline-meta"><span>${escapeHtml(role.dates)}</span><span>${escapeHtml(role.location || "El Paso, TX")}</span><span class="job-number">${String(index + 1).padStart(2, "0")}</span></div><div><p class="company">${escapeHtml(role.company)}</p><h2>${escapeHtml(role.title)}</h2><p class="job-kind">${escapeHtml(kind(role))}</p><p>${escapeHtml(role.context)}</p>${role.bullets?.length ? `<ul>${role.bullets.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}<div class="tech-line">${(role.tags || []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div></div></article>`;
+  const renderGroup = (title, copy, roles, open = false) => `<details class="job-group"${open ? " open" : ""}><summary><span><strong>${escapeHtml(title)}</strong><small>${escapeHtml(copy)}</small></span><span class="job-group-count">${roles.length} ${roles.length === 1 ? "role" : "roles"}</span></summary><section class="timeline jobs-timeline">${roles.map(renderRole).join("")}</section></details>`;
+  return `<header class="page-lead jobs-lead"><div><h1>Jobs</h1><p>Every paid role, separated by the kind of work.</p></div><aside><strong>${jobs.length} roles</strong><span>Technical experience first, with the rest one click away.</span></aside></header><section class="jobs-note"><p>I am proud of the full path. Each job taught me something different about reliability, patience, communication, customers, or the people depending on the work.</p></section><div class="jobs-toolbar"><p id="jobs-view-description">Grouped by relevance</p><button type="button" id="jobs-view-toggle" aria-pressed="false" aria-describedby="jobs-view-description">Merge chronologically</button></div><section class="job-groups" aria-label="Work experience groups">${renderGroup("Technical experience", "Google, TurboTax, and Boys & Girls Clubs.", technicalJobs, true)}${renderGroup("General experience", "Community, client service, retail, and operations.", generalJobs)}</section><section class="timeline jobs-timeline jobs-chronological" aria-label="All work experience in chronological order" hidden>${jobs.map(renderRole).join("")}</section><section class="education section-rule"><h2>Education alongside work</h2><div><p><strong>${escapeHtml(profile.education.degree)}</strong></p><p>${escapeHtml(profile.education.school)}</p><p>${escapeHtml(profile.education.graduation)} · GPA ${escapeHtml(profile.education.gpa)}</p><a class="text-link" href="/education">See education details <span aria-hidden="true">→</span></a></div></section>`;
 }
 
 function educationPage(profile) {
@@ -124,7 +129,7 @@ function educationPage(profile) {
 }
 
 function aboutPage(profile) {
-  return `<header class="page-lead about-lead"><h1>About</h1><p>I'm Aden—a computer science student who likes the cleanup-heavy parts of engineering as much as the first build.</p></header><section class="about-layout"><figure><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Aden Ramirez in San Francisco"><figcaption>San Francisco, during my 2025 internship.</figcaption></figure><div class="prose">${profile.about.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}<h2>How I work</h2>${profile.focus_areas.map((item) => `<section><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.copy)}</p></section>`).join("")}</div></section><section class="personal-note section-rule"><h2>Outside the editor</h2><p>I teach STEAM, stay involved with UTEP's engineering community, and enjoy work that lets me explain complicated things plainly. This site is deliberately a little quieter than most developer portfolios: the work should do the talking.</p></section>`;
+  return `<header class="page-lead about-lead"><h1>About</h1><p>I'm Aden—a computer science student who likes the cleanup-heavy parts of engineering as much as the first build.</p></header><section class="about-layout"><figure><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Professional headshot of Aden Ramirez"><figcaption>Aden Ramirez, computer science student and software engineer.</figcaption></figure><div class="prose">${profile.about.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}<h2>How I work</h2>${profile.focus_areas.map((item) => `<section><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.copy)}</p></section>`).join("")}</div></section><section class="personal-note section-rule"><h2>Outside the editor</h2><p>I organize civic-engagement outreach, mentor through UTEP's engineering community, and enjoy work that lets me explain complicated things plainly. This site is deliberately a little quieter than most developer portfolios: the work should do the talking.</p></section>`;
 }
 
 function contactPage(profile) {
@@ -155,16 +160,16 @@ function projectPage(project, repos) {
 function playPage() {
   return `<header class="page-lead play-lead"><h1>Play</h1><p>A small, dependency-free game of Snake. Arrow keys or WASD on a keyboard, on-screen buttons on a touch device.</p></header>
   <section class="play-area">
-    <div class="play-hud"><span>Score <strong id="play-score">0</strong></span><span>Best <strong id="play-best">0</strong></span><button type="button" id="play-toggle">Start</button></div>
+    <div class="play-hud"><span>Score <strong id="play-score">0</strong></span><span>Best <strong id="play-best">0</strong></span><div class="play-actions"><button type="button" id="play-toggle">Start</button><button type="button" id="play-pause" disabled>Pause</button></div></div>
     <div class="play-board">
-      <canvas id="play-canvas" width="440" height="440" role="img" aria-label="Snake game board"></canvas>
+      <canvas id="play-canvas" width="440" height="440" role="img" aria-label="Snake game board" tabindex="0"></canvas>
       <p id="play-status" class="play-status" role="status" aria-live="polite">Press Start, or hit any arrow key to begin.</p>
     </div>
     <div class="play-controls" aria-label="Touch controls">
       <button type="button" data-direction="up" aria-label="Move up">↑</button>
       <div><button type="button" data-direction="left" aria-label="Move left">←</button><button type="button" data-direction="down" aria-label="Move down">↓</button><button type="button" data-direction="right" aria-label="Move right">→</button></div>
     </div>
-    <p class="play-note">Your best score is saved on this device only. Nothing is sent anywhere.</p>
+    <p class="play-note">Arrow keys or WASD steer. Space pauses or resumes. Your best score is saved on this device only.</p>
     <noscript>This game needs JavaScript. Everything else on this site works without it.</noscript>
   </section>`;
 }

@@ -74,7 +74,7 @@ async function renderApp(pathname, origin, preloaded = {}) {
     .replaceAll("{{CANONICAL}}", escapeHtml(canonical))
     .replaceAll("{{SITE_URL}}", escapeHtml(origin))
     .replace("{{STRUCTURED_DATA}}", structuredDataForPath(canonicalPath, origin, profile, meta))
-    .replace("{{PAGE_SCRIPT}}", pathname === "/play" ? '<script src="/snake.js?v=1" defer></script><script src="/play.js?v=1" defer></script>' : "")
+    .replace("{{PAGE_SCRIPT}}", pathname === "/play" ? '<script src="/snake.js?v=1" defer></script><script src="/play.js?v=2" defer></script>' : "")
     .replace("{{CONTENT}}", renderPage(pathname, profile, projects.repos));
 }
 

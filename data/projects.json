@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-17T21:33:56.320Z",
+  "generated_at": "2026-09-17T21:41:41.358Z",
   "repos": [
     {
       "name": "portfolio-site",
@@ -494,7 +494,7 @@
       "slug": "flux-task-board",
       "url": "https://github.com/adeelone/flux-task-board",
       "homepage": "https://flux-task-board.vercel.app",
-      "description": "A polished Kanban task board with guest accounts, drag-and-drop, teams, and labels — built for the Task Board Assessment Challenge.",
+      "description": "Built a four-column Kanban board with drag-and-drop, guest accounts, teams, labels, due dates, and live status metrics.",
       "languages": [
         "HTML",
         "JavaScript",
@@ -518,7 +518,10 @@
       "is_archived": false,
       "latest_release": null,
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Built a four-column Kanban board with drag-and-drop, guest accounts, teams, labels, due dates, and live status metrics.",
+        "Connected React and dnd-kit to Supabase Auth, Postgres, Realtime, and row-level security so each guest gets an isolated workspace."
+      ],
       "readme_preview": [
         "# Flux Board",
         "",

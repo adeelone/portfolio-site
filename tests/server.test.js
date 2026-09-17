@@ -37,7 +37,14 @@ test("serves the app and project routes with route-specific metadata", async () 
   assert.match(await dwellSignal.text(), /DwellSignal \| Aden Ramirez/);
   const jobs = await fetch(`${origin}/jobs`);
   assert.equal(jobs.status, 200);
-  assert.match(await jobs.text(), /Jobs \| Aden Ramirez/);
+  const jobsHtml = await jobs.text();
+  assert.match(jobsHtml, /Jobs \| Aden Ramirez/);
+  assert.match(jobsHtml, /<details class="job-group" open>/);
+  assert.match(jobsHtml, /<details class="job-group"><summary>/);
+  assert.match(jobsHtml, /Technical experience/);
+  assert.match(jobsHtml, /General experience/);
+  assert.match(jobsHtml, /id="jobs-view-toggle"[^>]+>Merge chronologically/);
+  assert.match(jobsHtml, /class="timeline jobs-timeline jobs-chronological"[^>]+hidden/);
   const education = await fetch(`${origin}/education`);
   assert.equal(education.status, 200);
   assert.match(await education.text(), /Education \| Aden Ramirez/);
@@ -51,7 +58,8 @@ test("serves the app and project routes with route-specific metadata", async () 
   const playHtml = await play.text();
   assert.match(playHtml, /Play \| Aden Ramirez/);
   assert.match(playHtml, /<canvas id="play-canvas"/);
-  assert.match(playHtml, /<script src="\/snake\.js\?v=1" defer><\/script><script src="\/play\.js\?v=1" defer><\/script>/);
+  assert.match(playHtml, /id="play-pause" disabled>Pause/);
+  assert.match(playHtml, /<script src="\/snake\.js\?v=1" defer><\/script><script src="\/play\.js\?v=2" defer><\/script>/);
   assert.equal((playHtml.match(/<h1[ >]/g) || []).length, 1);
   const home2 = await fetch(`${origin}/`);
   assert.doesNotMatch(await home2.text(), /snake\.js|play\.js/, "the game scripts must not load on unrelated pages");

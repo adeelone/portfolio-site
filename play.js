@@ -7,6 +7,7 @@
   const bestEl = document.querySelector("#play-best");
   const statusEl = document.querySelector("#play-status");
   const toggleButton = document.querySelector("#play-toggle");
+  const pauseButton = document.querySelector("#play-pause");
 
   const GRID = 22;
   const CELL = canvas.width / GRID;
@@ -33,6 +34,7 @@
   let state = window.Snake.createGame(GRID, GRID);
   let timer = null;
   let running = false;
+  let paused = false;
 
   function paint() {
     const styles = getComputedStyle(document.documentElement);
@@ -58,14 +60,15 @@
     if (statusEl) statusEl.textContent = message;
   }
 
-  function stop() {
+  function stopTimer() {
     if (timer) clearInterval(timer);
     timer = null;
-    running = false;
   }
 
   function endRound() {
-    stop();
+    stopTimer();
+    running = false;
+    paused = false;
     if (state.score > best) {
       best = state.score;
       writeBest(best);
@@ -74,6 +77,8 @@
       announce(`Game over. Score ${state.score}. Press Start to play again.`);
     }
     toggleButton.textContent = "Start";
+    pauseButton.textContent = "Pause";
+    pauseButton.disabled = true;
     paint();
   }
 
@@ -81,22 +86,51 @@
     state = window.Snake.step(state);
     if (!state.alive) return endRound();
     if (state.won) {
-      stop();
+      stopTimer();
+      running = false;
+      paused = false;
       announce(`You filled the board! Final score ${state.score}.`);
       toggleButton.textContent = "Start";
+      pauseButton.textContent = "Pause";
+      pauseButton.disabled = true;
       return paint();
     }
     paint();
   }
 
   function start() {
-    if (running) stop();
+    stopTimer();
     state = window.Snake.createGame(GRID, GRID);
     running = true;
+    paused = false;
     toggleButton.textContent = "Restart";
+    pauseButton.textContent = "Pause";
+    pauseButton.disabled = false;
     announce("Go. Arrow keys or WASD to steer.");
     paint();
     timer = setInterval(tick, TICK_MS);
+  }
+
+  function pause(message = "Paused. Press Resume or Space when you're ready.") {
+    if (!running || paused) return;
+    stopTimer();
+    paused = true;
+    pauseButton.textContent = "Resume";
+    announce(message);
+  }
+
+  function resume() {
+    if (!running || !paused) return;
+    paused = false;
+    pauseButton.textContent = "Pause";
+    announce("Back in motion. Arrow keys or WASD to steer.");
+    timer = setInterval(tick, TICK_MS);
+  }
+
+  function togglePause() {
+    if (!running) return;
+    if (paused) resume();
+    else pause();
   }
 
   function steer(directionName) {
@@ -115,7 +149,14 @@
       steer(direction);
       return;
     }
-    if (!running && event.target === document.body && (event.key === " " || event.key === "Enter")) {
+    const gameplayTarget = event.target === document.body || event.target === canvas;
+    if (gameplayTarget && event.key === " ") {
+      event.preventDefault();
+      if (running) togglePause();
+      else start();
+      return;
+    }
+    if (!running && gameplayTarget && event.key === "Enter") {
       event.preventDefault();
       start();
     }
@@ -126,13 +167,10 @@
   });
 
   toggleButton?.addEventListener("click", start);
+  pauseButton?.addEventListener("click", togglePause);
 
   document.addEventListener("visibilitychange", () => {
-    if (document.hidden && running) {
-      stop();
-      toggleButton.textContent = "Start";
-      announce("Round ended while this tab was in the background. Press Start to play again.");
-    }
+    if (document.hidden && running && !paused) pause("Paused because this tab moved to the background. Resume when you're ready.");
   });
 
   bestEl.textContent = String(best);

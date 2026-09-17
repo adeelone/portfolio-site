@@ -6,7 +6,8 @@ const vm = require("node:vm");
 
 function loadPlayController() {
   const documentListeners = new Map();
-  const buttonListeners = new Map();
+  const toggleListeners = new Map();
+  const pauseListeners = new Map();
   let createCount = 0;
   let lastTurn = null;
 
@@ -20,7 +21,12 @@ function loadPlayController() {
   const status = { textContent: "" };
   const toggle = {
     textContent: "Start",
-    addEventListener: (type, listener) => buttonListeners.set(type, listener)
+    addEventListener: (type, listener) => toggleListeners.set(type, listener)
+  };
+  const pause = {
+    textContent: "Pause",
+    disabled: true,
+    addEventListener: (type, listener) => pauseListeners.set(type, listener)
   };
   const body = {};
   const elements = new Map([
@@ -29,6 +35,7 @@ function loadPlayController() {
     ["#play-best", best],
     ["#play-status", status],
     ["#play-toggle", toggle],
+    ["#play-pause", pause],
     ["#resume-dialog", null]
   ]);
   const document = {
@@ -62,9 +69,11 @@ function loadPlayController() {
   return {
     body,
     document,
+    pause,
     status,
     toggle,
-    click: () => buttonListeners.get("click")(),
+    click: () => toggleListeners.get("click")(),
+    pauseClick: () => pauseListeners.get("click")(),
     keydown: (event) => documentListeners.get("keydown")({ preventDefault() {}, ...event }),
     hide: () => {
       document.hidden = true;
@@ -80,10 +89,24 @@ test("the game button starts and restarts a round", () => {
   assert.equal(controller.createCount(), 1);
   controller.click();
   assert.equal(controller.toggle.textContent, "Restart");
+  assert.equal(controller.pause.disabled, false);
   assert.equal(controller.createCount(), 2);
   controller.click();
   assert.equal(controller.toggle.textContent, "Restart");
   assert.equal(controller.createCount(), 3);
+});
+
+test("pause and resume preserve the current round", () => {
+  const controller = loadPlayController();
+  controller.click();
+  assert.equal(controller.createCount(), 2);
+  controller.pauseClick();
+  assert.equal(controller.pause.textContent, "Resume");
+  assert.match(controller.status.textContent, /Paused/);
+  controller.pauseClick();
+  assert.equal(controller.pause.textContent, "Pause");
+  assert.match(controller.status.textContent, /Back in motion/);
+  assert.equal(controller.createCount(), 2, "resuming must not reset the round");
 });
 
 test("an arrow key starts the game in the requested direction", () => {
@@ -100,10 +123,12 @@ test("global Enter handling does not hijack focused controls", () => {
   assert.equal(controller.toggle.textContent, "Start");
 });
 
-test("backgrounding an active round ends it with an accurate label", () => {
+test("backgrounding an active round pauses it without resetting", () => {
   const controller = loadPlayController();
   controller.click();
   controller.hide();
-  assert.equal(controller.toggle.textContent, "Start");
-  assert.match(controller.status.textContent, /Round ended/);
+  assert.equal(controller.toggle.textContent, "Restart");
+  assert.equal(controller.pause.textContent, "Resume");
+  assert.match(controller.status.textContent, /background/);
+  assert.equal(controller.createCount(), 2);
 });
