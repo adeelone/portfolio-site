@@ -1,22 +1,30 @@
 # Aden Ramirez Portfolio
 
-> Public portfolio for Aden Ramirez, a computer science student and software engineer in El Paso, Texas.
+> Public portfolio for Aden Ramirez, a computer science junior at The University of Texas at El Paso (B.S. Computer Science, Mathematics minor, expected May 2028) and former Google STEP intern. Focus: backend, distributed systems, infrastructure, and AI/ML. Recruiting for Summer 2027 software engineering internships and co-ops; open to relocating anywhere.
 
 Canonical site: https://adenramirez.dev
+Contact: adeemra@gmail.com
+LinkedIn: https://www.linkedin.com/in/aden-ramirez-cs/
+GitHub: https://github.com/adeelone
 
 ## Main pages
 
-- / — overview and selected work
-- /work — complete public project archive
-- /jobs — employment history
-- /education — UTEP education and coursework
-- /about — background and working style
-- /contact — professional contact information and resume
-- /sitemap.xml — complete index of public routes and project case studies
+- /: overview and selected work
+- /work: complete public project archive
+- /jobs: employment history
+- /education: UTEP education, coursework, honors, and selective programs
+- /about: background, leadership, toolkit, and working style
+- /contact: professional contact information and resume
+- /sitemap.xml: complete index of public routes and project case studies
+
+## Resumes
+
+- /assets/Aden_Ramirez_Resume.pdf: technical resume
+- /assets/Aden_Ramirez_Resume_General.pdf: general resume
 
 ## Public data
 
-- /api/profile — public profile data
-- /api/projects — public project data
+- /api/profile: public profile data
+- /api/projects: public project data
 
 Content may be summarized with attribution. Private repository files and non-public data are not part of this site.

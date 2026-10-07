@@ -109,7 +109,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname === "/sitemap.xml") return send(res, 200, await sitemap(req), "application/xml; charset=utf-8", "public, max-age=3600");
     if (pathname === "/contact.vcf") {
       const profile = await readJson(profilePath);
-      const card = ["BEGIN:VCARD", "VERSION:3.0", `FN:${profile.name}`, `EMAIL;TYPE=INTERNET:${profile.email}`, `EMAIL;TYPE=INTERNET:${profile.school_email}`, `TEL;TYPE=CELL:${profile.phone_href.replace("tel:", "")}`, `URL:${profile.linkedin}`, `NOTE:Portfolio ${configuredSiteUrl || ""}`, "END:VCARD"].join("\r\n");
+      const card = ["BEGIN:VCARD", "VERSION:3.0", `FN:${profile.name}`, `EMAIL;TYPE=INTERNET:${profile.email}`, `EMAIL;TYPE=INTERNET:${profile.school_email}`, `TEL;TYPE=CELL:${profile.phone_href.replace("tel:", "")}`, `URL:${profile.website || configuredSiteUrl}`, `NOTE:LinkedIn ${profile.linkedin}`, "END:VCARD"].join("\r\n");
       return send(res, 200, card, "text/vcard; charset=utf-8", "public, max-age=3600");
     }
     if (publicFiles.has(pathname)) {

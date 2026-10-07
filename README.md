@@ -29,7 +29,8 @@ Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, AP
 
 - `data/profile.json` contains biography, experience, education, and contact content.
 - `data/projects.json` is the normalized GitHub project feed.
-- `data/highlights.json` contains curated project notes used by the sync script.
+- `data/highlights.json` contains curated project highlights used by the sync script.
+- `data/curated.json` overrides synced tech tags and descriptions by slug, so a GitHub sync never overwrites them.
 - `node scripts/sync-github.mjs` refreshes public GitHub project data.
 
 The server exposes only an explicit set of public assets. Repository source, `.git`, environment files, and `data/*.json` are never served statically. Public content is available through narrow read-only API routes.

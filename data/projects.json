@@ -112,11 +112,14 @@
         "typescript"
       ],
       "tech": [
+        "Next.js",
         "TypeScript",
-        "CSS",
-        "JavaScript",
-        "ai-agent",
-        "background-jobs"
+        "Postgres",
+        "Server-Sent Events",
+        "Zod",
+        "Groq",
+        "OpenAI",
+        "Anthropic"
       ],
       "stars": 0,
       "pushed_at": "2026-09-14T04:37:48Z",
@@ -126,7 +129,10 @@
       "is_archived": false,
       "latest_release": "v0.1.0",
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Built an async AI job platform in 2.6K+ lines of TypeScript that returns a job ID instantly while background workers run long LLM tasks with 3-attempt retries, linear backoff, cancellation, and per-job cost tracking.",
+        "Unified Groq, OpenAI, and Anthropic behind one provider interface powering 5 Zod-validated workflow recipes, then hardened the API with idempotency keys, a 30 req/min token-bucket rate limiter, API-key scoping, and HMAC-signed webhooks."
+      ],
       "readme_preview": [
         "# Relay",
         "",
@@ -216,11 +222,11 @@
         "vite"
       ],
       "tech": [
-        "Shell",
-        "JavaScript",
-        "HTML",
+        "React",
         "TypeScript",
-        "CSS"
+        "Vite",
+        "Playwright",
+        "Docker"
       ],
       "stars": 0,
       "pushed_at": "2026-09-14T04:32:56Z",
@@ -230,7 +236,10 @@
       "is_archived": false,
       "latest_release": "v0.1.0",
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Built a local-first business card studio with 16 templates and print-ready PDF export with bleed and crop marks, plus PNG, SVG, vCard, and QR output.",
+        "Added WCAG AA contrast checks, Playwright end-to-end tests, and Docker/nginx plus Vercel and Netlify deploy configs."
+      ],
       "readme_preview": [
         "# CardForge",
         "",
@@ -299,7 +308,7 @@
       "slug": "sentinel",
       "url": "https://github.com/adeelone/sentinel",
       "homepage": null,
-      "description": "Sentinel is a fraud detection research/demo platform for anonymized credit card transaction data.",
+      "description": "Sentinel is a fraud detection research platform for anonymized credit card transactions, with a training pipeline, a FastAPI scoring service, and a React triage dashboard.",
       "languages": [
         "Makefile",
         "Dockerfile",
@@ -323,10 +332,12 @@
       ],
       "tech": [
         "Python",
-        "JavaScript",
-        "HTML",
-        "TypeScript",
-        "CSS"
+        "FastAPI",
+        "React",
+        "scikit-learn",
+        "Postgres",
+        "Redis",
+        "Docker"
       ],
       "stars": 0,
       "pushed_at": "2026-09-14T02:45:52Z",
@@ -336,7 +347,10 @@
       "is_archived": false,
       "latest_release": "v0.2.0",
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Trained logistic regression, random forest, and isolation forest models on 284K card transactions and scored them on imbalance-aware metrics like PR-AUC, recall at precision, and F2.",
+        "Served models through a FastAPI scoring API that sends the top 5 risk factors per transaction to a React dashboard with drift monitoring, backed by a Redis job queue and a Postgres store."
+      ],
       "readme_preview": [
         "# Sentinel",
         "",
@@ -399,6 +413,43 @@
         "- Accuracy is intentionally not a primary metric. The dashboard and reports lead with PR-AUC, recall at fixed precision, cost-weighted loss, and threshold confusion matrices.",
         "- Logistic regression, random forest, and isolation forest are implemented as sklearn model adapters. XGBoost, LightGBM, PyTorch autoencoder, stacked ensemble, and true SHAP remain tracked production gaps in `docs/REQUIREMENTS_AUDIT.md`."
       ]
+    },
+    {
+      "name": "CohortCove",
+      "slug": "cohortcove",
+      "url": null,
+      "homepage": null,
+      "description": "A full-stack campus events platform with verified sign-up, search, RSVPs, waitlists, and moderation.",
+      "languages": [
+        "TypeScript"
+      ],
+      "topics": [
+        "full-stack",
+        "postgres",
+        "campus"
+      ],
+      "tech": [
+        "Next.js",
+        "TypeScript",
+        "PostgreSQL",
+        "Prisma",
+        "Vercel",
+        "Vitest",
+        "Playwright"
+      ],
+      "stars": 0,
+      "pushed_at": "2026-08-31T00:00:00Z",
+      "updated_at": "2026-08-31T00:00:00Z",
+      "is_pinned": false,
+      "is_private": true,
+      "is_archived": false,
+      "latest_release": null,
+      "screenshot": null,
+      "highlights": [
+        "Shipped a full-stack campus events platform in 8.7K+ lines with verified sign-up, search, RSVPs, waitlists, and moderation.",
+        "Prevented overbooking with Postgres row locks, proven by a test that fires 20 concurrent RSVPs at a 1-seat event and confirms exactly one, plus 26 Vitest and Playwright tests against a real database with axe accessibility scans."
+      ],
+      "readme_preview": []
     },
     {
       "name": "myReadList",
@@ -607,10 +658,8 @@
       ],
       "tech": [
         "Python",
-        "JavaScript",
-        "HTML",
-        "TypeScript",
-        "CSS"
+        "FastAPI",
+        "APScheduler"
       ],
       "stars": 0,
       "pushed_at": "2026-08-24T00:45:50Z",
@@ -888,11 +937,9 @@
         "work-orders"
       ],
       "tech": [
-        "JavaScript",
-        "HTML",
+        "React",
         "TypeScript",
-        "CSS",
-        "ai-routing"
+        "Vite"
       ],
       "stars": 0,
       "pushed_at": "2026-08-15T05:38:33Z",
@@ -902,7 +949,10 @@
       "is_archived": false,
       "latest_release": null,
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Built a property maintenance app for owners, technicians, and residents that routes requests across 10 trades.",
+        "Kept the app browser-local and covered core flows with 15 tests."
+      ],
       "readme_preview": [
         "# DwellSignal",
         "",
@@ -1059,11 +1109,8 @@
         "vite"
       ],
       "tech": [
-        "JavaScript",
-        "HTML",
         "TypeScript",
-        "CSS",
-        "charts"
+        "Next.js"
       ],
       "stars": 0,
       "pushed_at": "2026-08-04T02:05:21Z",
@@ -1267,10 +1314,11 @@
       ],
       "tech": [
         "Python",
-        "HTML",
-        "TypeScript",
-        "CSS",
-        "JavaScript"
+        "FastAPI",
+        "React",
+        "Typer",
+        "SQLite",
+        "Exa"
       ],
       "stars": 0,
       "pushed_at": "2026-07-25T01:52:22Z",
@@ -1280,7 +1328,10 @@
       "is_archived": false,
       "latest_release": "v0.1.0",
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Built one shared Python core for Exa-powered semantic search and exposed it three ways: a FastAPI web API, a React app, and a Typer CLI.",
+        "Added neural, keyword, and auto search, cited answer synthesis, saved collections, a SQLite cache with quota tracking, and Markdown, JSON, and CSV exports."
+      ],
       "readme_preview": [
         "# Meridian",
         "",
@@ -1468,11 +1519,13 @@
         "typescript"
       ],
       "tech": [
+        "Next.js",
         "TypeScript",
-        "JavaScript",
-        "CSS",
-        "bullmq",
-        "nextjs"
+        "tRPC",
+        "Prisma",
+        "Postgres",
+        "BullMQ",
+        "Redis"
       ],
       "stars": 0,
       "pushed_at": "2026-07-23T04:43:50Z",
@@ -1575,11 +1628,10 @@
         "vite"
       ],
       "tech": [
-        "JavaScript",
-        "HTML",
+        "Next.js",
         "TypeScript",
-        "CSS",
-        "Shell"
+        "Tailwind",
+        "TMDB API"
       ],
       "stars": 0,
       "pushed_at": "2026-07-21T13:14:25Z",
@@ -1589,7 +1641,10 @@
       "is_archived": false,
       "latest_release": "v0.1.0",
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Shipped a movie and TV tracker with live TMDB data, watchlists, and ratings.",
+        "Added a \"what to watch tonight\" picker that chooses from what you already saved."
+      ],
       "readme_preview": [
         "# Reel",
         "",
@@ -1679,11 +1734,13 @@
         "websockets"
       ],
       "tech": [
-        "Python",
-        "TypeScript",
-        "JavaScript",
-        "CSS",
-        "ai"
+        "Next.js",
+        "FastAPI",
+        "WebSockets",
+        "Gemini",
+        "Vertex AI",
+        "Cloud Run",
+        "Terraform"
       ],
       "stars": 0,
       "pushed_at": "2026-07-20T08:37:01Z",
@@ -1967,11 +2024,10 @@
         "resume"
       ],
       "tech": [
-        "Python",
+        "Next.js",
         "TypeScript",
-        "JavaScript",
-        "CSS",
-        "ats"
+        "Python",
+        "FastAPI"
       ],
       "stars": 0,
       "pushed_at": "2026-07-18T22:27:45Z",
@@ -1982,8 +2038,8 @@
       "latest_release": "v0.1.0",
       "screenshot": null,
       "highlights": [
-        "Treats the job search like an operating system rather than a to-do list.",
-        "Combines resume intelligence, search workflows, and AI-assisted triage."
+        "Built a job-search workspace that scores resumes for ATS readability and rates each job 0 to 100 with matched keywords.",
+        "Combines resume intelligence, search workflows, and AI-assisted triage in one place."
       ],
       "readme_preview": [
         "# Compass",
@@ -2209,7 +2265,7 @@
       "slug": "miner-eats",
       "url": "https://github.com/adeelone/MINER-EATS",
       "homepage": null,
-      "description": "small school thing",
+      "description": "An early Java project from my first semester at UTEP, built around campus food options.",
       "languages": [
         "Java"
       ],
@@ -2241,28 +2297,26 @@
       "readme_preview": [],
       "name": "Nebula-STAT Proto",
       "url": null,
-      "description": "Hackathon analytics prototype for health data workflows.",
+      "description": "UTEP AI Hackathon project (Oct 2025): an AI-assisted property maintenance app. I led the frontend.",
       "languages": [
         "React",
-        "Supabase",
-        "LangChain",
-        "Node.js"
+        "Vite",
+        "Supabase"
       ],
       "topics": [
         "ai",
-        "analytics",
-        "hackathon"
+        "hackathon",
+        "frontend"
       ],
       "tech": [
         "React",
-        "Supabase",
-        "LangChain",
-        "Node.js"
+        "Vite",
+        "Supabase"
       ],
       "is_private": true,
       "highlights": [
-        "Built an interactive analytics workflow for 100+ hackathon users.",
-        "Connected React UI, Supabase storage, and AI-assisted process automation."
+        "Led the frontend for a team-built AI property maintenance app at the UTEP AI Hackathon in October 2025.",
+        "Built the React and Vite interface on top of Supabase for auth and data."
       ]
     },
     {
@@ -2295,8 +2349,8 @@
       ],
       "is_private": true,
       "highlights": [
-        "Led content cleanup and practical performance improvements as Web Chair.",
-        "Compressed 30+ leadership photos and tightened page organization."
+        "Maintained the site as SHPE // MAES Web Chair, cleaning up content and page structure.",
+        "Compressed 30+ leadership photos for faster page loads."
       ]
     }
   ]

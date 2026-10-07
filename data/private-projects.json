@@ -1,16 +1,57 @@
 [
   {
+    "name": "CohortCove",
+    "url": null,
+    "homepage": null,
+    "description": "A full-stack campus events platform with verified sign-up, search, RSVPs, waitlists, and moderation.",
+    "languages": [
+      "TypeScript"
+    ],
+    "topics": [
+      "full-stack",
+      "postgres",
+      "campus"
+    ],
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "Vercel",
+      "Vitest",
+      "Playwright"
+    ],
+    "is_private": true,
+    "highlights": [
+      "Shipped a full-stack campus events platform in 8.7K+ lines with verified sign-up, search, RSVPs, waitlists, and moderation.",
+      "Prevented overbooking with Postgres row locks, proven by a test that fires 20 concurrent RSVPs at a 1-seat event and confirms exactly one, plus 26 Vitest and Playwright tests against a real database with axe accessibility scans."
+    ],
+    "pushed_at": "2026-08-31T00:00:00Z"
+  },
+  {
     "name": "Nebula-STAT Proto",
     "url": null,
     "homepage": null,
-    "description": "Hackathon analytics prototype for health data workflows.",
-    "languages": ["React", "Supabase", "LangChain", "Node.js"],
-    "topics": ["ai", "analytics", "hackathon"],
-    "tech": ["React", "Supabase", "LangChain", "Node.js"],
+    "description": "UTEP AI Hackathon project (Oct 2025): an AI-assisted property maintenance app. I led the frontend.",
+    "languages": [
+      "React",
+      "Vite",
+      "Supabase"
+    ],
+    "topics": [
+      "ai",
+      "hackathon",
+      "frontend"
+    ],
+    "tech": [
+      "React",
+      "Vite",
+      "Supabase"
+    ],
     "is_private": true,
     "highlights": [
-      "Built an interactive analytics workflow for 100+ hackathon users.",
-      "Connected React UI, Supabase storage, and AI-assisted process automation."
+      "Led the frontend for a team-built AI property maintenance app at the UTEP AI Hackathon in October 2025.",
+      "Built the React and Vite interface on top of Supabase for auth and data."
     ]
   },
   {
@@ -18,13 +59,24 @@
     "url": null,
     "homepage": null,
     "description": "Frontend cleanup and performance work for the SHPE UTEP site.",
-    "languages": ["HTML", "CSS", "JavaScript"],
-    "topics": ["frontend", "student-org"],
-    "tech": ["HTML", "CSS", "JavaScript"],
+    "languages": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "topics": [
+      "frontend",
+      "student-org"
+    ],
+    "tech": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
     "is_private": true,
     "highlights": [
-      "Led content cleanup and practical performance improvements as Web Chair.",
-      "Compressed 30+ leadership photos and tightened page organization."
+      "Maintained the site as SHPE // MAES Web Chair, cleaning up content and page structure.",
+      "Compressed 30+ leadership photos for faster page loads."
     ]
   }
 ]

@@ -101,6 +101,7 @@ function main() {
 
   const highlightsByName = readJson(join(DATA_DIR, "highlights.json"), {});
   const privateProjects = readJson(join(DATA_DIR, "private-projects.json"), []);
+  const curatedBySlug = readJson(join(DATA_DIR, "curated.json"), {});
   const repoList = JSON.parse(
     gh([
       "repo",
@@ -139,7 +140,8 @@ function main() {
       latest_release: repo.latestRelease?.tagName ?? null,
       screenshot: null,
       highlights: curatedHighlights,
-      readme_preview: readmeLines
+      readme_preview: readmeLines,
+      ...(curatedBySlug[safeSlug(repo.name)] || {})
     });
   }
 

@@ -34,5 +34,33 @@
   "price-deal-watcher": [
     "Tracks prices and availability across products, tickets, travel, and custom checks.",
     "Built as a self-hosted monitoring app instead of a one-off scraper."
+  ],
+  "relay": [
+    "Built an async AI job platform in 2.6K+ lines of TypeScript that returns a job ID instantly while background workers run long LLM tasks with 3-attempt retries, linear backoff, cancellation, and per-job cost tracking.",
+    "Unified Groq, OpenAI, and Anthropic behind one provider interface powering 5 Zod-validated workflow recipes, then hardened the API with idempotency keys, a 30 req/min token-bucket rate limiter, API-key scoping, and HMAC-signed webhooks."
+  ],
+  "sentinel": [
+    "Trained logistic regression, random forest, and isolation forest models on 284K card transactions and scored them on imbalance-aware metrics like PR-AUC, recall at precision, and F2.",
+    "Served models through a FastAPI scoring API that sends the top 5 risk factors per transaction to a React dashboard with drift monitoring, backed by a Redis job queue and a Postgres store."
+  ],
+  "meridian": [
+    "Built one shared Python core for Exa-powered semantic search and exposed it three ways: a FastAPI web API, a React app, and a Typer CLI.",
+    "Added neural, keyword, and auto search, cited answer synthesis, saved collections, a SQLite cache with quota tracking, and Markdown, JSON, and CSV exports."
+  ],
+  "cardforge": [
+    "Built a local-first business card studio with 16 templates and print-ready PDF export with bleed and crop marks, plus PNG, SVG, vCard, and QR output.",
+    "Added WCAG AA contrast checks, Playwright end-to-end tests, and Docker/nginx plus Vercel and Netlify deploy configs."
+  ],
+  "dwell-signal": [
+    "Built a property maintenance app for owners, technicians, and residents that routes requests across 10 trades.",
+    "Kept the app browser-local and covered core flows with 15 tests."
+  ],
+  "reel": [
+    "Shipped a movie and TV tracker with live TMDB data, watchlists, and ratings.",
+    "Added a \"what to watch tonight\" picker that chooses from what you already saved."
+  ],
+  "compass": [
+    "Built a job-search workspace that scores resumes for ATS readability and rates each job 0 to 100 with matched keywords.",
+    "Combines resume intelligence, search workflows, and AI-assisted triage in one place."
   ]
 }

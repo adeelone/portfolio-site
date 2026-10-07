@@ -1,115 +1,89 @@
 {
   "name": "Aden Ramirez",
-  "title": "CS at UTEP, building backend, systems, and full-stack projects that feel real enough to ship.",
-  "subtitle": "Open to software engineering internships, part-time tech roles, and teams where careful work actually matters.",
-  "current_status": "Currently organizing civic-engagement outreach at UTEP, caring for local clients' pets, and building toward May 2028 and the next strong SWE opportunity.",
-  "availability": "Based in El Paso, open to relocating for the right role, and usually easiest to reach by email or LinkedIn.",
-  "semester_focus": "Right now I'm balancing five technical courses, civic-engagement work, SHPE web work, and a steady push to make my projects cleaner, more complete, and more worth showing.",
+  "title": "Computer science junior at UTEP and former Google STEP intern, building backend, distributed systems, and AI/ML projects.",
+  "subtitle": "Recruiting for Summer 2027 software engineering internships, plus fall and spring co-ops. Open to relocating anywhere.",
+  "current_status": "This fall I'm a Research Technical Specialist with MinerSpark, Technical Officer for ColorStack at UTEP, a GDG on Campus mentor, a Civic Engagement Organizing Fellow, and part of the Code2Career Fall 2026 cohort.",
+  "availability": "Based in El Paso, open to relocating anywhere for the right role, and usually easiest to reach by email or LinkedIn.",
+  "semester_focus": "Right now I'm taking Database Systems, Operating Systems, Parallel Computing, Programming Language Concepts, and Probability and Statistics while recruiting for Summer 2027.",
   "phone": "(915) 240-7882",
   "phone_href": "tel:+19152407882",
   "email": "adeemra@gmail.com",
   "email_href": "mailto:adeemra@gmail.com",
   "school_email": "aeramirez17@miners.utep.edu",
-  "linkedin": "https://linkedin.com/in/aden-ramirez-cs",
+  "linkedin": "https://www.linkedin.com/in/aden-ramirez-cs/",
   "github": "https://github.com/adeelone",
+  "handshake": "https://app.joinhandshake.com/profiles/adenram",
+  "website": "https://adenramirez.dev",
   "resume": "assets/Aden_Ramirez_Resume.pdf",
   "hero_image": "assets/aden-headshot.png",
   "location": "El Paso, Texas",
   "hero_facts": [
-    {
-      "label": "Based in",
-      "value": "El Paso, TX"
-    },
-    {
-      "label": "Studying",
-      "value": "B.S. Computer Science"
-    },
-    {
-      "label": "GPA",
-    "value": "3.73 / 4.0"
-    }
+    { "label": "Based in", "value": "El Paso, TX" },
+    { "label": "Studying", "value": "B.S. Computer Science, Math minor" },
+    { "label": "GPA", "value": "3.73 / 4.0" }
   ],
   "current_focus": {
-    "title": "Trying to make every project and role look more complete, more real, and more useful.",
-    "copy": "Most of what I enjoy sits in the overlap between backend logic, cleanup-heavy engineering work, and product decisions that make software feel reliable instead of fragile.",
+    "title": "Recruiting for Summer 2027 while making every project worth opening.",
+    "copy": "Most of what I enjoy sits where backend logic, reliability work, and product decisions meet, the parts that decide whether software holds up after the first demo.",
     "points": [
-      "Keeping projects runnable, documented, and worth showing to actual recruiters.",
-      "Using LinkedIn, GitHub, Handshake, and direct applications pretty aggressively.",
-      "Looking for the next SWE internship or part-time tech role where I can contribute early and keep learning fast."
+      "Keeping projects runnable, tested, and honest about what they actually do.",
+      "Weekly pair programming with a Google engineer through Code2Career.",
+      "Looking for a Summer 2027 SWE internship or a co-op where I can contribute early and learn fast."
     ]
   },
   "snapshot": [
-    {
-      "label": "Work style",
-      "value": "Calm, direct, detail-oriented"
-    },
-    {
-      "label": "Interested in",
-      "value": "Backend, full-stack, embedded, analytics"
-    },
-    {
-      "label": "School",
-      "value": "The University of Texas at El Paso"
-    },
-    {
-      "label": "Looking for",
-      "value": "SWE internships, part-time tech work, May 2028 runway"
-    }
+    { "label": "Work style", "value": "Calm, direct, detail-oriented" },
+    { "label": "Interested in", "value": "Backend, distributed systems, infrastructure, AI/ML" },
+    { "label": "School", "value": "The University of Texas at El Paso" },
+    { "label": "Looking for", "value": "Summer 2027 SWE internships and co-ops" }
   ],
   "focus_areas": [
     {
-      "title": "Backend and systems",
-      "copy": "I like the parts of software that have to survive edge cases, stay readable, and still make sense after the first version ships."
+      "title": "Backend and distributed systems",
+      "copy": "I like the parts of software that have to survive retries, concurrency, and edge cases, and still read cleanly after the first version ships."
     },
     {
       "title": "Full-stack product work",
-      "copy": "I still care about whether an interface makes sense, whether the copy sounds normal, and whether someone would keep using it after the demo."
+      "copy": "I still care whether an interface makes sense, whether the copy sounds like a person wrote it, and whether someone would keep using it after the demo."
     },
     {
       "title": "Testing and rollout discipline",
-      "copy": "A lot of my best work comes from tightening coverage, watching latency, and making sure changes are safe enough to ship without drama."
+      "copy": "A lot of my best work comes from tightening coverage, watching latency, and making sure a change is safe enough to ship without drama."
     },
     {
-      "title": "Practical AI and automation",
-      "copy": "The interesting part for me is not just using models. It is knowing where automation actually helps and where normal software should stay in charge."
+      "title": "Practical AI and ML",
+      "copy": "The interesting part for me is not just calling a model. It is knowing where automation actually helps and where normal, deterministic software should stay in charge."
     }
   ],
-  "calendar": {
-    "href": "",
-    "label": "Book time",
-    "title": "Want a booking link here?",
-    "copy": "I left space for a real scheduling flow. If you want this live, swap in a Calendly link or a Google Calendar appointment page and this section is ready for it.",
-    "note": "Add your Calendly or Google Calendar booking link."
-  },
   "career_links": {
-    "linkedin": "https://linkedin.com/in/aden-ramirez-cs",
-    "handshake": "",
-    "indeed": "",
-    "ziprecruiter": ""
+    "linkedin": "https://www.linkedin.com/in/aden-ramirez-cs/",
+    "handshake": "https://app.joinhandshake.com/profiles/adenram"
   },
-  "career_note": {
-    "title": "LinkedIn is the profile I keep the most current.",
-    "copy": "If I add a new role or project anywhere first, it is usually LinkedIn. Handshake and the job boards matter for applications, but LinkedIn is still the clearest picture of what I'm doing."
-  },
-  "community": {
-    "title": "Recruiters, hiring managers, founders, classmates, and referrers are all welcome.",
-    "copy": "If someone likes the page, the work, or the resume, they should be able to reach me without guessing what to do next. Email, phone, LinkedIn, and the outreach form all work here.",
-    "banner": "Best first move: email or LinkedIn. That is usually where I answer fastest."
-  },
-  "connect_note": "If you're reaching out about internships, projects, student org work, or part-time tech roles, email is usually the safest bet. LinkedIn and GitHub stay current too.",
+  "connect_note": "If you're reaching out about internships, co-ops, projects, student org work, or part-time tech roles, email is usually the fastest way to reach me. LinkedIn and GitHub stay current too.",
   "education": {
     "school": "The University of Texas at El Paso",
     "degree": "Bachelor of Science in Computer Science",
     "minor": "Mathematics",
     "graduation": "Expected May 2028",
     "gpa": "3.73 / 4.0",
+    "standing": "Junior",
     "honors": [
       "Dean's List: Fall 2024, Spring 2025, Fall 2025",
       "2025 Hispanic Scholarship Fund Scholar"
     ],
+    "recognition": [
+      { "date": "Nov 2026", "title": "Aspen Ideas: Rising Generations", "detail": "Selected as one of 350 young leaders for the Aspen Institute's Rising Generations program at Crystal Bridges in Bentonville, Arkansas." },
+      { "date": "Fall 2026", "title": "Code2Career Fall 2026 Cohort", "detail": "Ten-week software engineering mentorship with weekly one-on-one pair programming alongside a Google software engineer." },
+      { "date": "Aug 2026", "title": "Lowe's x HSF Retail Immersion Program", "detail": "Selected for a national HSF Scholar cohort for a three-day corporate immersion with Lowe's teams in Charlotte, North Carolina." },
+      { "date": "Aug 2026", "title": "ElevenLabs Campus Ambassador", "detail": "Selected to represent ElevenLabs at UTEP." },
+      { "date": "Summer 2026", "title": "LinkedInOrLeftOut Summer Academy", "detail": "Twelve-week program covering data structures and algorithms, interview prep, system design, and full-stack development." },
+      { "date": "Spring 2026", "title": "Dell Tech Academy", "detail": "One of 25 students selected. My team placed third in the supply-chain case competition." },
+      { "date": "2025", "title": "Hispanic Scholarship Fund Scholar", "detail": "Selected from more than 69,000 applicants." },
+      { "date": "2023 to 2024", "title": "Autodesk Certified User", "detail": "Fusion 360 (2023) and Inventor (2024)." }
+    ],
     "coursework": [
       "Data Structures and Algorithms",
-      "Advanced OOP",
+      "Advanced Object-Oriented Programming",
       "Automata and Formal Languages",
       "Computer Organization",
       "Digital Systems Design",
@@ -118,22 +92,66 @@
       "Matrix Algebra"
     ],
     "in_progress": [
-      "Programming Language Concepts",
-      "Parallel Computing",
       "Database Systems",
       "Operating Systems Concepts",
+      "Parallel Computing",
+      "Programming Language Concepts",
       "Probability and Statistics"
     ],
-    "earned_hours": "86 total earned hours",
-    "college": "College of Engineering"
+    "earned_hours": "86 earned hours, junior standing",
+    "college": "Miguel A. Loya College of Engineering"
   },
   "about": [
-    "I'm a computer science student at UTEP who likes building software that feels solid, not just impressive in a screenshot.",
-    "A lot of the work I enjoy lives in backend systems, full-stack product work, testing, and the cleanup-heavy engineering work that makes software usable after launch.",
-    "So far that has meant infrastructure work at Google, high-volume problem solving at Intuit, youth-facing STEAM instruction, civic-engagement organizing, and side projects that keep getting more serious over time.",
-    "I'm looking for SWE internships, part-time tech work, and teams where I can contribute early, learn from stronger engineers, and keep getting better at shipping careful work."
+    "I'm a computer science junior at UTEP, minoring in math, and I like building software that holds up, not just software that looks good in a screenshot.",
+    "Most of the work I enjoy lives in backend systems, distributed pipelines, testing, and the rollout work between \"it runs\" and \"it's ready.\" At Google I spent a summer on Workspace Policy Infrastructure, parallelizing a policy compilation pipeline and shipping it through a zero-incident gated rollout.",
+    "Outside of that I've taught STEAM to 200+ kids, supported TurboTax customers, sold electronics, and worked a pizza counter. Every one of those jobs taught me something about patience, communication, and the people depending on the work.",
+    "I'm the first in my family to go to college. Right now I'm looking for Summer 2027 SWE internships and co-ops where I can contribute early, learn from stronger engineers, and keep getting better at shipping careful work."
+  ],
+  "skills": [
+    { "group": "Languages", "items": ["Python", "Java", "TypeScript", "JavaScript", "C", "C#", "Go", "SQL", "HTML/CSS", "RISC-V Assembly", "Verilog"] },
+    { "group": "Frameworks", "items": ["React", "Next.js", "Node.js", "FastAPI", "Prisma", "Tailwind", "React Native", "Electron", "scikit-learn", "Zod", "WebSockets"] },
+    { "group": "Cloud and data", "items": ["PostgreSQL", "Redis", "BullMQ", "Google Cloud Platform", "Vertex AI", "Vercel", "Supabase", "Linux"] },
+    { "group": "Testing and DevOps", "items": ["Git", "Docker", "GitHub Actions", "CI/CD", "pytest", "Vitest", "JUnit", "xUnit", "Playwright"] }
+  ],
+  "leadership": [
+    {
+      "company": "ColorStack, UTEP Chapter",
+      "title": "Technical Officer",
+      "dates": "Aug 2025 - Present",
+      "context": "Run technical programming for underrepresented CS students, from hands-on workshops to tech events."
+    },
+    {
+      "company": "Google Developer Groups on Campus, UTEP",
+      "title": "Mentor",
+      "dates": "Feb 2025 - Present",
+      "context": "Mentored 3+ underclassmen across two mentorship cohorts, guiding project planning and interview prep."
+    },
+    {
+      "company": "SHPE // MAES at UTEP",
+      "title": "Web Chair",
+      "dates": "Previous term",
+      "context": "Maintained utepshpemaes.org, compressing 30+ leadership photos and cleaning up page structure for faster loads. This work led into my current MinerSpark role."
+    },
+    {
+      "company": "Coding Interview Club",
+      "title": "Member",
+      "dates": "Sep 2024 - Present",
+      "context": "20+ sessions and 100+ interview problems solved."
+    }
   ],
   "experience": [
+    {
+      "company": "MinerSpark at UTEP",
+      "title": "Research Technical Specialist",
+      "dates": "Sep 2026 - Present",
+      "location": "El Paso, TX - Hybrid",
+      "context": "SHPE's in-house research and product prototyping program at UTEP.",
+      "bullets": [
+        "Support freshman and sophomore engineering research teams as they scope research questions and refine their posters.",
+        "Contribute to research, workflow design, and early development of tools for the UTEP community."
+      ],
+      "tags": ["Research", "Prototyping", "Workflow Design", "Mentoring"]
+    },
     {
       "company": "The Cornerstone Project",
       "title": "Civic Engagement Organizing Fellow",
@@ -141,7 +159,7 @@
       "location": "El Paso, TX - UTEP",
       "context": "Part-time, on-campus nonpartisan voter registration and civic-engagement outreach.",
       "bullets": [
-        "Organize nonpartisan voter registration and civic-engagement outreach on the UTEP campus, coordinating recurring shifts as part of a statewide organizing initiative."
+        "Organize nonpartisan voter registration and civic outreach on the UTEP campus as part of a statewide organizing initiative."
       ],
       "tags": ["Civic Engagement", "Campus Outreach", "Communication", "Organizing"]
     },
@@ -158,16 +176,28 @@
     },
     {
       "company": "Google",
-      "title": "STEP Intern, Software Engineering",
+      "title": "Associate Software Developer Intern (STEP)",
       "dates": "May 2025 - Aug 2025",
       "location": "Sunnyvale, CA",
       "context": "Google Cloud, Workspace Policy Infrastructure.",
       "bullets": [
-        "Redesigned the D4 compilation pipeline around per-entity parallelism, improving p50 latency by 30% and raising QA throughput by 15%.",
-        "Migrated 6 core modules to PromiseGraph, lifting test coverage from 60% to 95% and shortening review cycles by 20%.",
-        "Orchestrated a zero-incident rollout across Dev, QA, and Prod using a 10-step gated launch plan, backed by 50+ unit and integration tests and 7 Streamz dashboards for real-time observability."
+        "Redesigned a policy compilation pipeline from batch processing to per-entity parallelism, cutting p50 latency by 30%, reducing QA median latency from 642 ms to 589 ms, and raising throughput 15%.",
+        "Migrated 6 modules to Google's async dataflow framework, lifting test coverage from 60% to 95% and making code reviews 20% faster.",
+        "Shipped a zero-incident rollout across Dev, QA, and Prod through a 10-step gated launch plan, backed by 50+ unit and integration tests and 7 monitoring dashboards tracking latency, error rates, and system health."
       ],
-      "tags": ["Google Cloud", "JavaScript", "Testing", "Rollouts", "Observability"]
+      "tags": ["Google Cloud", "Distributed Pipelines", "Testing", "Rollouts", "Observability"]
+    },
+    {
+      "company": "Boys & Girls Clubs of America",
+      "title": "STEAM Specialist",
+      "dates": "May 2026 - Aug 2026",
+      "location": "El Paso, TX",
+      "context": "Part-time, on-site STEAM instruction across four club locations. I still volunteer as a tutor at the club.",
+      "bullets": [
+        "Led 50+ STEAM workshops at 4 club locations, reaching 200+ youth and raising program engagement 35%.",
+        "Designed 15+ robotics, 3D printing, and Python coding projects, including custom Sphero SPRK+ programs, driving a 40% increase in STEM participation."
+      ],
+      "tags": ["STEAM", "Technical Instruction", "Python", "Robotics"]
     },
     {
       "company": "Education at Work x Intuit",
@@ -176,30 +206,18 @@
       "location": "El Paso, TX - Remote",
       "context": "Seasonal remote product support for TurboTax customers.",
       "bullets": [
-        "Resolved 30+ customer inquiries daily for TurboTax financial services, achieving a 95% CSAT score and a 4.8/5 rating.",
-        "Collaborated with 10+ remote team members, reducing ticket resolution time by 20% through shared knowledge-base updates."
+        "Resolved 30+ TurboTax customer inquiries daily, earning a 95% CSAT score and a 4.8/5 resolution rating.",
+        "Cut ticket resolution time 20% through shared knowledge base updates with 10+ remote teammates."
       ],
       "tags": ["Customer Support", "Troubleshooting", "Communication", "Product Support"]
-    },
-    {
-      "company": "Boys & Girls Clubs of America",
-      "title": "STEAM Specialist",
-      "dates": "May 2026 - Aug 2026",
-      "location": "El Paso, TX",
-      "context": "Part-time, on-site STEAM instruction across four club locations.",
-      "bullets": [
-        "Delivered 50+ hands-on STEAM workshops across 4 club locations, reaching 200+ youth participants and improving program engagement by 35%.",
-        "Designed and executed 15+ robotics, 3D printing, and coding projects, including custom Sphero SPRK+ Python programs introducing youth to programming."
-      ],
-      "tags": ["STEAM", "Technical Instruction", "Project Planning", "Communication"]
     }
   ],
   "additional_experience": [
     {
       "company": "Best Buy",
-      "title": "Seasonal Sales Associate",
+      "title": "Seasonal Sales Associate, Gaming and Electronics",
       "dates": "Oct 2025 - Jan 2026",
-      "context": "Provided product recommendations across gaming, headphones, and consumer electronics, contributing to a 15% increase in department sales during the holiday season."
+      "context": "Recommended gaming and electronics products to 50+ customers daily, helping lift holiday department sales 15%."
     },
     {
       "company": "Peter Piper Pizza",

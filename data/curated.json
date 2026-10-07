@@ -1,0 +1,106 @@
+{
+  "relay": {
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Postgres",
+      "Server-Sent Events",
+      "Zod",
+      "Groq",
+      "OpenAI",
+      "Anthropic"
+    ]
+  },
+  "sentinel": {
+    "tech": [
+      "Python",
+      "FastAPI",
+      "React",
+      "scikit-learn",
+      "Postgres",
+      "Redis",
+      "Docker"
+    ],
+    "description": "Sentinel is a fraud detection research platform for anonymized credit card transactions, with a training pipeline, a FastAPI scoring service, and a React triage dashboard."
+  },
+  "meridian": {
+    "tech": [
+      "Python",
+      "FastAPI",
+      "React",
+      "Typer",
+      "SQLite",
+      "Exa"
+    ]
+  },
+  "cardforge": {
+    "tech": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Playwright",
+      "Docker"
+    ]
+  },
+  "dwell-signal": {
+    "tech": [
+      "React",
+      "TypeScript",
+      "Vite"
+    ]
+  },
+  "reel": {
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Tailwind",
+      "TMDB API"
+    ]
+  },
+  "compass": {
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "Python",
+      "FastAPI"
+    ]
+  },
+  "atlas": {
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "tRPC",
+      "Prisma",
+      "Postgres",
+      "BullMQ",
+      "Redis"
+    ]
+  },
+  "storygen": {
+    "tech": [
+      "Next.js",
+      "FastAPI",
+      "WebSockets",
+      "Gemini",
+      "Vertex AI",
+      "Cloud Run",
+      "Terraform"
+    ]
+  },
+  "price-deal-watcher": {
+    "tech": [
+      "Python",
+      "FastAPI",
+      "APScheduler"
+    ]
+  },
+  "stockpilot": {
+    "tech": [
+      "TypeScript",
+      "Next.js"
+    ]
+  },
+  "miner-eats": {
+    "description": "An early Java project from my first semester at UTEP, built around campus food options."
+  }
+}
