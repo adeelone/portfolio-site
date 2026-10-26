@@ -143,7 +143,7 @@ function contactPage(profile) {
 function eventBanner(profile, now = new Date()) {
   const event = profile.event;
   if (!event || now >= new Date(event.banner_until)) return "";
-  return `<aside class="event-banner" aria-label="${escapeHtml(event.short_name)}"><p><strong>At ${escapeHtml(event.short_name)} in ${escapeHtml(event.place)}?</strong> My resume and contact info are one tap away.</p><a class="text-link" href="/shpe">Open my quick card <span aria-hidden="true">→</span></a></aside>`;
+  return `<aside class="event-banner" aria-label="${escapeHtml(event.short_name)}"><p><strong>At ${escapeHtml(event.short_name)} in ${escapeHtml(event.place)}?</strong> Grab my resume or save my contact in one tap.</p><div class="event-actions"><a class="button" href="/assets/Aden_Ramirez_Resume.pdf" download="Aden_Ramirez_Resume.pdf">Resume <span aria-hidden="true">↓</span></a><a class="button event-save" href="/contact.vcf" download="Aden-Ramirez.vcf">Save contact <span aria-hidden="true">+</span></a><a class="text-link" href="/shpe">Quick card <span aria-hidden="true">→</span></a></div></aside>`;
 }
 
 function shpePage(profile, repos) {

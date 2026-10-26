@@ -219,6 +219,7 @@ test("serves a phone-first convention card with one-tap actions", async () => {
 test("shows the convention banner only until the event ends", () => {
   const profile = { event: { short_name: "SHPE 2026", place: "Indianapolis", banner_until: "2026-11-01T05:00:00Z" } };
   assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/shpe"/);
+  assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/assets\/Aden_Ramirez_Resume\.pdf" download[\s\S]*href="\/contact\.vcf" download/);
   assert.equal(eventBanner(profile, new Date("2026-11-01T05:00:00Z")), "");
   assert.equal(eventBanner({}, new Date("2026-10-29T15:00:00Z")), "");
 });
