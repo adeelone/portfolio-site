@@ -22,6 +22,7 @@ Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, AP
 - `/education` — verified UTEP degree progress, honors, coursework, and current classes
 - `/about` — background and working style
 - `/contact` — email, phone, professional profiles, résumé, and downloadable vCard
+- `/shpe` — phone-first quick card for career fairs (QR target): résumé download, save-contact, LinkedIn/email/text/call, and three recent projects. The home-page banner pointing to it is driven by `event` in `data/profile.json` and hides itself after `banner_until`
 - `/play` — a small, dependency-free Snake game (keyboard or touch controls, pause/resume, best score kept in `localStorage` only)
 - `/sitemap.xml`, `/robots.txt`, and `/llms.txt` — search and AI discovery
 

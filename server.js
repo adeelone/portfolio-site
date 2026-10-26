@@ -81,7 +81,7 @@ async function renderApp(pathname, origin, preloaded = {}) {
 async function sitemap(req) {
   const projects = await readJson(projectsPath);
   const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
-  const paths = ["/", "/work", "/jobs", "/education", "/about", "/contact", ...publicRepos(projects.repos).filter((project) => project.slug).map((project) => `/projects/${project.slug}`)];
+  const paths = ["/", "/shpe", "/work", "/jobs", "/education", "/about", "/contact", ...publicRepos(projects.repos).filter((project) => project.slug).map((project) => `/projects/${project.slug}`)];
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((item) => `<url><loc>${origin}${item}</loc></url>`).join("")}</urlset>`;
 }
 
@@ -109,7 +109,8 @@ const server = http.createServer(async (req, res) => {
     if (pathname === "/sitemap.xml") return send(res, 200, await sitemap(req), "application/xml; charset=utf-8", "public, max-age=3600");
     if (pathname === "/contact.vcf") {
       const profile = await readJson(profilePath);
-      const card = ["BEGIN:VCARD", "VERSION:3.0", `FN:${profile.name}`, `EMAIL;TYPE=INTERNET:${profile.email}`, `EMAIL;TYPE=INTERNET:${profile.school_email}`, `TEL;TYPE=CELL:${profile.phone_href.replace("tel:", "")}`, `URL:${profile.website || configuredSiteUrl}`, `NOTE:LinkedIn ${profile.linkedin}`, "END:VCARD"].join("\r\n");
+      const [given, ...rest] = profile.name.split(" ");
+      const card = ["BEGIN:VCARD", "VERSION:3.0", `N:${rest.join(" ")};${given};;;`, `FN:${profile.name}`, `ORG:${profile.education.school}`, "TITLE:Computer Science Student and Software Engineer", `EMAIL;TYPE=INTERNET:${profile.email}`, `EMAIL;TYPE=INTERNET:${profile.school_email}`, `TEL;TYPE=CELL:${profile.phone_href.replace("tel:", "")}`, `URL:${profile.website || configuredSiteUrl}`, `X-SOCIALPROFILE;TYPE=linkedin:${profile.linkedin}`, `NOTE:Seeking Summer 2027 SWE internships. LinkedIn: ${profile.linkedin}`, "END:VCARD"].join("\r\n");
       return send(res, 200, card, "text/vcard; charset=utf-8", "public, max-age=3600");
     }
     if (publicFiles.has(pathname)) {
@@ -120,7 +121,7 @@ const server = http.createServer(async (req, res) => {
     if (pathname.startsWith("/assets/") || pathname.startsWith("/data/") || pathname.startsWith("/.git") || pathname.includes(".")) return send(res, 404, "Not found");
     const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
     if (pathname === "/experience") return redirect(res, 308, `${origin}/jobs`);
-    if (["/", "/work", "/jobs", "/experience", "/education", "/about", "/contact", "/play"].includes(pathname)) {
+    if (["/", "/work", "/jobs", "/experience", "/education", "/about", "/contact", "/play", "/shpe"].includes(pathname)) {
       return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
     }
     if (/^\/projects\/[a-z0-9-]+$/i.test(pathname)) {

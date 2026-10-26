@@ -2,7 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
-const { projectArtSlugs } = require("../render");
+const { projectArtSlugs, eventBanner } = require("../render");
 
 const port = 3199;
 const origin = `http://127.0.0.1:${port}`;
@@ -74,7 +74,7 @@ test("serves the app and project routes with route-specific metadata", async () 
 
 test("provides complete route metadata and structured data in source HTML", async () => {
   const projectData = await (await fetch(`${origin}/api/projects`)).json();
-  const pages = ["/", "/work", "/jobs", "/education", "/about", "/contact", "/play", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  const pages = ["/", "/shpe", "/work", "/jobs", "/education", "/about", "/contact", "/play", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
   const titles = new Set();
   for (const pathname of pages) {
     const html = await (await fetch(`${origin}${pathname}`)).text();
@@ -196,5 +196,29 @@ test("provides a downloadable contact card", async () => {
   const card = await response.text();
   assert.match(card, /FN:Aden Ramirez/);
   assert.match(card, /EMAIL;TYPE=INTERNET:adeemra@gmail.com/);
-  assert.match(card, /TEL;TYPE=CELL:\+19152407882/);
+  assert.match(card, /TEL;TYPE=CELL:\+19152407882/);  assert.match(card, /^N:Ramirez;Aden;;;\r?$/m);
+  assert.match(card, /ORG:The University of Texas at El Paso/);
+  assert.match(card, /X-SOCIALPROFILE;TYPE=linkedin:https:\/\/www\.linkedin\.com\/in\/aden-ramirez-cs\//);
+});
+
+test("serves a phone-first convention card with one-tap actions", async () => {
+  const response = await fetch(`${origin}/shpe`);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<title>SHPE 2026 Quick Card \| Aden Ramirez<\/title>/);
+  assert.match(html, /href="\/assets\/Aden_Ramirez_Resume\.pdf" download/);
+  assert.match(html, /href="\/contact\.vcf" download/);
+  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/aden-ramirez-cs\/"/);
+  assert.match(html, /href="mailto:adeemra@gmail\.com\?subject=Great%20meeting%20you%20at%20SHPE%202026"/);
+  assert.match(html, /href="sms:\+19152407882"/);
+  assert.match(html, /href="tel:\+19152407882"/);
+  for (const slug of ["relay", "cohortcove", "sentinel"]) assert.match(html, new RegExp(`href="/projects/${slug}"`));
+  assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /<loc>http:\/\/127\.0\.0\.1:3199\/shpe<\/loc>/);
+});
+
+test("shows the convention banner only until the event ends", () => {
+  const profile = { event: { short_name: "SHPE 2026", place: "Indianapolis", banner_until: "2026-11-01T05:00:00Z" } };
+  assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/shpe"/);
+  assert.equal(eventBanner(profile, new Date("2026-11-01T05:00:00Z")), "");
+  assert.equal(eventBanner({}, new Date("2026-10-29T15:00:00Z")), "");
 });

@@ -17,6 +17,13 @@
   "resume": "assets/Aden_Ramirez_Resume.pdf",
   "hero_image": "assets/aden-headshot.png",
   "location": "El Paso, Texas",
+  "event": {
+    "name": "SHPE 2026 National Convention",
+    "short_name": "SHPE 2026",
+    "place": "Indianapolis",
+    "dates": "Oct 28 to 31",
+    "banner_until": "2026-11-01T05:00:00Z"
+  },
   "hero_facts": [
     { "label": "Based in", "value": "El Paso, TX" },
     { "label": "Studying", "value": "B.S. Computer Science, Math minor" },
