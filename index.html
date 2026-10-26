@@ -21,9 +21,9 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
     <link rel="stylesheet" href="/styles.css?v=2" />
-    <link rel="stylesheet" href="/polish.css?v=7" />
+    <link rel="stylesheet" href="/polish.css?v=8" />
     <script type="application/ld+json" id="structured-data">{{STRUCTURED_DATA}}</script>
-    <script src="/client.js?v=4" defer></script>
+    <script src="/client.js?v=5" defer></script>
     {{PAGE_SCRIPT}}
   </head>
   <body>
@@ -47,13 +47,13 @@
         <a href="/education">Education</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-        <button class="nav-resume" type="button" data-resume-open>Resume</button>
+        <a class="nav-resume" href="/assets/Aden_Ramirez_Resume.pdf" data-resume-open>Resume</a>
       </nav>
     </header>
     <main id="content" tabindex="-1">{{CONTENT}}</main>
     <footer class="site-footer">
       <div><strong>Aden Ramirez</strong><span>Software engineer and UTEP CS student in El Paso.</span></div>
-      <div class="footer-links"><a href="/contact">Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/aden-ramirez-cs/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
+      <div class="footer-links"><a href="/contact">Contact</a><a href="mailto:adeemra@gmail.com">Email</a><a href="tel:+19152407882">(915) 240-7882</a><a href="https://github.com/adeelone" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://www.linkedin.com/in/aden-ramirez-cs/" target="_blank" rel="noopener noreferrer">LinkedIn</a></div>
       <small>© <span id="year"></span> Aden Ramirez. Built by hand, kept honest.</small>
     </footer>
     <dialog class="resume-dialog" id="resume-dialog" aria-labelledby="resume-title">
@@ -62,12 +62,12 @@
         <button class="resume-close" type="button" data-resume-close aria-label="Close resume viewer">Close</button>
       </div>
       <div class="resume-switcher" role="group" aria-label="Choose resume version">
-        <button type="button" class="active" data-resume-src="/assets/Aden_Ramirez_Resume.pdf" data-resume-preview="/assets/resume-technical-preview.png">Technical</button>
+        <button type="button" class="active" data-resume-src="/assets/Aden_Ramirez_Resume.pdf" data-resume-preview="/assets/resume-technical-preview.png">Software engineering</button>
         <button type="button" data-resume-src="/assets/Aden_Ramirez_Resume_General.pdf" data-resume-preview="/assets/resume-general-preview.png">General</button>
         <a id="resume-download" href="/assets/Aden_Ramirez_Resume.pdf" download>Download PDF</a>
       </div>
-      <div class="resume-preview"><img id="resume-frame" alt="Preview of Aden Ramirez's technical resume"></div>
+      <div class="resume-preview"><img id="resume-frame" src="/assets/resume-technical-preview.png" loading="lazy" alt="Preview of Aden Ramirez's software engineering resume"></div>
     </dialog>
-    <noscript>JavaScript is optional; interactive filters and the resume dialog require it.</noscript>
+    <noscript>JavaScript is optional. Without it, Resume links open the PDF directly.</noscript>
   </body>
 </html>

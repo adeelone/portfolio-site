@@ -89,7 +89,12 @@ test("provides complete route metadata and structured data in source HTML", asyn
     assert.match(html, /<link rel="icon" href="\/favicon\.svg"/);
     assert.match(html, /<script type="application\/ld\+json"[^>]*>\{"@context":"https:\/\/schema\.org"/);
     assert.equal((html.match(/<h1[ >]/g) || []).length, 1, `${pathname} h1 count`);
-    for (const image of html.matchAll(/<img\b[^>]*>/g)) assert.match(image[0], /\balt="[^"]*"/, `${pathname} image alt`);
+    for (const image of html.matchAll(/<img\b[^>]*>/g)) {
+      assert.match(image[0], /\balt="[^"]*"/, `${pathname} image alt`);
+      assert.match(image[0], /\bsrc="[^"]+"/, `${pathname} image must have a src`);
+    }
+    assert.match(html, /<a class="nav-resume" href="\/assets\/Aden_Ramirez_Resume\.pdf" data-resume-open>Resume<\/a>/, `${pathname} resume link works without JavaScript`);
+    assert.match(html, /<footer[\s\S]*href="tel:\+19152407882"[\s\S]*<\/footer>/, `${pathname} footer phone`);
   }
 });
 
@@ -217,6 +222,13 @@ test("serves a phone-first convention card with one-tap actions", async () => {
   assert.match(html, /href="sms:\+19152407882"/);
   assert.match(html, /href="tel:\+19152407882"/);
   for (const slug of ["relay", "cohortcove", "sentinel"]) assert.match(html, new RegExp(`href="/projects/${slug}"`));
+  const { repos } = await (await fetch(`${origin}/api/projects`)).json();
+  for (const slug of ["relay", "cohortcove", "sentinel"]) {
+    const project = repos.find((item) => item.slug === slug);
+    const codeLink = new RegExp(`<a class="text-link" href="https://github\\.com/adeelone/${slug}"[^>]*>Code`);
+    if (project.url) assert.match(html, codeLink, `${slug} code link`); else assert.doesNotMatch(html, codeLink, `${slug} is private`);
+  }
+  assert.match(html, /First-generation college student/);
   assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /<loc>http:\/\/127\.0\.0\.1:3199\/shpe<\/loc>/);
 });
 
@@ -226,4 +238,18 @@ test("shows the convention banner only until the event ends", () => {
   assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/assets\/Aden_Ramirez_Resume\.pdf" download[\s\S]*href="\/contact\.vcf" download/);
   assert.equal(eventBanner(profile, new Date("2026-11-01T05:00:00Z")), "");
   assert.equal(eventBanner({}, new Date("2026-10-29T15:00:00Z")), "");
+});
+
+test("surfaces SHPE, ColorStack, and first-gen on home and about", async () => {
+  for (const pathname of ["/", "/about"]) {
+    const html = await (await fetch(`${origin}${pathname}`)).text();
+    assert.match(html, /<p class="affiliations">SHPE Research Technical Specialist · ColorStack Technical Officer · Hispanic Scholarship Fund Scholar · First-generation college student<\/p>/, pathname);
+  }
+  assert.match(await (await fetch(`${origin}/`)).text(), /<section class="contact-callout">[\s\S]*href="tel:\+19152407882"/);
+});
+
+test("project data has one entry per slug", async () => {
+  const { repos } = await (await fetch(`${origin}/api/projects`)).json();
+  const slugs = repos.map((project) => project.slug);
+  assert.deepEqual(slugs.filter((slug, index) => slugs.indexOf(slug) !== index), []);
 });

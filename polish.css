@@ -226,9 +226,12 @@ html, body { overflow-x: hidden; }
 .card-proof h2, .card-projects h2 { font-family: var(--serif); font-size: 1.5rem; margin: 0 0 .9rem; }
 .card-proof ul { margin: 0; padding-left: 1.1rem; }
 .card-proof li { margin-bottom: .7rem; line-height: 1.5; }
-.card-projects a { display: block; padding: .9rem 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
-.card-projects a:hover strong { color: var(--blue); }
-.card-projects strong { font-size: 1.1rem; }
+.card-projects article { padding: .9rem 0; border-bottom: 1px solid var(--line); }
+.card-projects h3 { font-size: 1.1rem; margin: 0; }
+.card-projects h3 a { color: inherit; text-decoration: none; }
+.card-projects h3 a:hover { color: var(--blue); }
+.card-project-links { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .55rem; }
+.card-project-links a { display: inline-flex; align-items: center; min-height: 2.75rem; }
 .card-projects span { display: block; color: var(--rust); font: .78rem var(--mono); margin-top: .2rem; }
 .card-projects p { margin: .35rem 0 0; color: var(--muted); line-height: 1.45; }
 .card-more { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; color: var(--muted); margin-bottom: 3rem; }
@@ -238,3 +241,6 @@ html, body { overflow-x: hidden; }
   .card-actions { grid-template-columns: 1fr; }
   .card-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+p.affiliations, .page-lead p.affiliations { color: var(--rust); font: 700 .78rem/1.7 var(--mono); letter-spacing: .04em; text-transform: uppercase; margin: .4rem 0 1rem; max-width: 62ch; }
+.contact-callout div { flex-wrap: wrap; }

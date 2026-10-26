@@ -49,6 +49,15 @@ menuButton?.addEventListener("click", () => {
 });
 
 document.addEventListener("click", async (event) => {
+  if (event.target.closest("[data-resume-open]") && resumeDialog?.showModal) {
+    event.preventDefault();
+    const frame = document.querySelector("#resume-frame");
+    if (!frame.getAttribute("src")) frame.src = document.querySelector("[data-resume-src].active").dataset.resumePreview;
+    nav?.classList.remove("open");
+    menuButton?.setAttribute("aria-expanded", "false");
+    resumeDialog.showModal();
+  }
+
   const copyButton = event.target.closest("[data-copy]");
   if (copyButton) {
     const status = document.querySelector("#copy-status");
@@ -61,11 +70,6 @@ document.addEventListener("click", async (event) => {
     }
   }
 
-  if (event.target.closest("[data-resume-open]")) {
-    const frame = document.querySelector("#resume-frame");
-    if (!frame.src) frame.src = document.querySelector("[data-resume-src].active").dataset.resumePreview;
-    resumeDialog?.showModal();
-  }
   if (event.target.closest("[data-resume-close]")) resumeDialog?.close();
 
   const choice = event.target.closest("[data-resume-src]");

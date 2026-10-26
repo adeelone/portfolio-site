@@ -62,5 +62,9 @@
   "compass": [
     "Built a job-search workspace that scores resumes for ATS readability and rates each job 0 to 100 with matched keywords.",
     "Combines resume intelligence, search workflows, and AI-assisted triage in one place."
+  ],
+  "cohortcove": [
+    "Shipped a full-stack campus events platform in 8.7K+ lines with verified sign-up, search, RSVPs, waitlists, and moderation.",
+    "Prevented overbooking with Postgres row locks, proven by a test that fires 20 concurrent RSVPs at a 1-seat event and confirms exactly one, plus 26 Vitest and Playwright tests against a real database with axe accessibility scans."
   ]
 }

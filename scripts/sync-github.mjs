@@ -150,7 +150,9 @@ function main() {
     return new Date(b.pushed_at) - new Date(a.pushed_at);
   });
 
+  const publicSlugs = new Set(repos.map((repo) => repo.slug));
   for (const project of privateProjects) {
+    if (publicSlugs.has(safeSlug(project.name))) continue;
     repos.push({
       slug: safeSlug(project.name),
       homepage: null,

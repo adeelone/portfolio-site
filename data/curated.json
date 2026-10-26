@@ -102,5 +102,17 @@
   },
   "miner-eats": {
     "description": "An early Java project from my first semester at UTEP, built around campus food options."
+  },
+  "cohortcove": {
+    "tech": [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "Vercel",
+      "Vitest",
+      "Playwright"
+    ],
+    "description": "A full-stack campus events platform with verified sign-up, search, RSVPs, waitlists, and moderation."
   }
 }

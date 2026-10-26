@@ -689,7 +689,7 @@
       "slug": "cohortcove",
       "url": "https://github.com/adeelone/cohortcove",
       "homepage": null,
-      "description": "Working name for the former **Campus Connect** concept — a lightweight, institution-scoped campus bulletin board where verified students discover events and organizations. See `BRIEF.md` for the full product brief this build follows, `ROADMAP.md` for what's built vs. not, and `AUDIT.md` for an honest requirement-by-requirement status.",
+      "description": "A full-stack campus events platform with verified sign-up, search, RSVPs, waitlists, and moderation.",
       "languages": [
         "Dockerfile",
         "JavaScript",
@@ -698,9 +698,13 @@
       ],
       "topics": [],
       "tech": [
-        "JavaScript",
+        "Next.js",
         "TypeScript",
-        "CSS"
+        "PostgreSQL",
+        "Prisma",
+        "Vercel",
+        "Vitest",
+        "Playwright"
       ],
       "stars": 0,
       "pushed_at": "2026-08-29T05:24:33Z",
@@ -710,7 +714,10 @@
       "is_archived": false,
       "latest_release": null,
       "screenshot": null,
-      "highlights": [],
+      "highlights": [
+        "Shipped a full-stack campus events platform in 8.7K+ lines with verified sign-up, search, RSVPs, waitlists, and moderation.",
+        "Prevented overbooking with Postgres row locks, proven by a test that fires 20 concurrent RSVPs at a 1-seat event and confirms exactly one, plus 26 Vitest and Playwright tests against a real database with axe accessibility scans."
+      ],
       "readme_preview": [
         "# CohortCove",
         "",
@@ -2426,43 +2433,6 @@
       "screenshot": null,
       "highlights": [],
       "readme_preview": []
-    },
-    {
-      "slug": "cohortcove",
-      "homepage": null,
-      "stars": 0,
-      "pushed_at": "2026-08-31T00:00:00Z",
-      "updated_at": null,
-      "is_pinned": false,
-      "is_archived": false,
-      "latest_release": null,
-      "screenshot": null,
-      "readme_preview": [],
-      "name": "CohortCove",
-      "url": null,
-      "description": "A full-stack campus events platform with verified sign-up, search, RSVPs, waitlists, and moderation.",
-      "languages": [
-        "TypeScript"
-      ],
-      "topics": [
-        "full-stack",
-        "postgres",
-        "campus"
-      ],
-      "tech": [
-        "Next.js",
-        "TypeScript",
-        "PostgreSQL",
-        "Prisma",
-        "Vercel",
-        "Vitest",
-        "Playwright"
-      ],
-      "is_private": true,
-      "highlights": [
-        "Shipped a full-stack campus events platform in 8.7K+ lines with verified sign-up, search, RSVPs, waitlists, and moderation.",
-        "Prevented overbooking with Postgres row locks, proven by a test that fires 20 concurrent RSVPs at a 1-seat event and confirms exactly one, plus 26 Vitest and Playwright tests against a real database with axe accessibility scans."
-      ]
     },
     {
       "slug": "nebula-stat-proto",
