@@ -2,7 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
-const { projectArtSlugs } = require("../render");
+const { projectArtSlugs, eventBanner } = require("../render");
 
 const port = 3199;
 const origin = `http://127.0.0.1:${port}`;
@@ -74,7 +74,7 @@ test("serves the app and project routes with route-specific metadata", async () 
 
 test("provides complete route metadata and structured data in source HTML", async () => {
   const projectData = await (await fetch(`${origin}/api/projects`)).json();
-  const pages = ["/", "/work", "/jobs", "/education", "/about", "/contact", "/play", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
+  const pages = ["/", "/shpe", "/work", "/jobs", "/education", "/about", "/contact", "/play", ...projectData.repos.filter((project) => project.slug !== "portfolio-site").map((project) => `/projects/${project.slug}`)];
   const titles = new Set();
   for (const pathname of pages) {
     const html = await (await fetch(`${origin}${pathname}`)).text();
@@ -84,7 +84,7 @@ test("provides complete route metadata and structured data in source HTML", asyn
     titles.add(title);
     assert.match(html, /<html lang="en">/);
     assert.match(html, /<meta name="description" content="[^"]+"/);
-    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.png"/);
+    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.jpg"/);
     assert.match(html, /<link rel="canonical"[^>]+href="http:\/\/127\.0\.0\.1:3199/);
     assert.match(html, /<link rel="icon" href="\/favicon\.svg"/);
     assert.match(html, /<script type="application\/ld\+json"[^>]*>\{"@context":"https:\/\/schema\.org"/);
@@ -118,10 +118,14 @@ test("exposes only read-only public APIs", async () => {
 });
 
 test("serves the professional headshot as an explicit public asset", async () => {
-  const response = await fetch(`${origin}/assets/aden-headshot.png`);
+  const response = await fetch(`${origin}/assets/aden-headshot.jpg`);
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("content-type"), "image/png");
-  assert.ok((await response.arrayBuffer()).byteLength > 100000);
+  assert.equal(response.headers.get("content-type"), "image/jpeg");
+  const bytes = (await response.arrayBuffer()).byteLength;
+  assert.ok(bytes > 50000 && bytes < 400000, `headshot should stay light for phones (${bytes} bytes)`);
+  const icon = await fetch(`${origin}/assets/apple-touch-icon.png`);
+  assert.equal(icon.status, 200);
+  assert.equal(icon.headers.get("content-type"), "image/png");
 });
 
 test("serves artwork for every curated project and both resume versions", async () => {
@@ -196,5 +200,30 @@ test("provides a downloadable contact card", async () => {
   const card = await response.text();
   assert.match(card, /FN:Aden Ramirez/);
   assert.match(card, /EMAIL;TYPE=INTERNET:adeemra@gmail.com/);
-  assert.match(card, /TEL;TYPE=CELL:\+19152407882/);
+  assert.match(card, /TEL;TYPE=CELL:\+19152407882/);  assert.match(card, /^N:Ramirez;Aden;;;\r?$/m);
+  assert.match(card, /ORG:The University of Texas at El Paso/);
+  assert.match(card, /X-SOCIALPROFILE;TYPE=linkedin:https:\/\/www\.linkedin\.com\/in\/aden-ramirez-cs\//);
+});
+
+test("serves a phone-first convention card with one-tap actions", async () => {
+  const response = await fetch(`${origin}/shpe`);
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /<title>SHPE 2026 Quick Card \| Aden Ramirez<\/title>/);
+  assert.match(html, /href="\/assets\/Aden_Ramirez_Resume\.pdf" download/);
+  assert.match(html, /href="\/contact\.vcf" download/);
+  assert.match(html, /href="https:\/\/www\.linkedin\.com\/in\/aden-ramirez-cs\/"/);
+  assert.match(html, /href="mailto:adeemra@gmail\.com\?subject=Great%20meeting%20you%20at%20SHPE%202026"/);
+  assert.match(html, /href="sms:\+19152407882"/);
+  assert.match(html, /href="tel:\+19152407882"/);
+  for (const slug of ["relay", "cohortcove", "sentinel"]) assert.match(html, new RegExp(`href="/projects/${slug}"`));
+  assert.match(await (await fetch(`${origin}/sitemap.xml`)).text(), /<loc>http:\/\/127\.0\.0\.1:3199\/shpe<\/loc>/);
+});
+
+test("shows the convention banner only until the event ends", () => {
+  const profile = { event: { short_name: "SHPE 2026", place: "Indianapolis", banner_until: "2026-11-01T05:00:00Z" } };
+  assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/shpe"/);
+  assert.match(eventBanner(profile, new Date("2026-10-29T15:00:00Z")), /href="\/assets\/Aden_Ramirez_Resume\.pdf" download[\s\S]*href="\/contact\.vcf" download/);
+  assert.equal(eventBanner(profile, new Date("2026-11-01T05:00:00Z")), "");
+  assert.equal(eventBanner({}, new Date("2026-10-29T15:00:00Z")), "");
 });

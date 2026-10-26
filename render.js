@@ -88,8 +88,8 @@ function homePage(profile, repos) {
   const preferred = ["relay", "cohortcove", "sentinel", "meridian", "cardforge"];
   const selected = preferred.map((slug) => projects.find((project) => project.slug === slug)).filter(Boolean).slice(0, 3);
   const google = profile.experience.find((role) => /google/i.test(role.company));
-  return `<section class="hero">
-    <div class="hero-copy"><h1>Aden<br>Ramirez</h1><p class="hero-role">Software engineer, CS junior at UTEP, and former Google STEP intern.</p><p class="hero-line">I build careful software for real people.</p><p class="hero-now">${escapeHtml(profile.subtitle)}</p><div class="hero-actions"><a class="button" href="/work">See my work <span aria-hidden="true">→</span></a><a class="text-link" href="mailto:${escapeHtml(profile.email)}">Say hello</a></div></div>
+  return `${eventBanner(profile)}<section class="hero">
+    <div class="hero-copy"><h1>Aden<br>Ramirez</h1><p class="hero-role">Software engineer, CS junior at UTEP, and former Google STEP intern.</p><p class="hero-line">I build careful software for real people.</p><p class="hero-now">${escapeHtml(profile.subtitle)}</p><div class="hero-actions"><a class="button" href="/work">See my work <span aria-hidden="true">→</span></a><a class="text-link" href="mailto:${escapeHtml(profile.email)}">Say hello</a></div><p class="hero-actions hero-connect">Connect: <a class="text-link" href="${escapeHtml(profile.linkedin)}" target="_blank" rel="noopener noreferrer">LinkedIn</a><a class="text-link" href="${escapeHtml(profile.phone_href)}">${escapeHtml(profile.phone)}</a><a class="text-link" href="mailto:${escapeHtml(profile.email)}">${escapeHtml(profile.email)}</a><a class="text-link" href="/assets/Aden_Ramirez_Resume.pdf" download="Aden_Ramirez_Resume.pdf">Resume (PDF)</a></p></div>
     <figure class="portrait"><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Professional headshot of Aden Ramirez"><figcaption>Curious. Pragmatic. Detail-oriented. Human.</figcaption></figure>
   </section>
   <section class="selected-work section-rule"><div class="section-intro"><h2>A few things I've built.</h2><p>Recent systems and products where the interesting work lives in the details.</p></div>${selected.map((project) => projectRow(project)).join("")}<a class="button secondary" href="/work">Browse all ${projects.length} projects</a></section>
@@ -140,6 +140,37 @@ function contactPage(profile) {
   return `<header class="page-lead contact-lead"><h1>Contact</h1><p>If you have an internship, role, project, referral, or useful conversation in mind, I would like to hear from you.</p></header><section class="contact-grid"><article class="contact-primary"><p class="company">Best first step</p><h2>Email me</h2><p>${escapeHtml(profile.connect_note)}</p><a class="button" href="mailto:${escapeHtml(profile.email)}?subject=${subject}">Start an email <span aria-hidden="true">→</span></a><button class="copy-button" type="button" data-copy="${escapeHtml(profile.email)}">Copy email</button></article><div class="contact-methods">${method("Personal email", `mailto:${profile.email}`, profile.email)}${method("University email", `mailto:${profile.school_email}`, profile.school_email)}${method("Phone", profile.phone_href, profile.phone)}${method("LinkedIn", profile.linkedin, profile.linkedin)}${method("GitHub", profile.github, profile.github)}${profile.handshake ? method("Handshake", profile.handshake, profile.handshake) : ""}<article><span>Resume</span><button class="inline-resume" type="button" data-resume-open>View here</button></article></div></section><section class="contact-details section-rule"><div><h2>Good reasons to reach out</h2><ul><li>Summer 2027 software engineering internships, co-ops, and part-time technical work</li><li>Entry-level opportunities and early-career programs</li><li>Project collaboration, student organizations, and referrals</li><li>Backend, full-stack, systems, testing, or practical AI work</li></ul></div><aside><h2>Save my contact</h2><p>Download a standard contact card for your phone or address book.</p><a class="button secondary" href="/contact.vcf" download="Aden-Ramirez.vcf">Download vCard</a><p class="contact-location">Based in ${escapeHtml(profile.location)} · Open to relocating anywhere.</p></aside></section><p id="copy-status" class="copy-status" role="status" aria-live="polite"></p>`;
 }
 
+function eventBanner(profile, now = new Date()) {
+  const event = profile.event;
+  if (!event || now >= new Date(event.banner_until)) return "";
+  return `<aside class="event-banner" aria-label="${escapeHtml(event.short_name)}"><p><strong>At ${escapeHtml(event.short_name)} in ${escapeHtml(event.place)}?</strong> Grab my resume or save my contact in one tap.</p><div class="event-actions"><a class="button" href="/assets/Aden_Ramirez_Resume.pdf" download="Aden_Ramirez_Resume.pdf">Resume <span aria-hidden="true">↓</span></a><a class="button event-save" href="/contact.vcf" download="Aden-Ramirez.vcf">Save contact <span aria-hidden="true">+</span></a><a class="text-link" href="/shpe">Quick card <span aria-hidden="true">→</span></a></div></aside>`;
+}
+
+function shpePage(profile, repos) {
+  const event = profile.event || { short_name: "SHPE 2026", place: "Indianapolis" };
+  const google = profile.experience.find((role) => /google/i.test(role.company));
+  const projects = ["relay", "cohortcove", "sentinel"].map((slug) => repos.find((project) => project.slug === slug)).filter(Boolean);
+  const subject = encodeURIComponent(`Great meeting you at ${event.short_name}`);
+  const facts = [
+    ["Seeking", "Summer 2027 SWE internship or co-op"],
+    ["Graduating", profile.education.graduation.replace(/^Expected\s+/, "")],
+    ["GPA", profile.education.gpa],
+    ["Based in", "El Paso, TX · open to relocating"]
+  ];
+  const proof = [
+    ...(google?.bullets || []).slice(0, 1).map((item) => `<strong>Google STEP intern, Cloud.</strong> ${escapeHtml(item)}`),
+    `<strong>Leadership.</strong> Research Technical Specialist in SHPE's MinerSpark program, ColorStack Technical Officer, and GDG on Campus mentor at UTEP.`,
+    `<strong>Recognition.</strong> 2025 Hispanic Scholarship Fund Scholar, Dean's List three semesters, Aspen Ideas: Rising Generations.`
+  ];
+  return `<header class="card-hero"><img src="${escapeHtml(profile.hero_image.replace(/^assets/, "/assets"))}" alt="Professional headshot of Aden Ramirez" width="112" height="140"><div><p class="eyebrow">${escapeHtml(event.short_name)} · ${escapeHtml(event.place)}</p><h1>Aden Ramirez</h1><p class="card-role">Computer science junior at UTEP and former Google STEP intern. I build backend systems, full-stack products, and practical AI tools.</p></div></header>
+  <dl class="card-facts">${facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
+  <div class="card-actions"><a class="button" href="/assets/Aden_Ramirez_Resume.pdf" download="Aden_Ramirez_Resume.pdf">Download resume <span aria-hidden="true">↓</span></a><a class="button card-save" href="/contact.vcf" download="Aden-Ramirez.vcf">Save my contact <span aria-hidden="true">+</span></a></div>
+  <nav class="card-links" aria-label="Contact Aden"><a href="${escapeHtml(profile.linkedin)}" target="_blank" rel="noopener noreferrer">LinkedIn</a><a href="mailto:${escapeHtml(profile.email)}?subject=${subject}">Email</a><a href="${escapeHtml(profile.phone_href.replace(/^tel:/, "sms:"))}">Text</a><a href="${escapeHtml(profile.phone_href)}">Call</a></nav>
+  <section class="card-proof"><h2>The short version</h2><ul>${proof.map((item) => `<li>${item}</li>`).join("")}</ul></section>
+  <section class="card-projects"><h2>Recent work</h2>${projects.map((project) => `<a href="${projectHref(project)}"><strong>${escapeHtml(displayName(project.name))}</strong><span>${escapeHtml(technologies(project, 4).join(" · "))}</span><p>${escapeHtml(plainText(project.description || ""))}</p></a>`).join("")}</section>
+  <p class="card-more"><a class="text-link" href="/">See the full portfolio <span aria-hidden="true">→</span></a><span>${escapeHtml(profile.email)} · ${escapeHtml(profile.phone)}</span></p>`;
+}
+
 function narrative(project) {
   const preview = (project.readme_preview || []).filter((line) => line && !/^#|^```|^\[!|^\|/.test(line));
   const highlights = (project.highlights || []).length ? project.highlights : preview.filter((line) => !line.startsWith("-")).slice(0, 2);
@@ -188,6 +219,7 @@ function renderPage(pathname, profile, repos) {
   if (pathname === "/about") return aboutPage(profile);
   if (pathname === "/contact") return contactPage(profile);
   if (pathname === "/play") return playPage();
+  if (pathname === "/shpe") return shpePage(profile, repos);
   const match = pathname.match(/^\/projects\/([^/]+)$/);
   if (match) {
     const project = repos.find((item) => item.slug === match[1]);
@@ -205,6 +237,7 @@ function metaForPath(pathname, repos) {
     "/education": ["Education | Aden Ramirez", "Aden Ramirez's computer science education at UTEP, including mathematics, coursework, honors, selective programs, and current studies."],
     "/about": ["About | Aden Ramirez", "About Aden Ramirez, a UTEP computer science student and software engineer in El Paso: background, leadership, and toolkit."],
     "/contact": ["Contact | Aden Ramirez", "Contact Aden Ramirez about software engineering internships, technical work, projects, referrals, and collaboration."],
+    "/shpe": ["SHPE 2026 Quick Card | Aden Ramirez", "Aden Ramirez at the SHPE 2026 National Convention: UTEP CS junior and former Google STEP intern seeking Summer 2027 SWE internships. Resume, contact card, and recent work in one place."],
     "/play": ["Play | Aden Ramirez", "A small, dependency-free Snake game built into Aden Ramirez's portfolio. Arrow keys or touch controls; best score saved locally."]
   };
   if (routes[pathname]) return { title: routes[pathname][0], description: routes[pathname][1], found: true };
@@ -220,7 +253,7 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     "@id": `${origin}/#aden-ramirez`,
     name: profile.name,
     url: `${origin}/`,
-    image: `${origin}/assets/aden-headshot.png`,
+    image: `${origin}/assets/aden-headshot.jpg`,
     email: `mailto:${profile.email}`,
     jobTitle: "Software Engineer and Computer Science Student",
     alumniOf: { "@type": "CollegeOrUniversity", name: "The University of Texas at El Paso" },
@@ -241,4 +274,4 @@ function structuredDataForPath(pathname, origin, profile, meta) {
   return JSON.stringify({ "@context": "https://schema.org", "@graph": [person, page] }).replace(/</g, "\\u003c");
 }
 
-module.exports = { escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs };
+module.exports = { eventBanner, escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs };

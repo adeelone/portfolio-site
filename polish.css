@@ -198,3 +198,43 @@ html, body { overflow-x: hidden; }
 .skills .course-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .skills .course-grid span { padding: .65rem .5rem .65rem 0; font-size: .95rem; }
 @media (max-width: 850px) { .skills .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.hero-connect { margin-top: 1rem; flex-wrap: wrap; gap: 0.5rem 1.2rem; color: var(--muted); }
+
+.event-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1.5rem; margin: 1.5rem 0 0; padding: .9rem 1.1rem; border: 1px solid var(--line); border-left: 4px solid var(--rust); background: var(--soft); }
+.event-banner p { margin: 0; }
+.event-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
+.event-actions .button { gap: .75rem; padding: .65rem 1rem; margin: 0; }
+.event-actions .event-save { background: var(--ink); border-color: var(--ink); }
+
+.card-hero { display: grid; grid-template-columns: 112px 1fr; gap: 1.25rem; align-items: center; max-width: 640px; margin: 2.5rem auto 1.5rem; }
+.card-hero img { width: 112px; height: 140px; object-fit: cover; object-position: top; border: 1px solid var(--line); }
+.card-hero h1 { font-family: var(--serif); font-size: clamp(2.2rem, 8vw, 3.2rem); line-height: 1; margin: .35rem 0 .6rem; letter-spacing: -.02em; }
+.card-role { margin: 0; color: var(--muted); max-width: 42ch; }
+.card-hero, .card-facts, .card-actions, .card-links, .card-proof, .card-projects, .card-more { max-width: 640px; margin-left: auto; margin-right: auto; }
+.card-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 0; margin-bottom: 1.25rem; }
+.card-facts div { background: var(--paper); padding: .75rem .9rem; }
+.card-facts dt { color: var(--muted); font: 700 .7rem var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.card-facts dd { margin: .25rem 0 0; font-weight: 700; }
+.card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.card-actions .button { justify-content: space-between; min-height: 3.25rem; margin: 0; }
+.card-actions .card-save { background: var(--ink); border-color: var(--ink); }
+.card-links { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .5rem; margin-top: .75rem; margin-bottom: 2rem; }
+.card-links a { display: flex; align-items: center; justify-content: center; min-height: 2.9rem; border: 1px solid var(--line); color: var(--blue); font-weight: 700; text-decoration: none; background: var(--paper); }
+.card-links a:hover, .card-links a:focus-visible { border-color: var(--blue); }
+.card-proof, .card-projects { border-top: 1px solid var(--line); padding-top: 1.25rem; margin-bottom: 1.75rem; }
+.card-proof h2, .card-projects h2 { font-family: var(--serif); font-size: 1.5rem; margin: 0 0 .9rem; }
+.card-proof ul { margin: 0; padding-left: 1.1rem; }
+.card-proof li { margin-bottom: .7rem; line-height: 1.5; }
+.card-projects a { display: block; padding: .9rem 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+.card-projects a:hover strong { color: var(--blue); }
+.card-projects strong { font-size: 1.1rem; }
+.card-projects span { display: block; color: var(--rust); font: .78rem var(--mono); margin-top: .2rem; }
+.card-projects p { margin: .35rem 0 0; color: var(--muted); line-height: 1.45; }
+.card-more { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; color: var(--muted); margin-bottom: 3rem; }
+@media (max-width: 540px) {
+  .card-hero { grid-template-columns: 88px 1fr; gap: 1rem; margin-top: 1.5rem; }
+  .card-hero img { width: 88px; height: 110px; }
+  .card-actions { grid-template-columns: 1fr; }
+  .card-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

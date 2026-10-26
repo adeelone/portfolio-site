@@ -2,7 +2,7 @@
   "name": "Aden Ramirez",
   "title": "Computer science junior at UTEP and former Google STEP intern, building backend, distributed systems, and AI/ML projects.",
   "subtitle": "Recruiting for Summer 2027 software engineering internships, plus fall and spring co-ops. Open to relocating anywhere.",
-  "current_status": "This fall I'm a Research Technical Specialist with MinerSpark, Technical Officer for ColorStack at UTEP, a GDG on Campus mentor, a Civic Engagement Organizing Fellow, and part of the Code2Career Fall 2026 cohort.",
+  "current_status": "This fall I'm a Research Technical Specialist with MinerSpark, Technical Officer for ColorStack at UTEP, a GDG on Campus mentor, a Civic Engagement Organizing Fellow, and part of the Code2Career Fall 2026 cohort. I'll also be at the 2026 SHPE National Convention in Indianapolis (Oct 28 to 31) — always glad to connect in person there.",
   "availability": "Based in El Paso, open to relocating anywhere for the right role, and usually easiest to reach by email or LinkedIn.",
   "semester_focus": "Right now I'm taking Database Systems, Operating Systems, Parallel Computing, Programming Language Concepts, and Probability and Statistics while recruiting for Summer 2027.",
   "phone": "(915) 240-7882",
@@ -15,8 +15,15 @@
   "handshake": "https://app.joinhandshake.com/profiles/adenram",
   "website": "https://adenramirez.dev",
   "resume": "assets/Aden_Ramirez_Resume.pdf",
-  "hero_image": "assets/aden-headshot.png",
+  "hero_image": "assets/aden-headshot.jpg",
   "location": "El Paso, Texas",
+  "event": {
+    "name": "SHPE 2026 National Convention",
+    "short_name": "SHPE 2026",
+    "place": "Indianapolis",
+    "dates": "Oct 28 to 31",
+    "banner_until": "2026-11-01T05:00:00Z"
+  },
   "hero_facts": [
     { "label": "Based in", "value": "El Paso, TX" },
     { "label": "Studying", "value": "B.S. Computer Science, Math minor" },
@@ -118,7 +125,7 @@
       "company": "ColorStack, UTEP Chapter",
       "title": "Technical Officer",
       "dates": "Aug 2025 - Present",
-      "context": "Run technical programming for underrepresented CS students, from hands-on workshops to tech events."
+      "context": "Run technical programming for underrepresented CS students, from hands-on workshops to tech events. Since September 2026 I also serve as the chapter's Social Media Manager, running its LinkedIn and Instagram."
     },
     {
       "company": "Google Developer Groups on Campus, UTEP",
