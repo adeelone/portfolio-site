@@ -253,7 +253,7 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     "@id": `${origin}/#aden-ramirez`,
     name: profile.name,
     url: `${origin}/`,
-    image: `${origin}/assets/aden-headshot.png`,
+    image: `${origin}/assets/aden-headshot.jpg`,
     email: `mailto:${profile.email}`,
     jobTitle: "Software Engineer and Computer Science Student",
     alumniOf: { "@type": "CollegeOrUniversity", name: "The University of Texas at El Paso" },

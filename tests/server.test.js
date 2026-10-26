@@ -84,7 +84,7 @@ test("provides complete route metadata and structured data in source HTML", asyn
     titles.add(title);
     assert.match(html, /<html lang="en">/);
     assert.match(html, /<meta name="description" content="[^"]+"/);
-    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.png"/);
+    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.jpg"/);
     assert.match(html, /<link rel="canonical"[^>]+href="http:\/\/127\.0\.0\.1:3199/);
     assert.match(html, /<link rel="icon" href="\/favicon\.svg"/);
     assert.match(html, /<script type="application\/ld\+json"[^>]*>\{"@context":"https:\/\/schema\.org"/);
@@ -118,10 +118,14 @@ test("exposes only read-only public APIs", async () => {
 });
 
 test("serves the professional headshot as an explicit public asset", async () => {
-  const response = await fetch(`${origin}/assets/aden-headshot.png`);
+  const response = await fetch(`${origin}/assets/aden-headshot.jpg`);
   assert.equal(response.status, 200);
-  assert.equal(response.headers.get("content-type"), "image/png");
-  assert.ok((await response.arrayBuffer()).byteLength > 100000);
+  assert.equal(response.headers.get("content-type"), "image/jpeg");
+  const bytes = (await response.arrayBuffer()).byteLength;
+  assert.ok(bytes > 50000 && bytes < 400000, `headshot should stay light for phones (${bytes} bytes)`);
+  const icon = await fetch(`${origin}/assets/apple-touch-icon.png`);
+  assert.equal(icon.status, 200);
+  assert.equal(icon.headers.get("content-type"), "image/png");
 });
 
 test("serves artwork for every curated project and both resume versions", async () => {

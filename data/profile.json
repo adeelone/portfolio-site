@@ -15,7 +15,7 @@
   "handshake": "https://app.joinhandshake.com/profiles/adenram",
   "website": "https://adenramirez.dev",
   "resume": "assets/Aden_Ramirez_Resume.pdf",
-  "hero_image": "assets/aden-headshot.png",
+  "hero_image": "assets/aden-headshot.jpg",
   "location": "El Paso, Texas",
   "event": {
     "name": "SHPE 2026 National Convention",
@@ -125,7 +125,7 @@
       "company": "ColorStack, UTEP Chapter",
       "title": "Technical Officer",
       "dates": "Aug 2025 - Present",
-      "context": "Run technical programming for underrepresented CS students, from hands-on workshops to tech events."
+      "context": "Run technical programming for underrepresented CS students, from hands-on workshops to tech events. Since September 2026 I also serve as the chapter's Social Media Manager, running its LinkedIn and Instagram."
     },
     {
       "company": "Google Developer Groups on Campus, UTEP",
