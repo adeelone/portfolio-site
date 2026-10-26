@@ -198,3 +198,5 @@ html, body { overflow-x: hidden; }
 .skills .course-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .skills .course-grid span { padding: .65rem .5rem .65rem 0; font-size: .95rem; }
 @media (max-width: 850px) { .skills .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.hero-connect { margin-top: 1rem; flex-wrap: wrap; gap: 0.5rem 1.2rem; color: var(--muted); }
