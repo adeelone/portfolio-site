@@ -2,14 +2,15 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
-const { projectArtSlugs, eventBanner } = require("../render");
+const { projectArtSlugs, eventBanner, renderPage } = require("../render");
+const { loadPosts, markdownToHtml } = require("../writing");
 
 const port = 3199;
 const origin = `http://127.0.0.1:${port}`;
 let child;
 
 test.before(async () => {
-  child = spawn(process.execPath, ["server.js"], { cwd: path.resolve(__dirname, ".."), env: { ...process.env, PORT: String(port), NODE_ENV: "production", SITE_URL: origin }, stdio: "ignore" });
+  child = spawn(process.execPath, ["server.js"], { cwd: path.resolve(__dirname, ".."), env: { ...process.env, PORT: String(port), NODE_ENV: "production", SITE_URL: origin, POSTS_DIR: path.join(__dirname, "fixtures", "posts") }, stdio: "ignore" });
   for (let attempt = 0; attempt < 40; attempt += 1) {
     try { if ((await fetch(`${origin}/api/health`)).ok) return; } catch {}
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -84,7 +85,8 @@ test("provides complete route metadata and structured data in source HTML", asyn
     titles.add(title);
     assert.match(html, /<html lang="en">/);
     assert.match(html, /<meta name="description" content="[^"]+"/);
-    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/aden-headshot\.jpg"/);
+    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:3199\/assets\/og-image\.jpg"/);
+    assert.match(html, /<meta property="og:image:width" content="1200"/);
     assert.match(html, /<link rel="canonical"[^>]+href="http:\/\/127\.0\.0\.1:3199/);
     assert.match(html, /<link rel="icon" href="\/favicon\.svg"/);
     assert.match(html, /<script type="application\/ld\+json"[^>]*>\{"@context":"https:\/\/schema\.org"/);
@@ -172,7 +174,12 @@ test("serves favicon and llms discovery while refusing source maps", async () =>
   assert.match(favicon.headers.get("content-type"), /image\/svg\+xml/);
   const llms = await fetch(`${origin}/llms.txt`);
   assert.equal(llms.status, 200);
-  assert.match(await llms.text(), /# Aden Ramirez Portfolio/);
+  const llmsText = await llms.text();
+  assert.match(llmsText, /^# Aden Ramirez\n/);
+  assert.match(llmsText, /\[Relay\]\(http:\/\/127\.0\.0\.1:3199\/projects\/relay\)/);
+  assert.match(llmsText, /First-generation college student/);
+  assert.match(llmsText, /\[Hello, world\]\(http:\/\/127\.0\.0\.1:3199\/writing\/hello-world\)/);
+  assert.doesNotMatch(llmsText, /Secret draft/);
   assert.equal((await fetch(`${origin}/client.js.map`)).status, 404);
   const client = await (await fetch(`${origin}/client.js`)).text();
   assert.ok(Buffer.byteLength(client) < 10000, "browser JavaScript should stay under 10 KB uncompressed");
@@ -252,4 +259,66 @@ test("project data has one entry per slug", async () => {
   const { repos } = await (await fetch(`${origin}/api/projects`)).json();
   const slugs = repos.map((project) => project.slug);
   assert.deepEqual(slugs.filter((slug, index) => slugs.indexOf(slug) !== index), []);
+});
+
+test("publishes posts but never drafts, with feed, sitemap, nav, and structured data", async () => {
+  const index = await fetch(`${origin}/writing`);
+  assert.equal(index.status, 200);
+  const indexHtml = await index.text();
+  assert.match(indexHtml, /href="\/writing\/hello-world"/);
+  assert.doesNotMatch(indexHtml, /Secret draft/);
+  assert.match(indexHtml, /<nav id="nav"[\s\S]*<a href="\/writing">Writing<\/a>[\s\S]*<\/nav>/);
+  assert.match(indexHtml, /<link rel="alternate" type="application\/rss\+xml"/);
+  const post = await fetch(`${origin}/writing/hello-world`);
+  assert.equal(post.status, 200);
+  const postHtml = await post.text();
+  assert.match(postHtml, /<title>Hello, world \| Aden Ramirez<\/title>/);
+  assert.match(postHtml, /<meta property="og:type" content="article"/);
+  const article = JSON.parse(postHtml.match(/<script type="application\/ld\+json"[^>]*>([^<]+)<\/script>/)[1])["@graph"].find((node) => node["@type"] === "BlogPosting");
+  assert.equal(article.headline, "Hello, world");
+  assert.equal(article.datePublished, "2026-11-02");
+  assert.match(postHtml, /<h2>Why it exists<\/h2>/);
+  assert.doesNotMatch(postHtml, /<script>alert/);
+  assert.equal((await fetch(`${origin}/writing/secret-draft`)).status, 404);
+  assert.equal((await fetch(`${origin}/writing/not-a-post`)).status, 404);
+  const feed = await fetch(`${origin}/feed.xml`);
+  assert.match(feed.headers.get("content-type"), /application\/rss\+xml/);
+  const feedText = await feed.text();
+  assert.match(feedText, /<link>http:\/\/127\.0\.0\.1:3199\/writing\/hello-world<\/link>/);
+  assert.doesNotMatch(feedText, /secret-draft/);
+  const sitemapText = await (await fetch(`${origin}/sitemap.xml`)).text();
+  assert.match(sitemapText, /<loc>http:\/\/127\.0\.0\.1:3199\/writing\/hello-world<\/loc><lastmod>2026-11-02<\/lastmod>/);
+  assert.match(sitemapText, /<loc>http:\/\/127\.0\.0\.1:3199\/projects\/relay<\/loc><lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+  assert.doesNotMatch(sitemapText, /secret-draft/);
+});
+
+test("renders a safe Markdown subset", () => {
+  const html = markdownToHtml("Hi `<b>` **x** [ok](https://a.dev) [no](javascript:alert(1)) [rel](/work)\n\n<script>alert(1)</script>\n\n```\n<i>\n```");
+  assert.match(html, /<code>&lt;b&gt;<\/code>/);
+  assert.match(html, /<strong>x<\/strong>/);
+  assert.match(html, /<a href="https:\/\/a\.dev" target="_blank" rel="noopener noreferrer">ok<\/a>/);
+  assert.match(html, /<a href="\/work">rel<\/a>/);
+  assert.doesNotMatch(html, /href="javascript/i);
+  assert.doesNotMatch(html, /<script|<i>/);
+  assert.match(html, /<pre><code>&lt;i&gt;<\/code><\/pre>/);
+});
+
+test("hides /writing entirely until a post is published", async () => {
+  const posts = await loadPosts(path.join(__dirname, "..", "posts"));
+  assert.deepEqual(posts.filter((post) => post.draft), []);
+  if (!posts.length) assert.match(renderPage("/writing", { }, [], posts), /That page isn't here/);
+});
+
+test("home page targets the name keyword and Person schema", async () => {
+  const html = await (await fetch(`${origin}/`)).text();
+  assert.match(html, /<title>Aden Ramirez \| Software Engineer, UTEP CS, ex-Google STEP<\/title>/);
+  const data = JSON.parse(html.match(/<script type="application\/ld\+json"[^>]*>([^<]+)<\/script>/)[1]);
+  const types = data["@graph"].map((node) => node["@type"]);
+  assert.deepEqual(types, ["Person", "WebSite", "ProfilePage"]);
+  assert.equal(data["@graph"][2].mainEntity["@id"], data["@graph"][0]["@id"]);
+  assert.ok(data["@graph"][0].sameAs.includes("https://www.linkedin.com/in/aden-ramirez-cs/"));
+  assert.doesNotMatch(html, /google-site-verification/, "no empty verification tag");
+  const image = await fetch(`${origin}/assets/og-image.jpg`);
+  assert.equal(image.status, 200);
+  assert.equal(image.headers.get("content-type"), "image/jpeg");
 });

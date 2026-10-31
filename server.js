@@ -1,13 +1,15 @@
 const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
-const { escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs } = require("./render");
+const { escapeHtml, llmsTxt, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs } = require("./render");
+const { feedXml, loadPosts } = require("./writing");
 
 const rootDir = __dirname;
 const port = Number(process.env.PORT) || 3000;
 const configuredSiteUrl = String(process.env.SITE_URL || "").replace(/\/+$/, "");
 const profilePath = path.join(rootDir, "data", "profile.json");
 const projectsPath = path.join(rootDir, "data", "projects.json");
+const postsDir = process.env.POSTS_DIR ? path.resolve(process.env.POSTS_DIR) : path.join(rootDir, "posts");
 const publicFiles = new Map([
   ["/styles.css", path.join(rootDir, "styles.css")],
   ["/polish.css", path.join(rootDir, "polish.css")],
@@ -15,9 +17,9 @@ const publicFiles = new Map([
   ["/snake.js", path.join(rootDir, "snake.js")],
   ["/play.js", path.join(rootDir, "play.js")],
   ["/favicon.svg", path.join(rootDir, "favicon.svg")],
-  ["/llms.txt", path.join(rootDir, "llms.txt")],
   ["/assets/aden-headshot.jpg", path.join(rootDir, "assets", "aden-headshot.jpg")],
   ["/assets/apple-touch-icon.png", path.join(rootDir, "assets", "apple-touch-icon.png")],
+  ["/assets/og-image.jpg", path.join(rootDir, "assets", "og-image.jpg")],
   ["/assets/project-sentinel.png", path.join(rootDir, "assets", "project-sentinel.png")],
   ["/assets/project-cardforge.png", path.join(rootDir, "assets", "project-cardforge.png")],
   ["/assets/project-dominion.png", path.join(rootDir, "assets", "project-dominion.png")],
@@ -64,8 +66,9 @@ async function readJson(file) {
 }
 
 async function renderApp(pathname, origin, preloaded = {}) {
-  const [template, profile, projects] = await Promise.all([fs.readFile(path.join(rootDir, "index.html"), "utf8"), preloaded.profile || readJson(profilePath), preloaded.projects || readJson(projectsPath)]);
-  const meta = metaForPath(pathname, projects.repos);
+  const [template, profile, projects, posts] = await Promise.all([fs.readFile(path.join(rootDir, "index.html"), "utf8"), preloaded.profile || readJson(profilePath), preloaded.projects || readJson(projectsPath), preloaded.posts || loadPosts(postsDir)]);
+  const meta = metaForPath(pathname, projects.repos, posts);
+  const verification = String(profile.google_site_verification || "").trim();
   const canonicalPath = pathname === "/experience" ? "/jobs" : pathname;
   const canonical = `${origin}${canonicalPath === "/" ? "" : canonicalPath}`;
   return template
@@ -74,16 +77,29 @@ async function renderApp(pathname, origin, preloaded = {}) {
     .replaceAll("{{ROBOTS_META}}", meta.found ? "index, follow" : "noindex, follow")
     .replaceAll("{{CANONICAL}}", escapeHtml(canonical))
     .replaceAll("{{SITE_URL}}", escapeHtml(origin))
+    .replace("{{OG_TYPE}}", meta.post ? "article" : "website")
+    .replace("{{HEAD_EXTRA}}", [verification ? `<meta name="google-site-verification" content="${escapeHtml(verification)}" />` : "", posts.length ? `<link rel="alternate" type="application/rss+xml" title="${escapeHtml(profile.name)}: Writing" href="${escapeHtml(origin)}/feed.xml" />` : ""].filter(Boolean).join("\n    "))
+    .replace("{{NAV_WRITING}}", posts.length ? '<a href="/writing">Writing</a>' : "")
     .replace("{{STRUCTURED_DATA}}", structuredDataForPath(canonicalPath, origin, profile, meta))
     .replace("{{PAGE_SCRIPT}}", pathname === "/play" ? '<script src="/snake.js?v=1" defer></script><script src="/play.js?v=2" defer></script>' : "")
-    .replace("{{CONTENT}}", renderPage(pathname, profile, projects.repos));
+    .replace("{{CONTENT}}", renderPage(pathname, profile, projects.repos, posts));
 }
 
 async function sitemap(req) {
-  const projects = await readJson(projectsPath);
-  const origin = configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
-  const paths = ["/", "/shpe", "/work", "/jobs", "/education", "/about", "/contact", ...publicRepos(projects.repos).filter((project) => project.slug).map((project) => `/projects/${project.slug}`)];
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map((item) => `<url><loc>${origin}${item}</loc></url>`).join("")}</urlset>`;
+  const [projects, posts] = await Promise.all([readJson(projectsPath), loadPosts(postsDir)]);
+  const origin = siteOrigin(req);
+  const day = (value) => (value ? String(value).slice(0, 10) : "");
+  const entries = [
+    ...["/", "/shpe", "/work", "/jobs", "/education", "/about", "/contact"].map((item) => [item, ""]),
+    ...(posts.length ? [["/writing", posts[0].date]] : []),
+    ...posts.map((post) => [`/writing/${post.slug}`, post.date]),
+    ...publicRepos(projects.repos).filter((project) => project.slug).map((project) => [`/projects/${project.slug}`, day(project.pushed_at)])
+  ];
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${entries.map(([item, lastmod]) => `<url><loc>${origin}${item}</loc>${lastmod ? `<lastmod>${lastmod}</lastmod>` : ""}</url>`).join("")}</urlset>`;
+}
+
+function siteOrigin(req) {
+  return configuredSiteUrl || `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host || "127.0.0.1"}`;
 }
 
 const server = http.createServer(async (req, res) => {
@@ -108,6 +124,14 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, body, "text/plain; charset=utf-8", "public, max-age=86400");
     }
     if (pathname === "/sitemap.xml") return send(res, 200, await sitemap(req), "application/xml; charset=utf-8", "public, max-age=3600");
+    if (pathname === "/feed.xml") {
+      const [posts, profile] = await Promise.all([loadPosts(postsDir), readJson(profilePath)]);
+      return send(res, 200, feedXml(posts, siteOrigin(req), profile), "application/rss+xml; charset=utf-8", "public, max-age=3600");
+    }
+    if (pathname === "/llms.txt") {
+      const [profile, projects, posts] = await Promise.all([readJson(profilePath), readJson(projectsPath), loadPosts(postsDir)]);
+      return send(res, 200, llmsTxt(siteOrigin(req), profile, projects.repos, posts), "text/plain; charset=utf-8", "public, max-age=3600");
+    }
     if (pathname === "/contact.vcf") {
       const profile = await readJson(profilePath);
       const [given, ...rest] = profile.name.split(" ");
@@ -124,6 +148,11 @@ const server = http.createServer(async (req, res) => {
     if (pathname === "/experience") return redirect(res, 308, `${origin}/jobs`);
     if (["/", "/work", "/jobs", "/experience", "/education", "/about", "/contact", "/play", "/shpe"].includes(pathname)) {
       return send(res, 200, await renderApp(pathname, origin), "text/html; charset=utf-8");
+    }
+    if (pathname === "/writing" || /^\/writing\/[a-z0-9-]+$/.test(pathname)) {
+      const posts = await loadPosts(postsDir);
+      const found = pathname === "/writing" ? posts.length > 0 : posts.some((post) => `/writing/${post.slug}` === pathname);
+      return send(res, found ? 200 : 404, await renderApp(pathname, origin, { posts }), "text/html; charset=utf-8");
     }
     if (/^\/projects\/[a-z0-9-]+$/i.test(pathname)) {
       const projects = await readJson(projectsPath);

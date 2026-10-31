@@ -23,8 +23,11 @@ Open `http://127.0.0.1:3000`. Checks cover syntax, routing, security headers, AP
 - `/about` — background and working style
 - `/contact` — email, phone, professional profiles, résumé, and downloadable vCard
 - `/shpe` — phone-first quick card for career fairs (QR target): résumé download, save-contact, LinkedIn/email/text/call, and three recent projects. The home-page banner pointing to it is driven by `event` in `data/profile.json` and hides itself after `banner_until`
+- `/writing` and `/writing/:slug` — blog posts from `posts/*.md`, plus an RSS feed at `/feed.xml`. Hidden (404, no nav link) until the first non-draft post exists; see `posts/README.md`
 - `/play` — a small, dependency-free Snake game (keyboard or touch controls, pause/resume, best score kept in `localStorage` only)
-- `/sitemap.xml`, `/robots.txt`, and `/llms.txt` — search and AI discovery
+- `/sitemap.xml`, `/robots.txt`, and `/llms.txt` — search and AI discovery. `llms.txt` is generated from `data/profile.json`, `data/projects.json`, and published posts, so it never goes stale
+
+Set `google_site_verification` in `data/profile.json` to the token from Google Search Console's HTML-tag method to verify the site.
 
 ## Content
 

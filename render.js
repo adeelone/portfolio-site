@@ -171,6 +171,18 @@ function shpePage(profile, repos) {
   <p class="card-more"><a class="text-link" href="/">See the full portfolio <span aria-hidden="true">→</span></a><span>${escapeHtml(profile.email)} · ${escapeHtml(profile.phone)}</span></p>`;
 }
 
+function postDate(date) {
+  return new Intl.DateTimeFormat("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
+}
+
+function writingPage(posts) {
+  return `<header class="page-lead"><h1>Writing</h1><p>Notes on what I build, what breaks, and what I learn shipping it.</p><a class="text-link" href="/feed.xml">RSS feed <span aria-hidden="true">↗</span></a></header><section class="post-list">${posts.map((post) => `<article><time datetime="${escapeHtml(post.date)}">${escapeHtml(postDate(post.date))}</time><h2><a href="/writing/${escapeHtml(post.slug)}">${escapeHtml(post.title)}</a></h2>${post.summary ? `<p>${escapeHtml(post.summary)}</p>` : ""}<span>${post.readingMinutes} min read</span></article>`).join("")}</section>`;
+}
+
+function postPage(post, profile) {
+  return `<nav class="breadcrumb post-back" aria-label="Breadcrumb"><a href="/writing"><span aria-hidden="true">←</span> Writing</a></nav><article class="post"><header class="post-header"><h1>${escapeHtml(post.title)}</h1><p><time datetime="${escapeHtml(post.date)}">${escapeHtml(postDate(post.date))}</time> · ${post.readingMinutes} min read · ${escapeHtml(profile.name)}</p></header><div class="post-body">${post.html}</div><footer class="post-footer"><p>I'm a computer science junior at UTEP and a former Google STEP intern, looking for Summer 2027 software engineering internships.</p><p><a class="text-link" href="/contact">Get in touch <span aria-hidden="true">→</span></a> <a class="text-link" href="/writing">More writing <span aria-hidden="true">→</span></a></p></footer></article>`;
+}
+
 function narrative(project) {
   const preview = (project.readme_preview || []).filter((line) => line && !/^#|^```|^\[!|^\|/.test(line));
   const highlights = (project.highlights || []).length ? project.highlights : preview.filter((line) => !line.startsWith("-")).slice(0, 2);
@@ -211,7 +223,7 @@ function notFoundPage(project = false) {
   return `<section class="not-found"><p>404</p><h1>${project ? "That project isn't here." : "That page isn't here."}</h1><p>The address may have changed, or the page may never have existed.</p><a class="button" href="${project ? "/work" : "/"}">${project ? "Back to work" : "Go home"}</a></section>`;
 }
 
-function renderPage(pathname, profile, repos) {
+function renderPage(pathname, profile, repos, posts = []) {
   if (pathname === "/") return homePage(profile, repos);
   if (pathname === "/work") return workPage(repos);
   if (pathname === "/jobs" || pathname === "/experience") return jobsPage(profile);
@@ -220,6 +232,12 @@ function renderPage(pathname, profile, repos) {
   if (pathname === "/contact") return contactPage(profile);
   if (pathname === "/play") return playPage();
   if (pathname === "/shpe") return shpePage(profile, repos);
+  if (pathname === "/writing" && posts.length) return writingPage(posts);
+  const postMatch = pathname.match(/^\/writing\/([^/]+)$/);
+  if (postMatch) {
+    const post = posts.find((item) => item.slug === postMatch[1]);
+    return post ? postPage(post, profile) : notFoundPage(false);
+  }
   const match = pathname.match(/^\/projects\/([^/]+)$/);
   if (match) {
     const project = repos.find((item) => item.slug === match[1]);
@@ -228,9 +246,9 @@ function renderPage(pathname, profile, repos) {
   return notFoundPage(false);
 }
 
-function metaForPath(pathname, repos) {
+function metaForPath(pathname, repos, posts = []) {
   const routes = {
-    "/": ["Aden Ramirez | Software Engineer", "Aden Ramirez is a UTEP computer science junior and former Google STEP intern building backend, distributed systems, and AI/ML projects. Recruiting for Summer 2027 SWE internships."],
+    "/": ["Aden Ramirez | Software Engineer, UTEP CS, ex-Google STEP", "Aden Ramirez, a UTEP computer science junior and former Google STEP intern, builds backend systems and practical AI. Seeking Summer 2027 SWE internships."],
     "/work": ["Work | Aden Ramirez", "Projects, experiments, and systems built by Aden Ramirez."],
     "/jobs": ["Jobs | Aden Ramirez", "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work."],
     "/experience": ["Jobs | Aden Ramirez", "The complete employment history of Aden Ramirez, including engineering, education, service, sales, and customer-support work."],
@@ -241,6 +259,10 @@ function metaForPath(pathname, repos) {
     "/play": ["Play | Aden Ramirez", "A small, dependency-free Snake game built into Aden Ramirez's portfolio. Arrow keys or touch controls; best score saved locally."]
   };
   if (routes[pathname]) return { title: routes[pathname][0], description: routes[pathname][1], found: true };
+  if (pathname === "/writing" && posts.length) return { title: "Writing | Aden Ramirez", description: "Notes from Aden Ramirez on building, testing, and shipping software.", found: true, blog: true };
+  const postMatch = pathname.match(/^\/writing\/([^/]+)$/);
+  const post = postMatch ? posts.find((item) => item.slug === postMatch[1]) : null;
+  if (post) return { title: `${post.title} | Aden Ramirez`, description: post.summary || `${post.title}, by Aden Ramirez.`, found: true, post };
   const match = pathname.match(/^\/projects\/([^/]+)$/);
   const project = match ? repos.find((item) => item.slug === match[1]) : null;
   if (project) return { title: `${displayName(project.name)} | Aden Ramirez`, description: project.description || `A project by Aden Ramirez: ${displayName(project.name)}.`, found: true, project };
@@ -256,11 +278,16 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     image: `${origin}/assets/aden-headshot.jpg`,
     email: `mailto:${profile.email}`,
     jobTitle: "Software Engineer and Computer Science Student",
-    alumniOf: { "@type": "CollegeOrUniversity", name: "The University of Texas at El Paso" },
+    description: profile.title,
+    affiliation: { "@type": "CollegeOrUniversity", name: profile.education.school },
+    address: { "@type": "PostalAddress", addressLocality: "El Paso", addressRegion: "TX", addressCountry: "US" },
+    memberOf: ["Society of Hispanic Professional Engineers (SHPE)", "ColorStack", "Google Developer Groups on Campus"].map((name) => ({ "@type": "Organization", name })),
+    knowsAbout: ["Backend engineering", "Distributed systems", "Full-stack development", "Machine learning", ...(profile.skills?.[0]?.items || []).slice(0, 6)],
     sameAs: [profile.github, profile.linkedin, profile.handshake].filter(Boolean)
   };
+  const website = { "@type": "WebSite", "@id": `${origin}/#website`, name: profile.name, url: `${origin}/`, publisher: { "@id": person["@id"] } };
   const page = {
-    "@type": meta.project ? "SoftwareSourceCode" : pathname === "/work" ? "CollectionPage" : "WebPage",
+    "@type": meta.post ? "BlogPosting" : meta.blog ? "Blog" : meta.project ? "SoftwareSourceCode" : ["/", "/about"].includes(pathname) ? "ProfilePage" : pathname === "/work" ? "CollectionPage" : "WebPage",
     "@id": `${origin}${pathname === "/" ? "/" : pathname}#page`,
     url: `${origin}${pathname === "/" ? "/" : pathname}`,
     name: meta.title,
@@ -271,7 +298,53 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     page.codeRepository = meta.project.url || undefined;
     page.programmingLanguage = technologies(meta.project, 12);
   }
-  return JSON.stringify({ "@context": "https://schema.org", "@graph": [person, page] }).replace(/</g, "\\u003c");
+  if (page["@type"] === "ProfilePage") page.mainEntity = { "@id": person["@id"] };
+  if (meta.post) Object.assign(page, { headline: meta.post.title, datePublished: meta.post.date, image: `${origin}/assets/og-image.jpg`, isPartOf: { "@id": `${origin}/#website` } });
+  return JSON.stringify({ "@context": "https://schema.org", "@graph": [person, website, page] }).replace(/</g, "\\u003c");
 }
 
-module.exports = { eventBanner, escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs };
+function llmsTxt(origin, profile, repos, posts = []) {
+  const projects = publicRepos(repos);
+  const roles = [...profile.experience, ...(profile.leadership || [])].map((role) => `- ${role.title}, ${role.company} (${role.dates})`);
+  return [
+    `# ${profile.name}`,
+    "",
+    `> ${profile.title} ${profile.subtitle}`,
+    "",
+    `Canonical site: ${origin}`,
+    `Email: ${profile.email}`,
+    `LinkedIn: ${profile.linkedin}`,
+    `GitHub: ${profile.github}`,
+    `Affiliations: ${profile.affiliations || ""}`,
+    "",
+    "## Education",
+    "",
+    `- ${profile.education.degree}, minor in ${profile.education.minor}, ${profile.education.school} (${profile.education.graduation}). GPA ${profile.education.gpa}.`,
+    ...profile.education.honors.map((honor) => `- ${honor}`),
+    "",
+    "## Experience and leadership",
+    "",
+    ...roles,
+    "",
+    "## Projects",
+    "",
+    ...projects.map((project) => `- [${displayName(project.name)}](${origin}${projectHref(project)}): ${plainText(project.description || "")}${project.url ? ` Code: ${project.url}` : ""}`),
+    ...(posts.length ? ["", "## Writing", "", ...posts.map((post) => `- [${post.title}](${origin}/writing/${post.slug}) (${post.date}): ${post.summary}`)] : []),
+    "",
+    "## Pages",
+    "",
+    `- ${origin}/: overview and selected work`,
+    `- ${origin}/work: every project`,
+    `- ${origin}/jobs: complete work history`,
+    `- ${origin}/education: degree progress, coursework, honors`,
+    `- ${origin}/about: background, leadership, and skills`,
+    `- ${origin}/contact: contact details`,
+    `- ${origin}/assets/Aden_Ramirez_Resume.pdf: software engineering resume`,
+    `- ${origin}/sitemap.xml: every public page`,
+    "",
+    "Content may be quoted or summarized with attribution to Aden Ramirez and a link to this site.",
+    ""
+  ].join("\n");
+}
+
+module.exports = { llmsTxt, eventBanner, escapeHtml, metaForPath, renderPage, structuredDataForPath, publicRepos, projectArtSlugs };
