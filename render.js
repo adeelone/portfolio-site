@@ -274,6 +274,7 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     "@type": "Person",
     "@id": `${origin}/#aden-ramirez`,
     name: profile.name,
+    alternateName: profile.alternate_name || undefined,
     url: `${origin}/`,
     image: `${origin}/assets/aden-headshot.jpg`,
     email: `mailto:${profile.email}`,
@@ -283,7 +284,7 @@ function structuredDataForPath(pathname, origin, profile, meta) {
     address: { "@type": "PostalAddress", addressLocality: "El Paso", addressRegion: "TX", addressCountry: "US" },
     memberOf: ["Society of Hispanic Professional Engineers (SHPE)", "ColorStack", "Google Developer Groups on Campus"].map((name) => ({ "@type": "Organization", name })),
     knowsAbout: ["Backend engineering", "Distributed systems", "Full-stack development", "Machine learning", ...(profile.skills?.[0]?.items || []).slice(0, 6)],
-    sameAs: [profile.github, profile.linkedin, profile.handshake].filter(Boolean)
+    sameAs: [...new Set([profile.github, profile.linkedin, profile.handshake, ...(profile.same_as || [])].filter(Boolean))]
   };
   const website = { "@type": "WebSite", "@id": `${origin}/#website`, name: profile.name, url: `${origin}/`, publisher: { "@id": person["@id"] } };
   const page = {
