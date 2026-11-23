@@ -1,7 +1,11 @@
 {
   "name": "Aden Ramirez",
   "alternate_name": "Aden Emilio Ramirez",
-  "same_as": [],
+  "same_as": [
+    "https://www.instagram.com/lone.aden.gen",
+    "https://orcid.org/0009-0003-3300-8308",
+    "https://scholar.google.com/citations?user=HZzBlzsAAAAJ"
+  ],
   "title": "Computer science junior at UTEP and former Google STEP intern, building backend, distributed systems, and AI/ML projects.",
   "subtitle": "Recruiting for Summer 2027 software engineering internships, plus fall and spring co-ops. Open to relocating anywhere.",
   "current_status": "This fall I'm a Research Technical Specialist with MinerSpark, Technical Officer for ColorStack at UTEP, a GDG on Campus mentor, a Civic Engagement Organizing Fellow, and part of the Code2Career Fall 2026 cohort.",
